@@ -29,7 +29,7 @@ export async function run(args: string[]): Promise<void> {
       `project — ${projectPath}${projectExists ? " (exists; will prompt to overwrite)" : ""}`,
       `home — ${homePath}${homeExists ? " (exists; will prompt to overwrite)" : ""}`,
     ];
-    emit("doctor", [
+    emit("init", [
       { type: "ask_user", question: "Where to write .oh-env?", options: opts },
       {
         type: "report",
@@ -44,7 +44,7 @@ export async function run(args: string[]): Promise<void> {
 
   // File exists and no --overwrite — ask user
   if (exists && !args.includes("--overwrite")) {
-    emit("doctor", [
+    emit("init", [
       {
         type: "ask_user",
         question: `${targetPath} exists. Overwrite?`,
@@ -83,7 +83,7 @@ export async function run(args: string[]): Promise<void> {
     }
   }
 
-  emit("doctor", [
+  emit("init", [
     {
       type: "report",
       message: [

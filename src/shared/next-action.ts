@@ -22,7 +22,7 @@ export type NextAction =
   | { type: "ask_user"; question: string; options?: readonly string[] }
   | { type: "report"; message: string };
 
-export type Skill = "nice" | "context" | "search" | "doctor" | "help";
+export type Skill = "nice" | "context" | "search" | "doctor" | "help" | "init";
 
 const SENTINELS: Record<Skill, string> = {
   nice: "__OH_NICE_NEXT_ACTIONS__",
@@ -30,6 +30,7 @@ const SENTINELS: Record<Skill, string> = {
   search: "__OH_SEARCH_NEXT_ACTIONS__",
   doctor: "__OH_DOCTOR_NEXT_ACTIONS__",
   help: "__OH_HELP_NEXT_ACTIONS__",
+  init: "__OH_INIT_NEXT_ACTIONS__",
 };
 
 export { SENTINELS };
