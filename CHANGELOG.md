@@ -8,6 +8,7 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ### Changed
 - Rewrote `src/shared/banner.ts`: single-line gradient title + optional subtitle with `subtitleHighlights`. Dropped bordered-ASCII rendering, `shadeChar`, `measureWidth`, `gradientLine`. New `gradientText()` helper, `stripAnsi` preserved.
+- Simplified `src/shared/banner-presets.ts`: now exports only `GRADIENTS` (5 per-skill color stops). Per-subcommand titles moved to call sites.
 
 ### Added
 - Bordered banners on context / search / doctor / help entry points with skill-specific gradient colors.
