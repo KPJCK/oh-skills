@@ -8,6 +8,7 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ### Added
 - Shared banner primitives (`src/shared/banner.ts`): `gradientLine`, `shadeChar`, `stripAnsi`, `measureWidth` with unit tests.
+- `renderBanner()` and side-effect `banner()` in `src/shared/banner.ts` — 4-line bordered banner with gradient text + borders, cfonts `tiny` post-processed to shade chars, subtitle support.
 - GitHub Actions CI (`.github/workflows/ci.yml`) — `bun test` on ubuntu-latest + macos-latest, doctor smoke test, version-sync check.
 - `scripts/check-version.ts` enforces package.json/plugin.json version sync.
 - Initial `RELEASE-NOTES.md` for 0.1.0.

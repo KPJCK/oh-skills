@@ -1,4 +1,6 @@
 // src/shared/banner.ts
+import pc from "picocolors";
+import { render as cfontsRender } from "cfonts";
 
 /** Replace one character: block → shade, leave others. */
 export function shadeChar(c: string): string {
@@ -50,4 +52,64 @@ export function gradientLine(char: string, n: number, gradient: readonly [string
     out += `\x1b[38;2;${r};${g};${b}m${char}\x1b[0m`;
   }
   return out;
+}
+
+export interface BannerOptions {
+  title: string;
+  subtitle?: string;
+  gradient: readonly [string, string];
+  leftPadding?: number;   // default 4
+  rightPadding?: number;  // default 4
+}
+
+/** Render the banner to a string (no IO). Pure — used by tests. */
+export function renderBanner(opts: BannerOptions): string {
+  const leftPad = opts.leftPadding ?? 4;
+  const rightPad = opts.rightPadding ?? 4;
+
+  // 1. Render text via cfonts tiny with the gradient
+  const result = cfontsRender(opts.title, {
+    font: "tiny",
+    align: "left",
+    colors: ["candy"],
+    background: "transparent",
+    letterSpacing: 1,
+    lineHeight: 1,
+    space: false,
+    gradient: [opts.gradient[0], opts.gradient[1]],
+    transitionGradient: true,
+    env: "node",
+  });
+  const cfontsString = result === false ? opts.title : result.string;
+
+  // 2. Post-process: swap blocks for shades
+  const shaded = cfontsString
+    .split("")
+    .map(shadeChar)
+    .join("");
+
+  // 3. Measure visible width (longest line after ANSI strip)
+  const textWidth = measureWidth(shaded);
+
+  // 4. Build borders to enclose: leftPad + textWidth + rightPad
+  const borderWidth = leftPad + textWidth + rightPad;
+  const topBorder = gradientLine("─", borderWidth, opts.gradient);
+  const bottomBorder = topBorder;
+
+  // 5. Indent each visible text line by leftPad spaces (right pad not needed if border encloses by total width)
+  const pad = " ".repeat(leftPad);
+  const textLines = shaded.split("\n").filter((l) => l.length > 0);
+  const indentedText = textLines.map((line) => pad + line).join("\n");
+
+  // 6. Subtitle (dim, below bottom border)
+  const subtitleBlock = opts.subtitle
+    ? "\n" + opts.subtitle.split("\n").map((line) => "   " + pc.dim(line)).join("\n")
+    : "";
+
+  return `${topBorder}\n${indentedText}\n${bottomBorder}${subtitleBlock}`;
+}
+
+/** Print the banner to stdout with a trailing newline. */
+export function banner(opts: BannerOptions): void {
+  process.stdout.write(renderBanner(opts) + "\n");
 }
