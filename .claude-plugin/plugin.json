@@ -3,10 +3,10 @@
   "description": "Personal dev-cycle skills: plan/go/review/fix orchestration, context-rule loader, local knowledge base, setup doctor, and help reference.",
   "version": "0.1.0",
   "author": {
-    "name": "chaiyawutk"
+    "name": "KPJCK"
   },
-  "homepage": "https://github.com/chaiyawutk/oh-skills",
-  "repository": "https://github.com/chaiyawutk/oh-skills",
+  "homepage": "https://github.com/KPJCK/oh-skills",
+  "repository": "https://github.com/KPJCK/oh-skills",
   "license": "MIT",
   "keywords": [
     "skills",

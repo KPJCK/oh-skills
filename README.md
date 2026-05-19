@@ -20,7 +20,7 @@ A [Claude Code](https://docs.claude.com/en/docs/claude-code) plugin that bundles
 ## Install — marketplace
 
 ```
-/plugin marketplace add chaiyawutk/oh-skills
+/plugin marketplace add KPJCK/oh-skills
 /plugin install oh-skills
 ```
 
@@ -38,7 +38,7 @@ Useful when the marketplace mechanism is unavailable, or for forks. Run these st
 
 ```bash
 # 1. Clone the repo to a stable path
-git clone https://github.com/chaiyawutk/oh-skills ~/workspaces/oh-skills
+git clone https://github.com/KPJCK/oh-skills ~/workspaces/oh-skills
 cd ~/workspaces/oh-skills
 
 # 2. Install the JS dependencies
@@ -138,7 +138,7 @@ If you have a personal implementer/reviewer (e.g. registered as a sub-agent in C
 ## Development
 
 ```bash
-git clone https://github.com/chaiyawutk/oh-skills
+git clone https://github.com/KPJCK/oh-skills
 cd oh-skills
 bun install
 bun test

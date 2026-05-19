@@ -6,6 +6,9 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+- Owner/repo references retargeted from `chaiyawutk/oh-skills` to `KPJCK/oh-skills` in README, `package.json`, `.claude-plugin/plugin.json`, and `.claude-plugin/marketplace.json`.
+
 ### Removed
 - `cfonts` npm dependency (no longer used after banner rewrite).
 - Legacy `banner()` function in `src/skills/nice/ui.ts` (callers now use `src/shared/banner.ts` directly).

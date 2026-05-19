@@ -5,7 +5,7 @@
   "type": "module",
   "private": false,
   "license": "MIT",
-  "repository": "https://github.com/chaiyawutk/oh-skills",
+  "repository": "https://github.com/KPJCK/oh-skills",
   "scripts": {
     "cli": "bun src/cli.ts",
     "test": "bun test"
