@@ -28,3 +28,6 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - oh-context commands list/check/add/update/promote/template/clear/huh ported to `src/skills/context/commands/`.
 - oh-context dispatcher (`src/skills/context/index.ts`) routing all 9 subcommands; defaults to `load` when no sub or flag-first invocation.
 - Ported tests: context-add-template-payload, context-huh, context-templates (11 cases total).
+- oh-search registry/scoring/template ported to `src/skills/search/`; reads `KNOWLEDGE_DIR` from `loadOhEnv()`.
+- Shared `ui.ts` extended with `success`, `hint`, `step`, `warn` functions (needed by search and context commands).
+- Ported tests: search-scoring, search-template (24 cases).
