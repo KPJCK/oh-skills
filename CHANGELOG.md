@@ -47,3 +47,4 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Removed hardcoded "mirai" references from nice/fix.ts.
 - oh-nice `plan` command ported (phased brainstorm → writing-plans).
 - oh-nice `update-plan` command verified/finalized (phased iteration of an existing plan); CLI literals updated to use `${CLAUDE_PLUGIN_ROOT}/src/cli.ts`.
+- oh-nice dispatcher finalized (`src/skills/nice/index.ts`).
