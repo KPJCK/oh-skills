@@ -59,3 +59,4 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ### Changed
 - oh-doctor rewritten for new plugin layout: single plugin `node_modules` check, shadow-dir detection, `.oh-env` loadability check, agent-resolution best-effort check, env-dir existence checks.
+- Replaced placeholder README with full public docs: requirements, marketplace + manual install, uninstall, configuration, skills overview, development guide, repo rules, license.
