@@ -1,0 +1,22 @@
+# .oh-env — oh-skills configuration
+# Paths support ~ expansion and resolve relative paths against the cwd.
+
+# ---- Paths ----
+
+# oh-context: rule files (rule-*.md organized by folder)
+CONTEXT_DIR=./.oh/context
+
+# oh-context: saved rule-set presets (*.json)
+CONTEXT_TEMPLATE_DIR=./.oh/context-templates
+
+# oh-search: knowledge files (search-*.md)
+KNOWLEDGE_DIR=./.oh/knowledge
+
+# oh-nice: plan dirs (<repo>/<slug>/{spec,plan,review}.md)
+PLAN_DIR=./.oh/plan
+
+# ---- Agents (optional; empty = main Claude does the work) ----
+
+CODING_AGENT=
+REVIEW_AGENT=
+RESEARCH_AGENT=
