@@ -2,7 +2,8 @@ import pc from "picocolors";
 import boxen, { type Options as BoxenOptions } from "boxen";
 import figures from "figures";
 import oraImport, { type Ora } from "ora";
-import { render } from "cfonts";
+import { banner as sharedBanner } from "../../shared/banner.ts";
+import { PRESETS } from "../../shared/banner-presets.ts";
 
 const PINK = (s: string) => `\x1b[38;5;213m${s}\x1b[0m`;
 
@@ -31,38 +32,25 @@ export function header(title: string, subtitle?: string): void {
   );
 }
 
+const MODE_TO_PRESET: Record<string, keyof typeof PRESETS> = {
+  plan: "nicePlan",
+  "update-plan": "niceUpdate",
+  go: "niceGo",
+  review: "niceReview",
+  fix: "niceFix",
+};
+
 /**
- * Big colorful "NICE" splash + mode pill + optional subtitle.
- * Use at the start of every subcommand entry so the user always knows
- * which mode they're in.
+ * Legacy nice-only banner. Forwards to the shared bordered banner.
+ * Prefer importing `banner` directly from `../../shared/banner.ts`.
  */
 export function banner(mode: string, subtitle?: string): void {
-  const result = render("NICE", {
-    font: "tiny",
-    align: "left",
-    colors: ["candy"],
-    background: "transparent",
-    letterSpacing: 1,
-    lineHeight: 1,
-    space: false,
-    gradient: ["#ff5fd7", "#ff87af"],
-    transitionGradient: true,
-    env: "node",
+  const presetKey = MODE_TO_PRESET[mode.toLowerCase().split(" ")[0] ?? ""] ?? "nicePlan";
+  const preset = PRESETS[presetKey];
+  sharedBanner({
+    ...preset,
+    ...(subtitle !== undefined && { subtitle }),
   });
-  // render() returns `false` only in browser env — we always pass env:"node"
-  if (result !== false) process.stdout.write(result.string + "\n");
-
-  // Mode pill — inverted pink, padded
-  const modeLabel = ` ${mode.toUpperCase()} `;
-  const pill = `\x1b[48;5;213m\x1b[30m\x1b[1m${modeLabel}\x1b[0m`;
-  process.stdout.write(`  ${pill}  ${c.dim("oh-nice skill")}\n`);
-
-  if (subtitle) {
-    for (const line of subtitle.split("\n")) {
-      process.stdout.write(`  ${c.dim(line)}\n`);
-    }
-  }
-  process.stdout.write("\n");
 }
 
 const STEP_GLYPH = "◇"; // ◇ — not in `figures`, use literal
