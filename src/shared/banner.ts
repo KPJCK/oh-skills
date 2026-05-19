@@ -1,115 +1,104 @@
 // src/shared/banner.ts
-import pc from "picocolors";
-import { render as cfontsRender } from "cfonts";
 
-/** Replace one character: block → shade, leave others. */
-export function shadeChar(c: string): string {
-  if (c === "█") return "▓";
-  if (c === "▄" || c === "▀") return "▒";
-  return c;
-}
-
-/** Strip ANSI escape sequences. */
-export function stripAnsi(s: string): string {
-  // matches CSI sequences (ESC [ ... letter)
-  return s.replace(/\x1b\[[0-9;]*m/g, "");
-}
-
-/** Longest visible line after ANSI strip. */
-export function measureWidth(s: string): number {
-  const clean = stripAnsi(s);
-  let max = 0;
-  for (const line of clean.split("\n")) {
-    if (line.length > max) max = line.length;
-  }
-  return max;
+export interface BannerOptions {
+  title: string;
+  subtitle?: string;
+  subtitleHighlights?: readonly string[];
+  gradient: readonly [string, string];
 }
 
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.startsWith("#") ? hex.slice(1) : hex;
-  const r = parseInt(h.slice(0, 2), 16);
-  const g = parseInt(h.slice(2, 4), 16);
-  const b = parseInt(h.slice(4, 6), 16);
-  return [r, g, b];
+  return [
+    parseInt(h.slice(0, 2), 16),
+    parseInt(h.slice(2, 4), 16),
+    parseInt(h.slice(4, 6), 16),
+  ];
 }
 
 function lerp(a: number, b: number, t: number): number {
   return Math.round(a + (b - a) * t);
 }
 
-/** Return `n` copies of `char`, each colored via 24-bit ANSI interpolated start→end. */
-export function gradientLine(char: string, n: number, gradient: readonly [string, string]): string {
-  if (n <= 0) return "";
-  const [start, end] = gradient;
-  const [r1, g1, b1] = hexToRgb(start);
-  const [r2, g2, b2] = hexToRgb(end);
+const ANSI_RE = /\x1b\[[0-9;]*m/g;
+
+export function stripAnsi(s: string): string {
+  return s.replace(ANSI_RE, "");
+}
+
+/** Apply 24-bit ANSI gradient char-by-char across `text`. */
+export function gradientText(text: string, gradient: readonly [string, string]): string {
+  if (text.length === 0) return "";
+  const [r1, g1, b1] = hexToRgb(gradient[0]);
+  const [r2, g2, b2] = hexToRgb(gradient[1]);
   let out = "";
+  const n = text.length;
   for (let i = 0; i < n; i++) {
     const t = n === 1 ? 0 : i / (n - 1);
     const r = lerp(r1, r2, t);
     const g = lerp(g1, g2, t);
     const b = lerp(b1, b2, t);
-    out += `\x1b[38;2;${r};${g};${b}m${char}\x1b[0m`;
+    out += `\x1b[38;2;${r};${g};${b}m${text[i]}\x1b[0m`;
   }
   return out;
 }
 
-export interface BannerOptions {
-  title: string;
-  subtitle?: string;
-  gradient: readonly [string, string];
-  leftPadding?: number;   // default 4
-  rightPadding?: number;  // default 4
+/**
+ * Render a subtitle line: dim by default, but any substring listed in
+ * `highlights` is rendered in the title's gradient instead.
+ */
+function renderSubtitleLine(
+  line: string,
+  highlights: readonly string[],
+  gradient: readonly [string, string],
+): string {
+  if (highlights.length === 0) return `\x1b[2m${line}\x1b[22m`;
+
+  // Find all highlight match positions, sorted by start index, non-overlapping.
+  type Match = { start: number; end: number; text: string };
+  const matches: Match[] = [];
+  for (const needle of highlights) {
+    if (needle.length === 0) continue;
+    let from = 0;
+    while (true) {
+      const idx = line.indexOf(needle, from);
+      if (idx < 0) break;
+      // skip if overlaps an already-matched range
+      const overlaps = matches.some(
+        (m) => idx < m.end && idx + needle.length > m.start,
+      );
+      if (!overlaps) {
+        matches.push({ start: idx, end: idx + needle.length, text: needle });
+      }
+      from = idx + needle.length;
+    }
+  }
+  matches.sort((a, b) => a.start - b.start);
+
+  if (matches.length === 0) return `\x1b[2m${line}\x1b[22m`;
+
+  let cursor = 0;
+  let out = "";
+  for (const m of matches) {
+    if (m.start > cursor) out += `\x1b[2m${line.slice(cursor, m.start)}\x1b[22m`;
+    out += gradientText(m.text, gradient);
+    cursor = m.end;
+  }
+  if (cursor < line.length) out += `\x1b[2m${line.slice(cursor)}\x1b[22m`;
+  return out;
 }
 
-/** Render the banner to a string (no IO). Pure — used by tests. */
 export function renderBanner(opts: BannerOptions): string {
-  const leftPad = opts.leftPadding ?? 4;
-  const rightPad = opts.rightPadding ?? 4;
+  const titleLine = gradientText(opts.title, opts.gradient);
+  if (opts.subtitle === undefined) return titleLine;
 
-  // 1. Render text via cfonts tiny with the gradient
-  const result = cfontsRender(opts.title, {
-    font: "tiny",
-    align: "left",
-    colors: ["candy"],
-    background: "transparent",
-    letterSpacing: 1,
-    lineHeight: 1,
-    space: false,
-    gradient: [opts.gradient[0], opts.gradient[1]],
-    transitionGradient: true,
-    env: "node",
-  });
-  const cfontsString = result === false ? opts.title : result.string;
-
-  // 2. Post-process: swap blocks for shades
-  const shaded = cfontsString
-    .split("")
-    .map(shadeChar)
-    .join("");
-
-  // 3. Measure visible width (longest line after ANSI strip)
-  const textWidth = measureWidth(shaded);
-
-  // 4. Build borders to enclose: leftPad + textWidth + rightPad
-  const borderWidth = leftPad + textWidth + rightPad;
-  const topBorder = gradientLine("─", borderWidth, opts.gradient);
-  const bottomBorder = topBorder;
-
-  // 5. Indent each visible text line by leftPad spaces (right pad not needed if border encloses by total width)
-  const pad = " ".repeat(leftPad);
-  const textLines = shaded.split("\n").filter((l) => l.length > 0);
-  const indentedText = textLines.map((line) => pad + line).join("\n");
-
-  // 6. Subtitle (dim, below bottom border)
-  const subtitleBlock = opts.subtitle
-    ? "\n" + opts.subtitle.split("\n").map((line) => "   " + pc.dim(line)).join("\n")
-    : "";
-
-  return `${topBorder}\n${indentedText}\n${bottomBorder}${subtitleBlock}`;
+  const highlights = opts.subtitleHighlights ?? [];
+  const subtitleLines = opts.subtitle
+    .split("\n")
+    .map((line) => renderSubtitleLine(line, highlights, opts.gradient));
+  return `${titleLine}\n${subtitleLines.join("\n")}`;
 }
 
-/** Print the banner to stdout with a trailing newline. */
 export function banner(opts: BannerOptions): void {
   process.stdout.write(renderBanner(opts) + "\n");
 }
