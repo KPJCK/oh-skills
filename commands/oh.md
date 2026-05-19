@@ -20,3 +20,5 @@ bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts $1 ${@:2}
 ```
 
 Read the stderr for the `__OH_<SKILL>_NEXT_ACTIONS__` sentinel + JSON, execute each action in order. For `help`, the rendered markdown goes to stdout — show it verbatim to the user.
+
+> **Note:** `doctor` exits directly via `process.exit` (no sentinel emitted); `help` writes only to stdout (no sentinel emitted). Sentinel handling applies to `init` only (`__OH_INIT_NEXT_ACTIONS__`).
