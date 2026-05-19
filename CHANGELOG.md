@@ -24,3 +24,4 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Consolidated interactive picker helper (`src/shared/picker.ts`).
 - oh-context registry, cache, tokens ported to `src/skills/context/`; reads `CONTEXT_DIR` from `loadOhEnv()`.
 - Ported tests for context cache and tokens.
+- oh-context `load` command ported to `src/skills/context/commands/load.ts`; supporting libs render, editor, templates, template, picker, ask-ui ported.
