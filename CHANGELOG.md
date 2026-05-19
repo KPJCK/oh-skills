@@ -19,3 +19,5 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - CLI routing tests (`tests/cli-routing.test.ts`).
 - Consolidated frontmatter parser (`src/shared/frontmatter.ts`) with `parseRule` and `parseKnowledge` typed wrappers.
 - Tests for frontmatter parsing (`tests/frontmatter.test.ts`).
+- Consolidated ask-ui payload builder (`src/shared/ask-ui.ts`) with generic bucketing for AskUserQuestion.
+- Tests for ask-ui (`tests/ask-ui.test.ts`, 18 cases).
