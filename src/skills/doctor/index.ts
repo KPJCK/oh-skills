@@ -13,7 +13,7 @@ const CLAUDE = path.join(HOME, ".claude");
 
 type Status = "ok" | "warn" | "fail";
 
-type Check = {
+export type Check = {
   group: string;
   name: string;
   status: Status;
@@ -268,7 +268,7 @@ function checkPluginNodeModules(checks: Check[]): void {
 // Shadow detection (old ~/.claude/skills/oh-* dirs)
 // ──────────────────────────────────────────────────────────────────────────────
 
-function checkShadowDirs(checks: Check[]): void {
+export function checkShadowDirs(checks: Check[]): void {
   const shadowed: string[] = [];
   const oldSkillDir = path.join(os.homedir(), ".claude", "skills");
   for (const s of ["oh-context", "oh-nice", "oh-search", "oh-doctor", "oh-help"]) {
@@ -315,7 +315,7 @@ type OhEnvResult = { ok: boolean; env: ReturnType<typeof loadOhEnv> | undefined 
 // Env-dir existence checks (from loaded .oh-env)
 // ──────────────────────────────────────────────────────────────────────────────
 
-function checkEnvDirs(checks: Check[], env: ReturnType<typeof loadOhEnv>): void {
+export function checkEnvDirs(checks: Check[], env: ReturnType<typeof loadOhEnv>): void {
   const pathKeys = ["CONTEXT_DIR", "CONTEXT_TEMPLATE_DIR", "KNOWLEDGE_DIR", "PLAN_DIR"] as const;
   for (const key of pathKeys) {
     const dir = env[key];
@@ -345,7 +345,6 @@ async function checkAgentResolution(
   ];
 
   // Also scan plugin cache dirs for agents
-  const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT ?? path.resolve(import.meta.dir, "../../..");
   const cacheBase = path.join(CLAUDE, "plugins", "cache");
 
   for (const key of agentKeys) {
@@ -387,7 +386,7 @@ async function checkAgentResolution(
 
 type Frontmatter = Record<string, string>;
 
-function parseFrontmatter(md: string): Frontmatter | null {
+export function parseFrontmatter(md: string): Frontmatter | null {
   const m = md.match(/^---\n([\s\S]*?)\n---/);
   if (!m) return null;
   const fm: Frontmatter = {};
@@ -403,7 +402,7 @@ function parseFrontmatter(md: string): Frontmatter | null {
   return fm;
 }
 
-function formatBytes(n: number): string {
+export function formatBytes(n: number): string {
   if (n < 1024) return `${n}B`;
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)}KB`;
   return `${(n / 1024 / 1024).toFixed(1)}MB`;
