@@ -29,6 +29,8 @@ jobs:
           KNOWLEDGE_DIR=/tmp/oh-smoke/.oh/knowledge
           PLAN_DIR=/tmp/oh-smoke/.oh/plan
           ENV
+          # Create required ~/.claude dirs so doctor's checkDirs passes on CI
+          mkdir -p ~/.claude/{agents,skills,context,knowledges}
           bun $GITHUB_WORKSPACE/src/cli.ts doctor
   version-check:
     runs-on: ubuntu-latest
