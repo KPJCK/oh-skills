@@ -11,3 +11,5 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Claude Code plugin manifest (.claude-plugin/plugin.json).
 - `.oh-env` loader (`src/env.ts`) with project/home/defaults precedence, tilde/relative expansion, agent-role resolution.
 - Tests for env loader (`tests/env.test.ts`, 12 cases).
+- Shared next-action emitter (`src/shared/next-action.ts`) with per-skill sentinels and `buildAgentAction()` for dispatch-vs-self-act selection.
+- Tests for next-action (`tests/next-action.test.ts`).
