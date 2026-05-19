@@ -9,6 +9,8 @@ import { pickPlan } from "../picker.ts";
 import { asSlug } from "../prompts.ts";
 import { buildPlanPickerAskPayload } from "../ask-ui.ts";
 import { banner, step, success, info, hint, error } from "../ui.ts";
+import { banner as sharedBanner } from "../../../shared/banner.ts";
+import { PRESETS } from "../../../shared/banner-presets.ts";
 import { emit, type NextAction } from "../../../shared/next-action.ts";
 
 const CLI = "${CLAUDE_PLUGIN_ROOT}/src/cli.ts";
@@ -65,10 +67,7 @@ async function phaseInit(rest: string[]): Promise<void> {
     return;
   }
 
-  banner(
-    "update-plan · init",
-    `Repo: ${repo}  •  Iterating an existing plan (new ideas / improvements / feedback)`,
-  );
+  sharedBanner({ ...PRESETS.niceUpdate, subtitle: `Repo: ${repo}  •  Iterating an existing plan (new ideas / improvements / feedback)` });
 
   // pick plan
   step(1, 3, "Pick a plan to update");
@@ -175,7 +174,7 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
     `oh-nice-update-plan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.md`,
   );
 
-  banner("update-plan · brainstorm done", `Repo: ${repo}  •  Writing tasks for the update`);
+  sharedBanner({ ...PRESETS.niceUpdate, subtitle: `Repo: ${repo}  •  Writing tasks for the update` });
   step(2, 3, "Writing plan delta with superpowers");
 
   const writeInstr = [
@@ -230,7 +229,7 @@ async function phasePostPlan(rest: string[]): Promise<void> {
   await trashIfExists(tmpPlan);
   if (tmpSpec) await trashIfExists(tmpSpec);
 
-  banner("update-plan · ready", `New tasks in: ${shortHome(paths.planMd)}`);
+  sharedBanner({ ...PRESETS.niceUpdate, subtitle: `New tasks in: ${shortHome(paths.planMd)}` });
 
   const actions: NextAction[] = [
     {

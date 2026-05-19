@@ -5,6 +5,8 @@ import { pickPlan } from "../picker.ts";
 import { asSlug } from "../prompts.ts";
 import { buildPlanPickerAskPayload } from "../ask-ui.ts";
 import { banner, step, success, info, hint, error, c } from "../ui.ts";
+import { banner as sharedBanner } from "../../../shared/banner.ts";
+import { PRESETS } from "../../../shared/banner-presets.ts";
 import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { goPrompts } from "../prompts.ts";
@@ -44,7 +46,7 @@ export async function run(args: string[]): Promise<void> {
     return;
   }
 
-  banner("go", `Repo: ${repo}  •  Mirai will execute the plan`);
+  sharedBanner({ ...PRESETS.niceGo, subtitle: `Repo: ${repo}  •  Mirai will execute the plan` });
 
   step(1, 2, "Pick a plan to execute");
   let slug: string;

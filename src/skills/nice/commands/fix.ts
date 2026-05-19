@@ -4,6 +4,8 @@ import { planPaths, listPlans } from "../plans.ts";
 import { pickPlan } from "../picker.ts";
 import { buildPlanPickerAskPayload } from "../ask-ui.ts";
 import { banner, step, success, info, hint, error } from "../ui.ts";
+import { banner as sharedBanner } from "../../../shared/banner.ts";
+import { PRESETS } from "../../../shared/banner-presets.ts";
 import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { fixPrompts } from "../prompts.ts";
@@ -33,7 +35,7 @@ export async function run(args: string[]): Promise<void> {
     return;
   }
 
-  banner("fix", `Repo: ${repo}  •  Mirai will apply the latest review round`);
+  sharedBanner({ ...PRESETS.niceFix, subtitle: `Repo: ${repo}  •  Mirai will apply the latest review round` });
 
   step(1, 2, "Pick a plan with a review to apply");
   let slug: string;

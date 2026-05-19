@@ -5,6 +5,8 @@ import { detectRepo } from "../repo.ts";
 import { createPlanDir, planPaths } from "../plans.ts";
 import { promptSlug, asSlug } from "../prompts.ts";
 import { banner, step, success, info, hint, box } from "../ui.ts";
+import { banner as sharedBanner } from "../../../shared/banner.ts";
+import { PRESETS } from "../../../shared/banner-presets.ts";
 import { emit, type NextAction } from "../../../shared/next-action.ts";
 
 const CLI = "${CLAUDE_PLUGIN_ROOT}/src/cli.ts";
@@ -54,10 +56,7 @@ async function phaseInit(rest: string[]): Promise<void> {
   const request = rest.join(" ").trim() || "(no initial request given)";
   const { repo, source, cwd } = await detectRepo();
 
-  banner(
-    "plan · init",
-    `Designing: ${request}\nRepo: ${repo} (${source})  •  cwd: ${shorten(cwd)}`,
-  );
+  sharedBanner({ ...PRESETS.nicePlan, subtitle: `Designing: ${request}\nRepo: ${repo} (${source})  •  cwd: ${shorten(cwd)}` });
 
   step(1, 3, "Brainstorming with superpowers");
   hint("handing off to claude — the brainstorming skill will run a Socratic interview");
@@ -117,7 +116,7 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
 
   const { repo } = await detectRepo();
 
-  banner("plan · brainstorm done", `Repo: ${repo}  •  Request: ${request}`);
+  sharedBanner({ ...PRESETS.nicePlan, subtitle: `Repo: ${repo}  •  Brainstorm done — writing plan` });
   step(2, 3, "Name this plan");
 
   let slug: ReturnType<typeof asSlug>;
@@ -193,7 +192,7 @@ async function phasePostPlan(rest: string[]): Promise<void> {
   const planContent = await readFile(paths.planMd, "utf-8");
   const summary = summarizePlan(planContent);
 
-  banner("plan · ready", `Plan written: ${shorten(paths.planMd)}`);
+  sharedBanner({ ...PRESETS.nicePlan, subtitle: `Plan written: ${shorten(paths.planMd)}` });
   box(summary, { title: "Plan summary", color: "magenta" });
 
   const actions: NextAction[] = [

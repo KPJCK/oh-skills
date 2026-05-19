@@ -9,6 +9,8 @@ import {
   buildScopePickerAskPayload,
 } from "../ask-ui.ts";
 import { banner, step, success, info, hint, error, c } from "../ui.ts";
+import { banner as sharedBanner } from "../../../shared/banner.ts";
+import { PRESETS } from "../../../shared/banner-presets.ts";
 import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { reviewPrompts } from "../prompts.ts";
@@ -80,7 +82,7 @@ export async function run(args: string[]): Promise<void> {
     return;
   }
 
-  banner("review", `Repo: ${repo}  •  Yama will append to review.md`);
+  sharedBanner({ ...PRESETS.niceReview, subtitle: `Repo: ${repo}  •  Yama will append to review.md` });
 
   // ── 1. Plan selection ──
   step(1, 3, "Pick a plan to review against");
