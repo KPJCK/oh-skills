@@ -11,11 +11,14 @@ import { buildPlanPickerAskPayload } from "../ask-ui.ts";
 import { step, success, info, hint, error } from "../ui.ts";
 import { banner as sharedBanner } from "../../../shared/banner.ts";
 import { GRADIENTS } from "../../../shared/banner-presets.ts";
-import { emit, type NextAction } from "../../../shared/next-action.ts";
+import { emit, buildAgentAction, type NextAction } from "../../../shared/next-action.ts";
+import { loadOhEnv } from "../../../env.ts";
+import { type SourceMode, buildResearchPrompt } from "./plan.ts";
 
 const CLI = "${CLAUDE_PLUGIN_ROOT}/src/cli.ts";
+const VALID_SOURCES: SourceMode[] = ["knowledge", "online", "auto"];
 
-type Phase = "init" | "post-brainstorm" | "post-plan";
+type Phase = "init" | "post-brainstorm" | "research-go" | "write-plan" | "post-plan";
 
 export async function run(args: string[]): Promise<void> {
   let phase: Phase = "init";
@@ -23,10 +26,16 @@ export async function run(args: string[]): Promise<void> {
   for (const a of args) {
     if (a.startsWith("--phase=")) {
       const v = a.slice("--phase=".length);
-      if (v !== "init" && v !== "post-brainstorm" && v !== "post-plan") {
+      if (
+        v !== "init" &&
+        v !== "post-brainstorm" &&
+        v !== "research-go" &&
+        v !== "write-plan" &&
+        v !== "post-plan"
+      ) {
         throw new Error(`unknown phase: ${v}`);
       }
-      phase = v;
+      phase = v as Phase;
     } else {
       rest.push(a);
     }
@@ -36,6 +45,10 @@ export async function run(args: string[]): Promise<void> {
       return phaseInit(rest);
     case "post-brainstorm":
       return phasePostBrainstorm(rest);
+    case "research-go":
+      return phaseResearchGo(rest);
+    case "write-plan":
+      return phaseWritePlan(rest);
     case "post-plan":
       return phasePostPlan(rest);
   }
@@ -142,7 +155,7 @@ async function phaseInit(rest: string[]): Promise<void> {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Phase 2: post-brainstorm — append spec delta, kick off writing-plans
+// Phase 2: post-brainstorm — append spec delta, offer research opt-in
 // ──────────────────────────────────────────────────────────────────────────────
 
 async function phasePostBrainstorm(rest: string[]): Promise<void> {
@@ -173,6 +186,138 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
   await appendDatedSection(paths.specMd, today, tmpContent + "\n");
   success(`appended update to ${shortHome(paths.specMd)}`);
 
+  sharedBanner({
+    title: "[OH! >> NICE >> UPDATE-PLAN]",
+    subtitle: `Repo: ${repo}  •  Spec updated — research or write plan?`,
+    gradient: GRADIENTS.nice,
+  });
+  step(2, 3, "Research step (optional)");
+  hint("offering research step before writing the plan delta");
+
+  const actions: NextAction[] = [
+    {
+      type: "ask_user",
+      question: "Run research before writing the plan?",
+      options: ["Run research", "Skip research"],
+    },
+    {
+      type: "report",
+      message: [
+        `The next ask_user offers Run research / Skip research.`,
+        ``,
+        `If user picks "Run research", ask via AskUserQuestion which source to use (options: "knowledge" / "online" / "auto"), then re-run:`,
+        `  bun ${CLI} nice update-plan --phase=research-go ${shellQuote(repo)} ${shellQuote(pickedSlug)} ${shellQuote(tmpSpec)} --source=<chosen>`,
+        ``,
+        `If user picks "Skip research", re-run:`,
+        `  bun ${CLI} nice update-plan --phase=write-plan ${shellQuote(repo)} ${shellQuote(pickedSlug)} ${shellQuote(tmpSpec)}`,
+      ].join("\n"),
+    },
+  ];
+  emit("nice", actions);
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Phase 3 (new): research-go — dispatch research agent, update section aware
+// ──────────────────────────────────────────────────────────────────────────────
+
+async function phaseResearchGo(rest: string[]): Promise<void> {
+  let sourceMode: string | null = null;
+  const positional: string[] = [];
+  for (const a of rest) {
+    if (a.startsWith("--source=")) {
+      sourceMode = a.slice("--source=".length);
+    } else {
+      positional.push(a);
+    }
+  }
+
+  const [repoArg, slugArg, tmpSpecArg] = positional;
+  if (!repoArg || !slugArg) {
+    error("research-go needs <repo> <slug> [<tmpSpec>] args");
+    process.exit(2);
+  }
+
+  if (!sourceMode) {
+    error(
+      "research-go needs --source=<mode>",
+      `valid values: ${VALID_SOURCES.join(", ")}`,
+    );
+    process.exit(2);
+  }
+
+  if (!(VALID_SOURCES as string[]).includes(sourceMode)) {
+    error(
+      `unknown source mode: ${sourceMode}`,
+      `valid values: ${VALID_SOURCES.join(", ")}`,
+    );
+    process.exit(2);
+  }
+
+  const source = sourceMode as SourceMode;
+  const repo = repoArg;
+  const slug = asSlug(slugArg);
+  const tmpSpec = tmpSpecArg;
+  const paths = planPaths(repo, slug);
+
+  sharedBanner({
+    title: "[OH! >> NICE >> UPDATE-PLAN]",
+    subtitle: `Repo: ${repo}  •  Research (${source})`,
+    gradient: GRADIENTS.nice,
+  });
+  step(3, 4, `Researching with source mode: ${source}`);
+  hint("dispatching research agent to enrich spec.md");
+
+  const env = loadOhEnv();
+
+  const dispatchedPrompt = buildResearchPrompt({ specPath: paths.specMd, source, isUpdatePlan: true, dispatched: true });
+  const selfActPrompt = buildResearchPrompt({ specPath: paths.specMd, source, isUpdatePlan: true, dispatched: false });
+
+  const agentAction = buildAgentAction({
+    role: "research",
+    env,
+    dispatchedPrompt,
+    selfActPrompt,
+  });
+
+  const saveToKnowledgeNote =
+    source === "knowledge"
+      ? `- --source was "knowledge": re-run directly (no save-to-knowledge prompt).`
+      : [
+          `- --source was "${source}": if the research agent performed web research, ask the user via AskUserQuestion: "Save these findings to the knowledge base?" (options: "Save" / "Skip"). If "Save", invoke the oh-search skill with \`add\` arguments per finding (the agent's output should suggest topic + title for each). If "Skip", continue.`,
+        ].join("\n");
+
+  const tmpSpecPart = tmpSpec ? ` ${shellQuote(tmpSpec)}` : "";
+
+  const actions: NextAction[] = [
+    agentAction,
+    {
+      type: "report",
+      message: [
+        `After the research agent finishes:`,
+        saveToKnowledgeNote,
+        `- Then re-run: \`bun ${CLI} nice update-plan --phase=write-plan ${shellQuote(repo)} ${shellQuote(slug)}${tmpSpecPart}\``,
+      ].join("\n"),
+    },
+  ];
+  emit("nice", actions);
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Phase 4 (new): write-plan — invoke writing-plans against (possibly enriched) spec.md
+// ──────────────────────────────────────────────────────────────────────────────
+
+async function phaseWritePlan(rest: string[]): Promise<void> {
+  const [repoArg, slugArg, tmpSpecArg] = rest;
+  if (!repoArg || !slugArg) {
+    throw new Error("write-plan needs <repo> <slug> [<tmpSpec>] args");
+  }
+  const repo = repoArg;
+  const slug = asSlug(slugArg);
+  const tmpSpec = tmpSpecArg;
+  const paths = planPaths(repo, slug);
+
+  const today = new Date().toISOString().slice(0, 10);
+
   const tmpPlan = path.join(
     os.tmpdir(),
     `oh-nice-update-plan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.md`,
@@ -183,7 +328,7 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
     subtitle: `Repo: ${repo}  •  Writing tasks for the update`,
     gradient: GRADIENTS.nice,
   });
-  step(2, 3, "Writing plan delta with superpowers");
+  step(3, 4, "Writing plan delta with superpowers");
 
   const writeInstr = [
     `This is an iteration on an existing plan — write **only the new tasks**, not a full rewrite.`,
@@ -193,6 +338,8 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
     `Output: a markdown fragment containing **only the new tasks** (bite-sized TDD steps using \`- [ ]\` checkboxes) — NOT a full plan document. Save it to: ${tmpPlan}`,
     `Do not include a Goal/Architecture preamble — just the task list, as it'll be appended under "## Update — ${today}" in the existing plan.md.`,
   ].join("\n");
+
+  const tmpSpecPart = tmpSpec ? ` ${shellQuote(tmpSpec)}` : "";
 
   const actions: NextAction[] = [
     {
@@ -204,7 +351,7 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
       type: "report",
       message: [
         "After writing-plans returns, re-run:",
-        `  bun ${CLI} nice update-plan --phase=post-plan ${shellQuote(repo)} ${shellQuote(pickedSlug)} ${shellQuote(tmpPlan)} ${shellQuote(tmpSpec)}`,
+        `  bun ${CLI} nice update-plan --phase=post-plan ${shellQuote(repo)} ${shellQuote(slug)} ${shellQuote(tmpPlan)}${tmpSpecPart}`,
       ].join("\n"),
     },
   ];
