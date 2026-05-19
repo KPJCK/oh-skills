@@ -48,3 +48,6 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - oh-nice `plan` command ported (phased brainstorm → writing-plans).
 - oh-nice `update-plan` command verified/finalized (phased iteration of an existing plan); CLI literals updated to use `${CLAUDE_PLUGIN_ROOT}/src/cli.ts`.
 - oh-nice dispatcher finalized (`src/skills/nice/index.ts`).
+
+### Changed
+- oh-doctor rewritten for new plugin layout: single plugin `node_modules` check, shadow-dir detection, `.oh-env` loadability check, agent-resolution best-effort check, env-dir existence checks.
