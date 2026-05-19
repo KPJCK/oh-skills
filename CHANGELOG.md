@@ -55,5 +55,7 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - `templates/.oh-env.example` shipped as the scaffolded content.
 - `/oh` slash command (`commands/oh.md`) registers init/doctor/help meta-commands.
 
+- Thin SKILL.md shims for oh-nice, oh-context, oh-search, oh-doctor, oh-help. Operational details moved to HELP.md to reduce per-invocation context cost.
+
 ### Changed
 - oh-doctor rewritten for new plugin layout: single plugin `node_modules` check, shadow-dir detection, `.oh-env` loadability check, agent-resolution best-effort check, env-dir existence checks.
