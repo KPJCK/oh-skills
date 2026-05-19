@@ -9,6 +9,10 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 ### Changed
 - Rewrote `src/shared/banner.ts`: single-line gradient title + optional subtitle with `subtitleHighlights`. Dropped bordered-ASCII rendering, `shadeChar`, `measureWidth`, `gradientLine`. New `gradientText()` helper, `stripAnsi` preserved.
 - Simplified `src/shared/banner-presets.ts`: now exports only `GRADIENTS` (5 per-skill color stops). Per-subcommand titles moved to call sites.
+- oh-nice subcommands (plan, update-plan, go, review, fix) updated to single-line banner API: title baked in at call site, subtitle carries repo + context. go/review/fix show agent name in subtitle, highlighted in gradient.
+- Removed `PRESETS` dependency from nice command files; now import `GRADIENTS` directly.
+- `src/skills/nice/ui.ts` legacy `banner()` wrapper updated to use `GRADIENTS` (PRESETS removed); V.5 will remove cfonts/boxen.
+- context/search/doctor/help `index.ts` entry points updated to single-line `banner({ title, gradient })` API; `PRESETS` import replaced with `GRADIENTS`.
 
 ### Added
 - Bordered banners on context / search / doctor / help entry points with skill-specific gradient colors.

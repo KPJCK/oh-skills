@@ -4,9 +4,9 @@ import { planPaths, listPlans } from "../plans.ts";
 import { pickPlan } from "../picker.ts";
 import { asSlug } from "../prompts.ts";
 import { buildPlanPickerAskPayload } from "../ask-ui.ts";
-import { banner, step, success, info, hint, error, c } from "../ui.ts";
+import { step, success, info, hint, error, c } from "../ui.ts";
 import { banner as sharedBanner } from "../../../shared/banner.ts";
-import { PRESETS } from "../../../shared/banner-presets.ts";
+import { GRADIENTS } from "../../../shared/banner-presets.ts";
 import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { goPrompts } from "../prompts.ts";
@@ -46,7 +46,15 @@ export async function run(args: string[]): Promise<void> {
     return;
   }
 
-  sharedBanner({ ...PRESETS.niceGo, subtitle: `Repo: ${repo}  •  Mirai will execute the plan` });
+  const env = loadOhEnv();
+  const agentName = env.CODING_AGENT?.trim() || "main Claude";
+  const agentTag = `[${agentName}]`;
+  sharedBanner({
+    title: "[OH! >> NICE >> GO]",
+    subtitle: `Repo: ${repo}  •  ${agentTag} will execute the plan`,
+    subtitleHighlights: [agentTag],
+    gradient: GRADIENTS.nice,
+  });
 
   step(1, 2, "Pick a plan to execute");
   let slug: string;
@@ -90,8 +98,6 @@ export async function run(args: string[]): Promise<void> {
   hint(`tasks (checkbox lines): ${taskCount}`);
 
   step(2, 2, "Handing off to implementer");
-
-  const env = loadOhEnv();
   const ctx = {
     planPath: paths.planMd,
     specPath: paths.specMd,

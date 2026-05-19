@@ -8,9 +8,9 @@ import {
   buildPlanPickerAskPayload,
   buildScopePickerAskPayload,
 } from "../ask-ui.ts";
-import { banner, step, success, info, hint, error, c } from "../ui.ts";
+import { step, success, info, hint, error, c } from "../ui.ts";
 import { banner as sharedBanner } from "../../../shared/banner.ts";
-import { PRESETS } from "../../../shared/banner-presets.ts";
+import { GRADIENTS } from "../../../shared/banner-presets.ts";
 import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { reviewPrompts } from "../prompts.ts";
@@ -82,7 +82,15 @@ export async function run(args: string[]): Promise<void> {
     return;
   }
 
-  sharedBanner({ ...PRESETS.niceReview, subtitle: `Repo: ${repo}  •  Yama will append to review.md` });
+  const env = loadOhEnv();
+  const agentName = env.REVIEW_AGENT?.trim() || "main Claude";
+  const agentTag = `[${agentName}]`;
+  sharedBanner({
+    title: "[OH! >> NICE >> REVIEW]",
+    subtitle: `Repo: ${repo}  •  ${agentTag} will append to review.md`,
+    subtitleHighlights: [agentTag],
+    gradient: GRADIENTS.nice,
+  });
 
   // ── 1. Plan selection ──
   step(1, 3, "Pick a plan to review against");
@@ -143,7 +151,7 @@ export async function run(args: string[]): Promise<void> {
   const actions: NextAction[] = [
     buildAgentAction({
       role: "review",
-      env: loadOhEnv(),
+      env,
       dispatchedPrompt: reviewPrompts.dispatched(ctx),
       selfActPrompt: reviewPrompts.selfAct(ctx),
     }),

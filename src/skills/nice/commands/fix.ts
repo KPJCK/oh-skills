@@ -3,9 +3,9 @@ import { detectRepo } from "../repo.ts";
 import { planPaths, listPlans } from "../plans.ts";
 import { pickPlan } from "../picker.ts";
 import { buildPlanPickerAskPayload } from "../ask-ui.ts";
-import { banner, step, success, info, hint, error } from "../ui.ts";
+import { step, success, info, hint, error } from "../ui.ts";
 import { banner as sharedBanner } from "../../../shared/banner.ts";
-import { PRESETS } from "../../../shared/banner-presets.ts";
+import { GRADIENTS } from "../../../shared/banner-presets.ts";
 import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { fixPrompts } from "../prompts.ts";
@@ -35,7 +35,15 @@ export async function run(args: string[]): Promise<void> {
     return;
   }
 
-  sharedBanner({ ...PRESETS.niceFix, subtitle: `Repo: ${repo}  •  Mirai will apply the latest review round` });
+  const env = loadOhEnv();
+  const agentName = env.CODING_AGENT?.trim() || "main Claude";
+  const agentTag = `[${agentName}]`;
+  sharedBanner({
+    title: "[OH! >> NICE >> FIX]",
+    subtitle: `Repo: ${repo}  •  ${agentTag} will apply the latest review round`,
+    subtitleHighlights: [agentTag],
+    gradient: GRADIENTS.nice,
+  });
 
   step(1, 2, "Pick a plan with a review to apply");
   let slug: string;
@@ -90,7 +98,7 @@ export async function run(args: string[]): Promise<void> {
   const actions: NextAction[] = [
     buildAgentAction({
       role: "coding",
-      env: loadOhEnv(),
+      env,
       dispatchedPrompt: fixPrompts.dispatched(ctx),
       selfActPrompt: fixPrompts.selfAct(ctx),
     }),

@@ -3,7 +3,7 @@ import boxen, { type Options as BoxenOptions } from "boxen";
 import figures from "figures";
 import oraImport, { type Ora } from "ora";
 import { banner as sharedBanner } from "../../shared/banner.ts";
-import { PRESETS } from "../../shared/banner-presets.ts";
+import { GRADIENTS } from "../../shared/banner-presets.ts";
 
 const PINK = (s: string) => `\x1b[38;5;213m${s}\x1b[0m`;
 
@@ -32,23 +32,23 @@ export function header(title: string, subtitle?: string): void {
   );
 }
 
-const MODE_TO_PRESET: Record<string, keyof typeof PRESETS> = {
-  plan: "nicePlan",
-  "update-plan": "niceUpdate",
-  go: "niceGo",
-  review: "niceReview",
-  fix: "niceFix",
+const MODE_TO_TITLE: Record<string, string> = {
+  plan: "[OH! >> NICE >> PLAN]",
+  "update-plan": "[OH! >> NICE >> UPDATE-PLAN]",
+  go: "[OH! >> NICE >> GO]",
+  review: "[OH! >> NICE >> REVIEW]",
+  fix: "[OH! >> NICE >> FIX]",
 };
 
 /**
- * Legacy nice-only banner. Forwards to the shared bordered banner.
- * Prefer importing `banner` directly from `../../shared/banner.ts`.
+ * Legacy nice-only banner. Forwards to the shared banner.
+ * Prefer calling `sharedBanner` directly from `../../shared/banner.ts`.
  */
 export function banner(mode: string, subtitle?: string): void {
-  const presetKey = MODE_TO_PRESET[mode.toLowerCase().split(" ")[0] ?? ""] ?? "nicePlan";
-  const preset = PRESETS[presetKey];
+  const title = MODE_TO_TITLE[mode.toLowerCase().split(" ")[0] ?? ""] ?? "[OH! >> NICE]";
   sharedBanner({
-    ...preset,
+    title,
+    gradient: GRADIENTS.nice,
     ...(subtitle !== undefined && { subtitle }),
   });
 }
