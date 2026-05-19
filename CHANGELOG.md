@@ -6,6 +6,10 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Removed
+- `cfonts` npm dependency (no longer used after banner rewrite).
+- Legacy `banner()` function in `src/skills/nice/ui.ts` (callers now use `src/shared/banner.ts` directly).
+
 ### Changed
 - Rewrote `src/shared/banner.ts`: single-line gradient title + optional subtitle with `subtitleHighlights`. Dropped bordered-ASCII rendering, `shadeChar`, `measureWidth`, `gradientLine`. New `gradientText()` helper, `stripAnsi` preserved.
 - Simplified `src/shared/banner-presets.ts`: now exports only `GRADIENTS` (5 per-skill color stops). Per-subcommand titles moved to call sites.

@@ -2,8 +2,6 @@ import pc from "picocolors";
 import boxen, { type Options as BoxenOptions } from "boxen";
 import figures from "figures";
 import oraImport, { type Ora } from "ora";
-import { banner as sharedBanner } from "../../shared/banner.ts";
-import { GRADIENTS } from "../../shared/banner-presets.ts";
 
 const PINK = (s: string) => `\x1b[38;5;213m${s}\x1b[0m`;
 
@@ -30,27 +28,6 @@ export function header(title: string, subtitle?: string): void {
       margin: { top: 0, bottom: 1, left: 0, right: 0 },
     }) + "\n",
   );
-}
-
-const MODE_TO_TITLE: Record<string, string> = {
-  plan: "[OH! >> NICE >> PLAN]",
-  "update-plan": "[OH! >> NICE >> UPDATE-PLAN]",
-  go: "[OH! >> NICE >> GO]",
-  review: "[OH! >> NICE >> REVIEW]",
-  fix: "[OH! >> NICE >> FIX]",
-};
-
-/**
- * Legacy nice-only banner. Forwards to the shared banner.
- * Prefer calling `sharedBanner` directly from `../../shared/banner.ts`.
- */
-export function banner(mode: string, subtitle?: string): void {
-  const title = MODE_TO_TITLE[mode.toLowerCase().split(" ")[0] ?? ""] ?? "[OH! >> NICE]";
-  sharedBanner({
-    title,
-    gradient: GRADIENTS.nice,
-    ...(subtitle !== undefined && { subtitle }),
-  });
 }
 
 const STEP_GLYPH = "◇"; // ◇ — not in `figures`, use literal
