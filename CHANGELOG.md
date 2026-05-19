@@ -8,6 +8,7 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ### Changed
 - Owner/repo references retargeted from `chaiyawutk/oh-skills` to `KPJCK/oh-skills` in README, `package.json`, `.claude-plugin/plugin.json`, and `.claude-plugin/marketplace.json`.
+- Moved CI workflow from `.github/workflows/ci.yml` to `.github/workflows-pending/ci.yml` so the initial push doesn't require `workflow` OAuth scope. To re-enable: run `gh auth refresh -s workflow`, then `git mv .github/workflows-pending/ci.yml .github/workflows/ci.yml`, commit, push.
 
 ### Removed
 - `cfonts` npm dependency (no longer used after banner rewrite).
