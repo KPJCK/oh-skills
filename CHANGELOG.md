@@ -13,3 +13,7 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Tests for env loader (`tests/env.test.ts`, 12 cases).
 - Shared next-action emitter (`src/shared/next-action.ts`) with per-skill sentinels and `buildAgentAction()` for dispatch-vs-self-act selection.
 - Tests for next-action (`tests/next-action.test.ts`).
+- CLI dispatcher (`src/cli.ts`) routing `<skill> <subcommand>` to nice/context/search/doctor/help/init.
+- Shared UI helpers (`src/shared/ui.ts`).
+- Skill stubs for nice/context/search/doctor/help; init command stub.
+- CLI routing tests (`tests/cli-routing.test.ts`).
