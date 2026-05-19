@@ -15,6 +15,7 @@ const commands: Record<string, () => Promise<Cmd>> = {
 };
 
 export async function run(args: string[]): Promise<void> {
+  // suppress banner for machine-readable subs (none currently, but guard here if added)
   banner({
     title: "[OH! >> SEARCH SEARCH]",
     gradient: GRADIENTS.search,

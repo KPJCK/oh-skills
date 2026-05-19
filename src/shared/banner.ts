@@ -1,11 +1,11 @@
 // src/shared/banner.ts
 
-export interface BannerOptions {
+export type BannerOptions = {
   title: string;
   subtitle?: string;
   subtitleHighlights?: readonly string[];
   gradient: readonly [string, string];
-}
+};
 
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.startsWith("#") ? hex.slice(1) : hex;

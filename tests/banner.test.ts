@@ -1,7 +1,6 @@
 // tests/banner.test.ts
 import { describe, test, expect } from "bun:test";
 import {
-  banner,
   renderBanner,
   gradientText,
   stripAnsi,
