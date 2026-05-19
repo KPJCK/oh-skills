@@ -31,3 +31,7 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - oh-search registry/scoring/template ported to `src/skills/search/`; reads `KNOWLEDGE_DIR` from `loadOhEnv()`.
 - Shared `ui.ts` extended with `success`, `hint`, `step`, `warn` functions (needed by search and context commands).
 - Ported tests: search-scoring, search-template (24 cases).
+- oh-search commands (find/research/add/update/delete/list) ported to `src/skills/search/commands/`.
+- oh-search dispatcher (`src/skills/search/index.ts`) replacing stub.
+- `research` command uses agent abstraction via `buildAgentAction` (role: research); emits `dispatch_agent` or `self_act` based on `RESEARCH_AGENT` env setting.
+- Supporting libs ported locally to `src/skills/search/`: ask-ui.ts, picker.ts, prompts.ts.
