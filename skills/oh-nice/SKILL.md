@@ -44,4 +44,26 @@ stderr final line: `__OH_NICE_NEXT_ACTIONS__<json>`. The JSON is an array of Nex
 
 For phased subcommands (`plan`, `update-plan`), `report` messages contain re-run instructions. Execute them after the prior action completes, then re-read the new sentinel line.
 
+## Phase flags — plan
+
+| Phase | CLI flag | Positional args | Purpose |
+|---|---|---|---|
+| init | `--phase=init` | `[request...]` | Banner + brainstorm |
+| post-brainstorm | `--phase=post-brainstorm` | `<tmpSpec> [request...] --slug <slug>` | Name plan + research opt-in |
+| research-go | `--phase=research-go` | `<repo> <slug> --source=<mode>` | Dispatch research agent |
+| write-plan | `--phase=write-plan` | `<repo> <slug>` | Invoke writing-plans |
+| post-plan | `--phase=post-plan` | `<repo> <slug>` | Summarize + implement? |
+
+`--source` accepts: `knowledge` | `online` | `auto` (see README for semantics).
+
+## Phase flags — update-plan
+
+| Phase | CLI flag | Positional args | Purpose |
+|---|---|---|---|
+| init | `--phase=init` | `[request...] --slug <slug>` | Pick plan + brainstorm |
+| post-brainstorm | `--phase=post-brainstorm` | `<tmpSpec> --slug <slug>` | Append spec delta + research opt-in |
+| research-go | `--phase=research-go` | `<repo> <slug> [<tmpSpec>] --source=<mode>` | Dispatch research agent (Update-section aware) |
+| write-plan | `--phase=write-plan` | `<repo> <slug> [<tmpSpec>]` | Invoke writing-plans |
+| post-plan | `--phase=post-plan` | `<repo> <slug> <tmpPlan> [<tmpSpec>]` | Append plan delta + clean up |
+
 For the full flag cheatsheet, `--emit-ask-json` payload structure, phased state machine details, and path conventions: run `/oh help oh-nice`.
