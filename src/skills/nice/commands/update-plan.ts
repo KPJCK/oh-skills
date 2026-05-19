@@ -11,6 +11,8 @@ import { buildPlanPickerAskPayload } from "../ask-ui.ts";
 import { banner, step, success, info, hint, error } from "../ui.ts";
 import { emit, type NextAction } from "../../../shared/next-action.ts";
 
+const CLI = "${CLAUDE_PLUGIN_ROOT}/src/cli.ts";
+
 type Phase = "init" | "post-brainstorm" | "post-plan";
 
 export async function run(args: string[]): Promise<void> {
@@ -129,7 +131,7 @@ async function phaseInit(rest: string[]): Promise<void> {
       type: "report",
       message: [
         "After brainstorming returns, re-run:",
-        `  bun src/cli.ts nice update-plan --phase=post-brainstorm ${shellQuote(tmpSpec)} --slug ${shellQuote(pickedSlug)}`,
+        `  bun ${CLI} nice update-plan --phase=post-brainstorm ${shellQuote(tmpSpec)} --slug ${shellQuote(pickedSlug)}`,
       ].join("\n"),
     },
   ];
@@ -195,7 +197,7 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
       type: "report",
       message: [
         "After writing-plans returns, re-run:",
-        `  bun src/cli.ts nice update-plan --phase=post-plan ${shellQuote(repo)} ${shellQuote(pickedSlug)} ${shellQuote(tmpPlan)} ${shellQuote(tmpSpec)}`,
+        `  bun ${CLI} nice update-plan --phase=post-plan ${shellQuote(repo)} ${shellQuote(pickedSlug)} ${shellQuote(tmpPlan)} ${shellQuote(tmpSpec)}`,
       ].join("\n"),
     },
   ];
@@ -240,7 +242,7 @@ async function phasePostPlan(rest: string[]): Promise<void> {
       type: "report",
       message: [
         "If the user picks 'Implement now', run:",
-        `  bun src/cli.ts nice go --slug ${shellQuote(slug)}`,
+        `  bun ${CLI} nice go --slug ${shellQuote(slug)}`,
         "Otherwise confirm the plan path and end.",
       ].join("\n"),
     },
