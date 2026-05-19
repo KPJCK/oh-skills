@@ -25,3 +25,6 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - oh-context registry, cache, tokens ported to `src/skills/context/`; reads `CONTEXT_DIR` from `loadOhEnv()`.
 - Ported tests for context cache and tokens.
 - oh-context `load` command ported to `src/skills/context/commands/load.ts`; supporting libs render, editor, templates, template, picker, ask-ui ported.
+- oh-context commands list/check/add/update/promote/template/clear/huh ported to `src/skills/context/commands/`.
+- oh-context dispatcher (`src/skills/context/index.ts`) routing all 9 subcommands; defaults to `load` when no sub or flag-first invocation.
+- Ported tests: context-add-template-payload, context-huh, context-templates (11 cases total).
