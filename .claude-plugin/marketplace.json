@@ -1,0 +1,20 @@
+{
+  "name": "oh-skills",
+  "description": "Personal dev-cycle skills for Claude Code: plan/go/review/fix orchestration, context-rule loader, local knowledge base, doctor, and help reference.",
+  "owner": {
+    "name": "chaiyawutk"
+  },
+  "plugins": [
+    {
+      "name": "oh-skills",
+      "source": "./",
+      "description": "Bundle of oh-nice, oh-context, oh-search, oh-doctor, oh-help skills + /oh init/doctor/help slash commands. Configurable via .oh-env. Requires Bun.",
+      "version": "0.1.0",
+      "author": {
+        "name": "chaiyawutk"
+      },
+      "category": "workflow",
+      "tags": ["plan", "review", "context", "search", "skills", "workflow"]
+    }
+  ]
+}
