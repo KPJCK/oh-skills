@@ -1,5 +1,7 @@
 // src/skills/search/index.ts
 import { error } from "../../shared/ui.ts";
+import { banner } from "../../shared/banner.ts";
+import { PRESETS } from "../../shared/banner-presets.ts";
 
 type Cmd = { run: (args: string[]) => Promise<void> };
 
@@ -13,6 +15,7 @@ const commands: Record<string, () => Promise<Cmd>> = {
 };
 
 export async function run(args: string[]): Promise<void> {
+  banner(PRESETS.search);
   const sub = args[0];
   const rest = args.slice(1);
   if (!sub) {

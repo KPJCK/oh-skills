@@ -2,6 +2,8 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { loadOhEnv, type OhEnv } from "../../env.ts";
+import { banner } from "../../shared/banner.ts";
+import { PRESETS } from "../../shared/banner-presets.ts";
 
 function pluginRoot(): string {
   return process.env.CLAUDE_PLUGIN_ROOT ?? path.resolve(import.meta.dir, "../../..");
@@ -26,6 +28,7 @@ function render(template: string, env: OhEnv): string {
 }
 
 export async function run(args: string[]): Promise<void> {
+  banner(PRESETS.help);
   const template = readFileSync(path.join(pluginRoot(), "templates", "HELP.md"), "utf-8");
   let env: OhEnv;
   try {

@@ -7,6 +7,7 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+- Bordered banners on context / search / doctor / help entry points with skill-specific gradient colors.
 - Shared banner primitives (`src/shared/banner.ts`): `gradientLine`, `shadeChar`, `stripAnsi`, `measureWidth` with unit tests.
 - `renderBanner()` and side-effect `banner()` in `src/shared/banner.ts` — 4-line bordered banner with gradient text + borders, cfonts `tiny` post-processed to shade chars, subtitle support.
 - Per-skill banner presets (`src/shared/banner-presets.ts`) for nice (5 subcommands), context, search, doctor, help.

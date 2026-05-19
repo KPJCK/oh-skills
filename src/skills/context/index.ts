@@ -1,5 +1,7 @@
 // src/skills/context/index.ts
 import { error } from "../../shared/ui.ts";
+import { banner } from "../../shared/banner.ts";
+import { PRESETS } from "../../shared/banner-presets.ts";
 
 type SubRunner = {
   run: (args: string[]) => Promise<void>;
@@ -23,6 +25,11 @@ export async function run(args: string[]): Promise<void> {
   // Default to `load` when no subcommand or it looks like a flag (e.g. --pick, --all, --template)
   const sub =
     !first || first.startsWith("-") ? "load" : first;
+
+  // `huh` is machine-readable (outputs only `true`/`false`) — suppress banner
+  if (sub !== "huh") {
+    banner(PRESETS.context);
+  }
   const rest = !first || first.startsWith("-") ? args : args.slice(1);
 
   const loader = SUBS[sub];
