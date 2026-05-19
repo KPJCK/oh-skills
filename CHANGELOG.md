@@ -53,6 +53,7 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Help renderer (`src/skills/help/index.ts`) substitutes env values into HELP.md template; supports optional section filter.
 - `/oh init` command scaffolds `.oh-env` at project or `~/.claude/.oh-env`; appends `.oh-env` to project `.gitignore`.
 - `templates/.oh-env.example` shipped as the scaffolded content.
+- `/oh` slash command (`commands/oh.md`) registers init/doctor/help meta-commands.
 
 ### Changed
 - oh-doctor rewritten for new plugin layout: single plugin `node_modules` check, shadow-dir detection, `.oh-env` loadability check, agent-resolution best-effort check, env-dir existence checks.
