@@ -22,3 +22,5 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Consolidated ask-ui payload builder (`src/shared/ask-ui.ts`) with generic bucketing for AskUserQuestion.
 - Tests for ask-ui (`tests/ask-ui.test.ts`, 18 cases).
 - Consolidated interactive picker helper (`src/shared/picker.ts`).
+- oh-context registry, cache, tokens ported to `src/skills/context/`; reads `CONTEXT_DIR` from `loadOhEnv()`.
+- Ported tests for context cache and tokens.
