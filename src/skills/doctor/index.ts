@@ -8,7 +8,7 @@ import os from "node:os";
 import pc from "picocolors";
 import { loadOhEnv } from "../../env.ts";
 import { banner } from "../../shared/banner.ts";
-import { PRESETS } from "../../shared/banner-presets.ts";
+import { GRADIENTS } from "../../shared/banner-presets.ts";
 
 const HOME = os.homedir();
 const CLAUDE = path.join(HOME, ".claude");
@@ -423,7 +423,10 @@ function statusColor(s: Status): (x: string) => string {
 // ──────────────────────────────────────────────────────────────────────────────
 
 export async function run(_args: string[]): Promise<void> {
-  banner(PRESETS.doctor);
+  banner({
+    title: "[OH! >> DOCTOR!!]",
+    gradient: GRADIENTS.doctor,
+  });
   process.stderr.write(`${pc.magenta("◇")} ${pc.bold("oh-doctor")} — checking ~/.claude…\n`);
 
   const checks: Check[] = [];

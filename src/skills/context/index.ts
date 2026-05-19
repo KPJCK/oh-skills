@@ -1,7 +1,7 @@
 // src/skills/context/index.ts
 import { error } from "../../shared/ui.ts";
 import { banner } from "../../shared/banner.ts";
-import { PRESETS } from "../../shared/banner-presets.ts";
+import { GRADIENTS } from "../../shared/banner-presets.ts";
 
 type SubRunner = {
   run: (args: string[]) => Promise<void>;
@@ -28,7 +28,10 @@ export async function run(args: string[]): Promise<void> {
 
   // `huh` is machine-readable (outputs only `true`/`false`) — suppress banner
   if (sub !== "huh") {
-    banner(PRESETS.context);
+    banner({
+      title: "[OH! >> CONTEXT]",
+      gradient: GRADIENTS.context,
+    });
   }
   const rest = !first || first.startsWith("-") ? args : args.slice(1);
 
