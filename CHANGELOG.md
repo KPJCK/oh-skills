@@ -17,3 +17,5 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Shared UI helpers (`src/shared/ui.ts`).
 - Skill stubs for nice/context/search/doctor/help; init command stub.
 - CLI routing tests (`tests/cli-routing.test.ts`).
+- Consolidated frontmatter parser (`src/shared/frontmatter.ts`) with `parseRule` and `parseKnowledge` typed wrappers.
+- Tests for frontmatter parsing (`tests/frontmatter.test.ts`).
