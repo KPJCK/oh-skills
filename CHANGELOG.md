@@ -37,3 +37,4 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Supporting libs ported locally to `src/skills/search/`: ask-ui.ts, picker.ts, prompts.ts.
 - oh-nice repo/plans/picker libs ported to `src/skills/nice/`; `plans.ts` reads `PLAN_DIR` from `loadOhEnv()`.
 - Ported tests: nice-repo, nice-plans, nice-update-plan, and nice-specific ask-ui tests (nice-ask-ui.test.ts).
+- Paired dispatched/selfAct prompts for nice go/review/fix (`src/skills/nice/prompts.ts`).
