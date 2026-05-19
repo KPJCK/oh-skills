@@ -41,3 +41,5 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - nice go command ported with role-based agent abstraction.
 - Removed hardcoded "mirai" references from nice/go.ts.
 - nice index.ts updated to route subcommands (go/review/fix/update-plan).
+- nice review command ported; removed hardcoded "yama" reference; uses buildAgentAction.
+- Removed hardcoded "yama" references from nice/review.ts.
