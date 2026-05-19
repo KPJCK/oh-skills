@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun test
+      - name: Smoke-test doctor with a tmp .oh-env
+        run: |
+          mkdir -p /tmp/oh-smoke && cd /tmp/oh-smoke
+          cat > .oh-env <<'ENV'
+          CONTEXT_DIR=/tmp/oh-smoke/.oh/context
+          CONTEXT_TEMPLATE_DIR=/tmp/oh-smoke/.oh/templates
+          KNOWLEDGE_DIR=/tmp/oh-smoke/.oh/knowledge
+          PLAN_DIR=/tmp/oh-smoke/.oh/plan
+          ENV
+          bun $GITHUB_WORKSPACE/src/cli.ts doctor
+  version-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun scripts/check-version.ts
