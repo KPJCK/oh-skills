@@ -8,3 +8,4 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ### Added
 - Initial repo scaffold (package.json, tsconfig.json, .gitignore, LICENSE, README, CHANGELOG).
+- Claude Code plugin manifest (.claude-plugin/plugin.json).
