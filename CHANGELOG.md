@@ -45,3 +45,4 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - Removed hardcoded "yama" references from nice/review.ts.
 - nice fix command ported with role-based agent abstraction.
 - Removed hardcoded "mirai" references from nice/fix.ts.
+- oh-nice `plan` command ported (phased brainstorm → writing-plans).
