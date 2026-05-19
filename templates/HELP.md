@@ -47,8 +47,18 @@ Wraps the `superpowers` plugin's brainstorming / writing-plans / subagent-driven
 
 ### Subcommands
 
-- **`/oh-nice plan [request]`** — phased: brainstorm interview → name the plan → write `plan.md`. Asks "implement now or stop" at the end.
-- **`/oh-nice update-plan [request]`** — iterate an existing plan: pick plan → tight brainstorm scoped to the change → append `## Update — YYYY-MM-DD` to `spec.md` AND a matching new-tasks section to `plan.md`. Asks "implement now or stop" at the end. Use this for new ideas, improvements, refactoring asks, or applying review feedback.
+- **`/oh-nice plan [request]`** — phased: brainstorm interview → name the plan → optional research step → write `plan.md`. Asks "implement now or stop" at the end.
+- **`/oh-nice update-plan [request]`** — iterate an existing plan: pick plan → tight brainstorm scoped to the change → append `## Update — YYYY-MM-DD` to `spec.md` → optional research step → write new-tasks section to `plan.md`. Asks "implement now or stop" at the end. Use this for new ideas, improvements, refactoring asks, or applying review feedback.
+
+  **Optional research step** (both `plan` and `update-plan`): after brainstorming, you are asked "Run research before writing the plan?" with three source modes:
+
+  | Mode | What the research agent does |
+  |---|---|
+  | `knowledge` | Searches the local oh-search knowledge base only; no web calls; leaves spec.md unchanged if nothing relevant found |
+  | `online` | Skips local search; uses WebSearch + WebFetch (3-5 sources per topic) |
+  | `auto` | Local-first via oh-search; falls back to web for topics with no local hit |
+
+  Findings are appended as `## Research` to `spec.md` (or `### Research` under the latest `## Update — YYYY-MM-DD` block for `update-plan`). If web research was performed, you are asked "Save these findings to the knowledge base?" before writing-plans runs.
 - **`/oh-nice go [--slug X]`** — picker (or pre-selected) → {{CODING_AGENT}} executes the plan task-by-task via `superpowers:subagent-driven-development`.
 - **`/oh-nice review`** — picker → ask scope (uncommitted / last N commits / whole branch vs main) → dispatch {{REVIEW_AGENT}} with git refs. {{REVIEW_AGENT}} appends `## Round N — YYYY-MM-DD` to `review.md`.
 - **`/oh-nice fix`** — picker (filtered to plans with `review.md`) → dispatch {{CODING_AGENT}} with the latest review round → {{CODING_AGENT}} implements Critical+Important, leaves Minor as TODOs unless trivial.

@@ -6,6 +6,12 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- Optional research step in `/oh-nice plan` and `/oh-nice update-plan`. After brainstorming produces `spec.md`, the user is asked "Run research before writing the plan?" with three source modes: `knowledge` (local oh-search only), `online` (WebSearch + WebFetch), `auto` (local-first, web fallback). Findings are appended to `spec.md` as `## Research` (or `### Research` under the latest `## Update` block for `update-plan`). Online research triggers a save-to-knowledge prompt before writing-plans runs.
+- New phases `research-go` and `write-plan` in both `plan.ts` and `update-plan.ts`; `tmpSpec` threaded through the update-plan phase chain to preserve cleanup.
+- Exported `buildResearchPrompt` helper in `plan.ts` (shared with `update-plan.ts`) that generates source-mode-specific prompts for both dispatched and self-act paths.
+- Tests: `tests/nice-plan.test.ts` (new, 14 cases) covering research-go validation, action shapes, write-plan output, post-brainstorm ask_user; `tests/nice-update-plan.test.ts` extended with 11 new cases for the same phases plus tmpSpec threading.
+
 ### Changed
 - Owner/repo references retargeted from `chaiyawutk/oh-skills` to `KPJCK/oh-skills` in README, `package.json`, `.claude-plugin/plugin.json`, and `.claude-plugin/marketplace.json`.
 - Moved CI workflow from `.github/workflows/ci.yml` to `.github/workflows-pending/ci.yml` so the initial push doesn't require `workflow` OAuth scope. To re-enable: run `gh auth refresh -s workflow`, then `git mv .github/workflows-pending/ci.yml .github/workflows/ci.yml`, commit, push.

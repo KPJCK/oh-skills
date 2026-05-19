@@ -117,6 +117,16 @@ If you have a personal implementer/reviewer (e.g. registered as a sub-agent in C
 /oh-nice fix                                  → apply the latest review feedback
 ```
 
+Both `plan` and `update-plan` include an **optional research step** after brainstorming. When prompted, choose a source mode:
+
+| Mode | Behaviour |
+|---|---|
+| `knowledge` | Searches the local oh-search knowledge base only; leaves spec.md unchanged if no matches |
+| `online` | Skips local search; uses WebSearch + WebFetch directly (3-5 sources per topic) |
+| `auto` | Local-first; falls back to web for topics with no local hit |
+
+The research agent appends a `## Research` section (or a `### Research` subsection under the latest `## Update` block for `update-plan`) to `spec.md`. When online research is performed, you are asked whether to save findings to the knowledge base before writing the plan.
+
 ### oh-context
 
 ```

@@ -7,11 +7,15 @@ import { promptSlug, asSlug } from "../prompts.ts";
 import { step, success, info, hint, box } from "../ui.ts";
 import { banner as sharedBanner } from "../../../shared/banner.ts";
 import { GRADIENTS } from "../../../shared/banner-presets.ts";
-import { emit, type NextAction } from "../../../shared/next-action.ts";
+import { emit, buildAgentAction, type NextAction } from "../../../shared/next-action.ts";
+import { loadOhEnv } from "../../../env.ts";
 
 const CLI = "${CLAUDE_PLUGIN_ROOT}/src/cli.ts";
 
-type Phase = "init" | "post-brainstorm" | "post-plan";
+export type SourceMode = "knowledge" | "online" | "auto";
+const VALID_SOURCES: SourceMode[] = ["knowledge", "online", "auto"];
+
+type Phase = "init" | "post-brainstorm" | "research-go" | "write-plan" | "post-plan";
 
 type Args = {
   phase: Phase;
@@ -24,8 +28,14 @@ function parseArgs(args: string[]): Args {
   for (const a of args) {
     if (a.startsWith("--phase=")) {
       const v = a.slice("--phase=".length);
-      if (v === "init" || v === "post-brainstorm" || v === "post-plan") {
-        phase = v;
+      if (
+        v === "init" ||
+        v === "post-brainstorm" ||
+        v === "research-go" ||
+        v === "write-plan" ||
+        v === "post-plan"
+      ) {
+        phase = v as Phase;
       } else {
         throw new Error(`unknown phase: ${v}`);
       }
@@ -43,6 +53,10 @@ export async function run(args: string[]): Promise<void> {
       return phaseInit(rest);
     case "post-brainstorm":
       return phasePostBrainstorm(rest);
+    case "research-go":
+      return phaseResearchGo(rest);
+    case "write-plan":
+      return phaseWritePlan(rest);
     case "post-plan":
       return phasePostPlan(rest);
   }
@@ -95,7 +109,7 @@ async function phaseInit(rest: string[]): Promise<void> {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Phase 2: post-brainstorm — name the plan, create dir, kick off writing-plans
+// Phase 2: post-brainstorm — name the plan, create dir, offer research opt-in
 // ──────────────────────────────────────────────────────────────────────────────
 
 async function phasePostBrainstorm(rest: string[]): Promise<void> {
@@ -122,7 +136,7 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
 
   sharedBanner({
     title: "[OH! >> NICE >> PLAN]",
-    subtitle: `Repo: ${repo}  •  Brainstorm done — writing plan`,
+    subtitle: `Repo: ${repo}  •  Brainstorm done — naming plan`,
     gradient: GRADIENTS.nice,
   });
   step(2, 3, "Name this plan");
@@ -159,7 +173,135 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
   success(`created ${shorten(paths.dir)}`);
   info(`spec saved at ${shorten(paths.specMd)}`);
 
-  step(3, 3, "Writing plan with superpowers");
+  hint("offering research step before writing the plan");
+
+  const actions: NextAction[] = [
+    {
+      type: "ask_user",
+      question: "Run research before writing the plan?",
+      options: ["Run research", "Skip research"],
+    },
+    {
+      type: "report",
+      message: [
+        `The next ask_user offers Run research / Skip research.`,
+        ``,
+        `If user picks "Run research", ask via AskUserQuestion which source to use (options: "knowledge" / "online" / "auto"), then re-run:`,
+        `  bun ${CLI} nice plan --phase=research-go ${shellQuote(repo)} ${shellQuote(slug)} --source=<chosen>`,
+        ``,
+        `If user picks "Skip research", re-run:`,
+        `  bun ${CLI} nice plan --phase=write-plan ${shellQuote(repo)} ${shellQuote(slug)}`,
+      ].join("\n"),
+    },
+  ];
+  emit("nice", actions);
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Phase 3 (new): research-go — dispatch research agent against spec.md
+// ──────────────────────────────────────────────────────────────────────────────
+
+async function phaseResearchGo(rest: string[]): Promise<void> {
+  let sourceMode: string | null = null;
+  const positional: string[] = [];
+  for (const a of rest) {
+    if (a.startsWith("--source=")) {
+      sourceMode = a.slice("--source=".length);
+    } else {
+      positional.push(a);
+    }
+  }
+
+  const [repoArg, slugArg] = positional;
+  if (!repoArg || !slugArg) {
+    const { error } = await import("../ui.ts");
+    error("research-go needs <repo> <slug> args");
+    process.exit(2);
+  }
+
+  if (!sourceMode) {
+    const { error } = await import("../ui.ts");
+    error(
+      "research-go needs --source=<mode>",
+      `valid values: ${VALID_SOURCES.join(", ")}`,
+    );
+    process.exit(2);
+  }
+
+  if (!(VALID_SOURCES as string[]).includes(sourceMode)) {
+    const { error } = await import("../ui.ts");
+    error(
+      `unknown source mode: ${sourceMode}`,
+      `valid values: ${VALID_SOURCES.join(", ")}`,
+    );
+    process.exit(2);
+  }
+
+  const source = sourceMode as SourceMode;
+  const repo = repoArg;
+  const slug = asSlug(slugArg);
+  const paths = planPaths(repo, slug);
+
+  sharedBanner({
+    title: "[OH! >> NICE >> PLAN]",
+    subtitle: `Repo: ${repo}  •  Research (${source})`,
+    gradient: GRADIENTS.nice,
+  });
+  step(3, 4, `Researching with source mode: ${source}`);
+  hint("dispatching research agent to enrich spec.md");
+
+  const env = loadOhEnv();
+
+  const dispatchedPrompt = buildResearchPrompt({ specPath: paths.specMd, source, isUpdatePlan: false, dispatched: true });
+  const selfActPrompt = buildResearchPrompt({ specPath: paths.specMd, source, isUpdatePlan: false, dispatched: false });
+
+  const agentAction = buildAgentAction({
+    role: "research",
+    env,
+    dispatchedPrompt,
+    selfActPrompt,
+  });
+
+  const saveToKnowledgeNote =
+    source === "knowledge"
+      ? `- --source was "knowledge": re-run directly (no save-to-knowledge prompt).`
+      : [
+          `- --source was "${source}": if the research agent performed web research, ask the user via AskUserQuestion: "Save these findings to the knowledge base?" (options: "Save" / "Skip"). If "Save", invoke the oh-search skill with \`add\` arguments per finding (the agent's output should suggest topic + title for each). If "Skip", continue.`,
+        ].join("\n");
+
+  const actions: NextAction[] = [
+    agentAction,
+    {
+      type: "report",
+      message: [
+        `After the research agent finishes:`,
+        saveToKnowledgeNote,
+        `- Then re-run: \`bun ${CLI} nice plan --phase=write-plan ${shellQuote(repo)} ${shellQuote(slug)}\``,
+      ].join("\n"),
+    },
+  ];
+  emit("nice", actions);
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Phase 4 (new): write-plan — invoke writing-plans against (possibly enriched) spec.md
+// ──────────────────────────────────────────────────────────────────────────────
+
+async function phaseWritePlan(rest: string[]): Promise<void> {
+  const [repoArg, slugArg] = rest;
+  if (!repoArg || !slugArg) {
+    throw new Error("write-plan needs <repo> <slug> args");
+  }
+  const repo = repoArg;
+  const slug = asSlug(slugArg);
+  const paths = planPaths(repo, slug);
+
+  sharedBanner({
+    title: "[OH! >> NICE >> PLAN]",
+    subtitle: `Repo: ${repo}  •  Writing plan`,
+    gradient: GRADIENTS.nice,
+  });
+  step(3, 4, "Writing plan with superpowers");
   hint("handing off to claude — writing-plans will turn the spec into a checklist");
 
   const actions: NextAction[] = [
@@ -229,6 +371,66 @@ async function phasePostPlan(rest: string[]): Promise<void> {
 // ──────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ──────────────────────────────────────────────────────────────────────────────
+
+export function buildResearchPrompt(opts: {
+  specPath: string;
+  source: SourceMode;
+  isUpdatePlan: boolean;
+  dispatched: boolean;
+}): string {
+  const { specPath, source, isUpdatePlan, dispatched } = opts;
+
+  const sourceBehavior: Record<SourceMode, string> = {
+    knowledge: [
+      `- Source mode is "knowledge": ONLY call \`/oh-search find\` via Bash for each topic (do NOT use WebSearch or WebFetch).`,
+      `  If no relevant local matches are found for a topic, leave spec.md unchanged for that topic and report 'no findings'.`,
+    ].join("\n"),
+    online: [
+      `- Source mode is "online": skip local search entirely; use WebSearch and WebFetch directly (3-5 sources per topic).`,
+    ].join("\n"),
+    auto: [
+      `- Source mode is "auto": for each topic, try \`/oh-search find\` first.`,
+      `  For topics with no local match, fall back to WebSearch and WebFetch (3-5 sources per topic).`,
+    ].join("\n"),
+  };
+
+  const appendInstruction = isUpdatePlan
+    ? [
+        `If spec.md contains one or more \`## Update — YYYY-MM-DD\` headings, append the research findings under the most-recent one`,
+        `(i.e., insert it as a \`### Research\` subsection within the latest Update block).`,
+        `Otherwise append a top-level \`## Research\` section at the end of spec.md.`,
+        `Do NOT create a new top-level \`## Research\` heading if an Update section exists.`,
+      ].join("\n")
+    : [
+        `Append a single \`## Research\` section to spec.md (one \`### <Topic>\` subsection per topic`,
+        `with Overview / Key concepts / Links — and a \`Local knowledge:\` line listing matched filenames if any).`,
+        `Do NOT modify any other section.`,
+      ].join("\n");
+
+  const searchInstruction = dispatched
+    ? `Use Bash to run \`bun ${CLI} search find <topic>\` for local knowledge base searches.`
+    : `Use Bash to run \`bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts search find <topic>\` for local knowledge base searches.`;
+
+  const webResearchNote = [
+    `If you performed web research (WebSearch or WebFetch), report 'web research performed' in your final message`,
+    `so the parent can offer save-to-knowledge.`,
+  ].join(" ");
+
+  return [
+    `You are a research sub-agent. Read the spec at: ${specPath}`,
+    ``,
+    `Identify research-worthy topics (libraries, frameworks, unfamiliar patterns, APIs).`,
+    ``,
+    `Source mode: ${source}`,
+    sourceBehavior[source],
+    ``,
+    searchInstruction,
+    ``,
+    appendInstruction,
+    ``,
+    webResearchNote,
+  ].join("\n");
+}
 
 function summarizePlan(content: string): string {
   // pull the first 5 H2/H3 headings or top-level checkbox tasks
