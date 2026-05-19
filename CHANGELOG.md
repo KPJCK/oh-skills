@@ -9,6 +9,7 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 ### Added
 - GitHub Actions CI (`.github/workflows/ci.yml`) — `bun test` on ubuntu-latest + macos-latest, doctor smoke test, version-sync check.
 - `scripts/check-version.ts` enforces package.json/plugin.json version sync.
+- Initial `RELEASE-NOTES.md` for 0.1.0.
 - Initial repo scaffold (package.json, tsconfig.json, .gitignore, LICENSE, README, CHANGELOG).
 - Claude Code plugin manifest (.claude-plugin/plugin.json).
 - `.oh-env` loader (`src/env.ts`) with project/home/defaults precedence, tilde/relative expansion, agent-role resolution.
