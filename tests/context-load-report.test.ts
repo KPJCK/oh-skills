@@ -92,4 +92,23 @@ describe("renderLoadReport", () => {
       ].join("\n"),
     );
   });
+
+  test("baseline folders render in this load's pick order, not baseline order", () => {
+    const rules: Rule[] = [fakeRule("a"), fakeRule("b"), fakeRule("c")];
+    const out = renderLoadReport({
+      picked: ["a", "b", "c"],
+      rules,
+      sessionBaseline: ["b", "a"], // baseline order differs from picked order
+    });
+    expect(out).toBe(
+      [
+        "===================================",
+        "||        Context Loaded",
+        "===================================",
+        "[a]: 1 rule",
+        "[b]: 1 rule",
+        "[c]: 1 rule (new)",
+      ].join("\n"),
+    );
+  });
 });
