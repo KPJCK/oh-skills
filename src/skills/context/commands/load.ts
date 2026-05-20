@@ -14,10 +14,11 @@ type Flags = {
   all: boolean;
   emitAskJson: boolean;
   template: string | null;
+  silent: boolean;
 };
 
 function parseFlags(args: string[]): Flags {
-  const flags: Flags = { pick: null, all: false, emitAskJson: false, template: null };
+  const flags: Flags = { pick: null, all: false, emitAskJson: false, template: null, silent: false };
   for (let i = 0; i < args.length; i++) {
     const a = args[i]!;
     if (a === "--pick") {
@@ -32,6 +33,8 @@ function parseFlags(args: string[]): Flags {
       flags.emitAskJson = true;
     } else if (a === "--template") {
       flags.template = args[++i] ?? null;
+    } else if (a === "--silent") {
+      flags.silent = true;
     } else {
       throw new Error(`unknown flag: ${a}`);
     }
@@ -82,10 +85,16 @@ export async function run(args: string[]): Promise<void> {
       })),
       sessionBaselinePicks: prev?.sessionBaselinePicks ?? picked,
     });
-    process.stdout.write(
-      renderLoadReport({ picked, rules, sessionBaseline }) + "\n",
-    );
-    await deliverPayload(rules);
+    if (!flags.silent) {
+      process.stdout.write(
+        renderLoadReport({ picked, rules, sessionBaseline }) + "\n",
+      );
+    }
+    await deliverPayload(rules, {
+      bannerEcho: flags.silent
+        ? renderLoadReport({ picked, rules, sessionBaseline, style: "compact" })
+        : null,
+    });
     return;
   }
 
@@ -192,9 +201,15 @@ export async function run(args: string[]): Promise<void> {
     sessionBaselinePicks: prev?.sessionBaselinePicks ?? picked,
   });
 
-  process.stdout.write(
-    renderLoadReport({ picked, rules, sessionBaseline }) + "\n",
-  );
+  if (!flags.silent) {
+    process.stdout.write(
+      renderLoadReport({ picked, rules, sessionBaseline }) + "\n",
+    );
+  }
 
-  await deliverPayload(rules);
+  await deliverPayload(rules, {
+    bannerEcho: flags.silent
+      ? renderLoadReport({ picked, rules, sessionBaseline, style: "compact" })
+      : null,
+  });
 }

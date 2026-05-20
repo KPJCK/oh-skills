@@ -91,11 +91,19 @@ const BANNER_TITLE = "||        Context Loaded";
  * On subsequent loads in the same session (sessionBaseline non-null), folders
  * not present in the baseline are suffixed with " (new)" and rendered after
  * the baseline folders. Pure function — no I/O.
+ *
+ * `style` controls the header rendering:
+ * - `"box"` (default): three-line ASCII banner used for human-facing CLI
+ *   output when the user runs the load command directly.
+ * - `"compact"`: a single `Context Loaded:` header line, used when Claude
+ *   needs to echo the report verbatim as its user-facing reply (the
+ *   `--silent` + next-action flow).
  */
 export function renderLoadReport(opts: {
   picked: readonly string[];
   rules: readonly Rule[];
   sessionBaseline: readonly string[] | null;
+  style?: "box" | "compact";
 }): string {
   const counts = new Map<string, number>();
   for (const r of opts.rules) {
@@ -118,11 +126,10 @@ export function renderLoadReport(opts: {
     }
   }
 
-  return [
-    BANNER_RULE,
-    BANNER_TITLE,
-    BANNER_RULE,
-    ...baselineLines,
-    ...newLines,
-  ].join("\n");
+  const header =
+    opts.style === "compact"
+      ? ["Context Loaded:"]
+      : [BANNER_RULE, BANNER_TITLE, BANNER_RULE];
+
+  return [...header, ...baselineLines, ...newLines].join("\n");
 }

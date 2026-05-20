@@ -111,4 +111,44 @@ describe("renderLoadReport", () => {
       ].join("\n"),
     );
   });
+
+  test("compact style: single 'Context Loaded:' header (no ASCII box) for Claude's --silent echo", () => {
+    const rules: Rule[] = [
+      fakeRule("typescript/frontend"),
+      fakeRule("typescript/frontend"),
+      fakeRule("typescript/frontend"),
+      fakeRule("typescript/frontend"),
+    ];
+    const out = renderLoadReport({
+      picked: ["typescript/frontend"],
+      rules,
+      sessionBaseline: null,
+      style: "compact",
+    });
+    expect(out).toBe(
+      ["Context Loaded:", "[typescript/frontend]: 4 rules"].join("\n"),
+    );
+  });
+
+  test("compact style: (new) markers and ordering preserved", () => {
+    const rules: Rule[] = [
+      fakeRule("typescript"),
+      fakeRule("git"),
+      fakeRule("rust"),
+    ];
+    const out = renderLoadReport({
+      picked: ["typescript", "git", "rust"],
+      rules,
+      sessionBaseline: ["typescript"],
+      style: "compact",
+    });
+    expect(out).toBe(
+      [
+        "Context Loaded:",
+        "[typescript]: 1 rule",
+        "[git]: 1 rule (new)",
+        "[rust]: 1 rule (new)",
+      ].join("\n"),
+    );
+  });
 });

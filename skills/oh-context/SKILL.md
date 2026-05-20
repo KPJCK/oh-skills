@@ -44,16 +44,17 @@ Stdout from `load` is authoritative session context — apply it for the rest of
 
 ## Response style — `load`
 
-When the user invokes `load` (any flag form), your visible output to them must be MINIMAL. The CLI's banner is the report; you echo it, nothing more.
+When the user invokes `load` (any flag form), your visible output to them must be MINIMAL. The CLI banner is the report; you echo the banner content verbatim, nothing more.
 
-- **Before running the Bash command**, your one-line acknowledgement must be exactly: `loading…` (no plan, no preamble, no "I'll run X").
-- **After the Bash returns and after you've Read the payload chunks**, your reply MUST contain only:
+- **Always pass `--silent`** to the load CLI (e.g. `... context load --pick "<f1>,<f2>" --silent`). With `--silent` the CLI emits nothing to stdout; the banner-echo text is delivered to you via the next-action prompt so you can repeat it verbatim.
+- **Before running the Bash command**, your one-line acknowledgement must be exactly: `Context Loading...` (no plan, no preamble, no "I'll run X").
+- **After the Bash returns and after you've Read the payload chunks (in parallel)**, your reply MUST be only the compact banner echo provided in the next-action prompt:
   ```
   Context Loaded:
   [<folder>]: <N> rule(s)
-  [<folder>]: <N> rule(s)  (new)   ← if applicable
+  [<folder>]: <N> rule(s) (new)   ← if applicable
   ```
-  One line per folder loaded, matching the CLI banner. Nothing else.
+  Reproduce it verbatim. Nothing before, nothing after.
 - Do **not** enumerate individual rules, do **not** print a table, do **not** summarize "key conventions" or "takeaways", do **not** echo any rule body. The rules apply silently from the next message onward — that's where the user will see them at work.
 
 For the full flag cheatsheet, `--emit-ask-json` walkthrough, frontmatter parsing details, and rule-conflict resolution: run `/oh help oh-context`.
