@@ -6,7 +6,7 @@ import { loadCwd, saveCwd } from "../cache.ts";
 import { renderEmpty, renderLoadReport } from "../render.ts";
 import { deliverPayload } from "../paginate.ts";
 import { buildLoadAskPayload } from "../ask-ui.ts";
-import { step, info, success, error } from "../../../shared/ui.ts";
+import { step, info, error } from "../../../shared/ui.ts";
 
 type Flags = {
   pick: string[] | null;
@@ -59,6 +59,18 @@ export async function run(args: string[]): Promise<void> {
       return;
     }
     const contextRoot = loadOhEnv().CONTEXT_DIR;
+    // Picked folders from the template = unique folders the resolved rules came
+    // from, preserving first-occurrence order. This is what the banner reports.
+    const picked: string[] = [];
+    const seenFolders = new Set<string>();
+    for (const r of rules) {
+      if (!seenFolders.has(r.folder)) {
+        seenFolders.add(r.folder);
+        picked.push(r.folder);
+      }
+    }
+    const prev = await loadCwd(cwd);
+    const sessionBaseline = prev?.sessionBaselinePicks ?? null;
     await saveCwd(cwd, {
       lastPicks: [],
       lastLoaded: rules.map((r) => ({
@@ -67,14 +79,10 @@ export async function run(args: string[]): Promise<void> {
         priority: r.priority,
         hash: r.hash,
       })),
+      sessionBaselinePicks: prev?.sessionBaselinePicks ?? picked,
     });
-    const { formatTokens, estimateTokens } = await import("../tokens.ts");
-    let total = 0;
-    for (const r of rules) {
-      try { total += await estimateTokens(r.absPath); } catch { /* skip */ }
-    }
-    success(
-      `loaded template "${flags.template}" · ${rules.length} rule${rules.length === 1 ? "" : "s"} (${formatTokens(total)} total)`,
+    process.stdout.write(
+      renderLoadReport({ picked, rules, sessionBaseline }) + "\n",
     );
     await deliverPayload(rules);
     return;
