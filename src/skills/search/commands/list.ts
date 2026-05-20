@@ -50,7 +50,7 @@ export async function run(args: string[]): Promise<void> {
   }
 
   const lines: string[] = [];
-  lines.push(`## 📚 Knowledge library`);
+  lines.push(`## Knowledge library`);
   lines.push("");
   lines.push(`Root: \`${KNOWLEDGES_ROOT}\``);
   lines.push("");

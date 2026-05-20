@@ -27,15 +27,15 @@ export async function run(args: string[]): Promise<void> {
 
   if (matches.length === 0) {
     process.stdout.write(
-      `## 🔎 No local match for \`${escapeMd(query)}\`\n\n` +
-        `Nothing scored above the relevance threshold. Either the topic isn't covered, or the existing knowledge uses different terminology.\n\n` +
-        `**Recommended:** run \`/oh-search research ${shellQuote(query)}\` to go online, then \`add\` the result.\n`,
+      `## No local match: \`${escapeMd(query)}\`\n\n` +
+        `No results above relevance threshold.\n` +
+        `Try: \`/oh-search research ${shellQuote(query)}\`\n`,
     );
     return;
   }
 
   const lines: string[] = [];
-  lines.push(`## 🔎 Local matches for \`${escapeMd(query)}\``);
+  lines.push(`## Local matches: \`${escapeMd(query)}\``);
   lines.push("");
   lines.push("| Score | Knowledge | Topic | Age | Path |");
   lines.push("|---:|:---|:---|---:|:---|");
@@ -47,19 +47,7 @@ export async function run(args: string[]): Promise<void> {
     );
   }
   lines.push("");
-  lines.push(`**Top match summary:** ${escapeMd(matches[0]!.knowledge.meta.summary)}`);
-  lines.push("");
-  lines.push("## How to use these");
-  lines.push("");
-  lines.push(
-    `1. **Pick the top match** if its title/summary cover what's being asked. \`Read\` the full file at the path above and use it directly.`,
-  );
-  lines.push(
-    `2. **Check freshness** — if the \`Age\` column is large (>180 days) for a fast-moving topic, the content may be stale; consider \`/oh-search research ${shellQuote(query)}\` to refresh.`,
-  );
-  lines.push(
-    `3. **No good match** — if none of the top results actually cover the user's intent, fall back to \`WebSearch\` / \`WebFetch\` and then save the new knowledge via \`add\` (with the user's YES confirmation).`,
-  );
+  lines.push(`Top match: ${escapeMd(matches[0]!.knowledge.meta.summary)}`);
 
   process.stdout.write(lines.join("\n") + "\n");
 }

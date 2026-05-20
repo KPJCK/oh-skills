@@ -34,6 +34,16 @@ The `add` command REFUSES to write without `--confirmed`. Before passing that fl
 
 Never assume consent. Never auto-confirm.
 
+## Interpreting find / list output
+
+**find** output: score table + top-match summary line.
+- Top match covers intent → `Read` the full file at the listed path.
+- Age >180d on a fast-moving topic → consider `/oh-search research <query>` to refresh.
+- No good match → fall back to WebSearch/WebFetch, then `add` with YES confirm.
+
+**list** output: knowledge table grouped by topic.
+- Use `--topic <name>` to filter.
+
 ## Next-actions manifest
 
 stderr final line: `__OH_SEARCH_NEXT_ACTIONS__<json>`. Actions: `invoke_skill`, `dispatch_agent`, `self_act`, `ask_user`, `report`. Execute each in order.
