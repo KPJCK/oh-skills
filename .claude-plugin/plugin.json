@@ -1,7 +1,7 @@
 {
   "name": "oh-skills",
   "description": "Personal dev-cycle skills: plan/go/review/fix orchestration, context-rule loader, local knowledge base, setup doctor, and help reference.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "KPJCK"
   },
