@@ -3,7 +3,7 @@ import { listFolders, loadRules } from "../registry.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { pickFolders } from "../picker.ts";
 import { loadCwd, saveCwd } from "../cache.ts";
-import { renderEmpty } from "../render.ts";
+import { renderEmpty, renderLoadReport } from "../render.ts";
 import { deliverPayload } from "../paginate.ts";
 import { buildLoadAskPayload } from "../ask-ui.ts";
 import { step, info, success, error } from "../../../shared/ui.ts";
@@ -173,6 +173,8 @@ export async function run(args: string[]): Promise<void> {
   }
 
   const contextRoot = loadOhEnv().CONTEXT_DIR;
+  const prev = await loadCwd(cwd);
+  const sessionBaseline = prev?.sessionBaselinePicks ?? null;
   await saveCwd(cwd, {
     lastPicks: picked,
     lastLoaded: rules.map((r) => ({
@@ -181,10 +183,11 @@ export async function run(args: string[]): Promise<void> {
       priority: r.priority,
       hash: r.hash,
     })),
+    sessionBaselinePicks: prev?.sessionBaselinePicks ?? picked,
   });
 
-  success(
-    `loaded ${rules.length} rule${rules.length === 1 ? "" : "s"} from ${picked.length} folder${picked.length === 1 ? "" : "s"}`,
+  process.stdout.write(
+    renderLoadReport({ picked, rules, sessionBaseline }) + "\n",
   );
 
   await deliverPayload(rules);
