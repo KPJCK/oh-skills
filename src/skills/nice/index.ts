@@ -9,6 +9,7 @@ const subcommands: { name: string; short: string; load: () => Promise<Cmd> }[] =
   { name: "go",          short: "Implement the plan",                       load: () => import("./commands/go.ts") },
   { name: "review",      short: "Review against the plan",                  load: () => import("./commands/review.ts") },
   { name: "fix",         short: "Apply latest review feedback",             load: () => import("./commands/fix.ts") },
+  { name: "do",          short: "JFDI: implement → review → fix without artifacts", load: () => import("./commands/do.ts") },
 ];
 
 export async function run(args: string[]): Promise<void> {

@@ -135,6 +135,116 @@ export const reviewPrompts = {
   },
 };
 
+export interface DoImplementContext {
+  request: string;
+}
+
+export interface DoReviewContext {
+  request: string;
+  reviewTmp: string;
+}
+
+export interface DoFixContext {
+  request: string;
+  findings: string;
+}
+
+export const doPrompts = {
+  implement: {
+    dispatched(ctx: DoImplementContext): string {
+      return [
+        `You are a focused implementer dispatched as a fresh sub-agent.`,
+        ``,
+        `**Task:** ${ctx.request}`,
+        ``,
+        `No plan file exists for this task. Workflow:`,
+        `1. Read the cwd, understand the codebase structure, and infer scope from the request.`,
+        `2. Make the changes needed to fulfil the request.`,
+        `3. Commit per logical chunk with meaningful commit messages.`,
+        `4. If scope is ambiguous, STOP and ask before proceeding. Do not improvise beyond the ask.`,
+        ``,
+        `Implement only what was asked. No scope creep.`,
+      ].join("\n");
+    },
+
+    selfAct(ctx: DoImplementContext): string {
+      return [
+        `Switch hats: act as the implementer for this task:`,
+        `  ${ctx.request}`,
+        ``,
+        `No plan file — read the cwd, infer scope from the request, make changes, commit per logical chunk.`,
+        `Stop and ask if scope is ambiguous.`,
+      ].join("\n");
+    },
+  },
+
+  reviewQuick: {
+    dispatched(ctx: DoReviewContext): string {
+      return [
+        `You are a strict code reviewer with NO prior context for this work.`,
+        ``,
+        `**Original ask:** ${ctx.request}`,
+        `**Review output file:** ${ctx.reviewTmp}`,
+        ``,
+        `Scope: all changes on the current branch vs origin/main, plus any uncommitted changes.`,
+        ``,
+        `Instructions:`,
+        `1. Run \`git diff origin/main..HEAD\` and check uncommitted changes.`,
+        `2. Judge the changes strictly against the original ask above.`,
+        `3. For each finding, write a line to ${ctx.reviewTmp}:`,
+        `   \`- [ ] **finding** — Suggested fix: ...\``,
+        `4. If there are no findings, write the literal line \`NO_FINDINGS\` to that file.`,
+        `5. Do NOT modify any source code. Write only to ${ctx.reviewTmp}.`,
+        ``,
+        `Be specific. Be honest. Be terse.`,
+      ].join("\n");
+    },
+
+    selfAct(ctx: DoReviewContext): string {
+      return [
+        `Switch hats and act as the reviewer for the changes just made.`,
+        ``,
+        `Original ask: ${ctx.request}`,
+        `Write your findings to: ${ctx.reviewTmp}`,
+        ``,
+        `Scope: branch vs origin/main + uncommitted changes.`,
+        ``,
+        `For each finding: \`- [ ] **finding** — Suggested fix: ...\``,
+        `If clean: write the literal line \`NO_FINDINGS\` to that file.`,
+        `Do NOT modify source code in this step — only write to the review file.`,
+      ].join("\n");
+    },
+  },
+
+  fixQuick: {
+    dispatched(ctx: DoFixContext): string {
+      return [
+        `You are a fix-implementer dispatched as a fresh sub-agent.`,
+        ``,
+        `**Original ask:** ${ctx.request}`,
+        ``,
+        `**Review findings (raw):**`,
+        ctx.findings,
+        ``,
+        `For each unchecked \`- [ ]\` line above, apply the suggested fix.`,
+        `Commit per fix or grouped logically.`,
+        `This is a transient fix pass — no status tags needed.`,
+      ].join("\n");
+    },
+
+    selfAct(ctx: DoFixContext): string {
+      return [
+        `Apply the review findings for the original ask: ${ctx.request}`,
+        ``,
+        `Findings:`,
+        ctx.findings,
+        ``,
+        `For each unchecked \`- [ ]\` line, apply the suggested fix and commit.`,
+      ].join("\n");
+    },
+  },
+};
+
 export const fixPrompts = {
   dispatched(ctx: PromptContext): string {
     return [
