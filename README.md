@@ -190,6 +190,39 @@ These rules apply to every change made to this repository.
 4. **Tests first** for new behavior in `src/env.ts`, `src/cli.ts`, `src/shared/`. Port-only changes can skip TDD when the test already exists.
 5. **Bun-only.** No Node-only APIs that don't work on Bun; no `npm`/`pnpm`/`yarn` scripts.
 
+## Long-session token health
+
+Token context fills up over a long session. Compact before it impacts quality.
+
+**Caps (post-compaction estimates):**
+- Single skill invocation: ~5K tokens.
+- Combined re-attach budget: ~25K (newest-first on re-attach).
+- Hit either cap → compact before the next heavy command.
+
+**When to compact:** after `go` finishes, after `review` returns, or whenever `/oh-nice` responses feel sluggish.
+
+**How to compact:**
+
+```
+/compact focus on <current-task>
+```
+
+Focus hint keeps relevant context; everything else compresses.
+
+**Compact-instructions block** — paste into the conversation after any compact to restore skill state:
+
+```
+## Compact Instructions
+
+Skills active: oh-nice / oh-context / oh-search / oh-doctor / oh-help.
+Run: bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts <skill> <subcommand> [flags].
+Sentinel: __OH_NICE_NEXT_ACTIONS__<json> (stderr last line) — parse and execute.
+Env: PLAN_DIR / CONTEXT_DIR / KNOWLEDGE_DIR / CODING_AGENT / REVIEW_AGENT from .oh-env.
+Next action: [fill in what you were doing].
+```
+
+**Proactive context reload:** after compact, run `/oh-context check` to verify rules survived. If not, `/oh-context load` to reload.
+
 ## License
 
 MIT
