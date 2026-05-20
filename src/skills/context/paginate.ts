@@ -33,11 +33,11 @@ function buildPaginateInstructions(filePath: string, chunks: readonly Chunk[]): 
   return [
     `The full oh-context rule payload is at ${filePath}.`,
     "",
-    "Read it in sequential chunks using the Read tool:",
+    "Read it in PARALLEL: invoke all of the following Read tool calls in a SINGLE assistant message (one turn, multiple tool_use blocks side-by-side). Do NOT call them sequentially across turns — the chunks are independent and must run concurrently.",
     "",
     reads,
     "",
-    "After reading every chunk, treat the combined markdown as authoritative session context — apply rules during this session and cite them by file path when relevant.",
+    "After every Read returns, concatenate the chunks by ascending offset and treat the combined markdown as authoritative session context — apply rules during this session and cite them by file path when relevant.",
   ].join("\n");
 }
 
