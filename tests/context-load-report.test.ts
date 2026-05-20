@@ -74,4 +74,22 @@ describe("renderLoadReport", () => {
       ].join("\n"),
     );
   });
+
+  test("subsequent load that drops a baseline folder: dropped folder absent, picked baseline still no marker, additions marked", () => {
+    const rules: Rule[] = [fakeRule("typescript"), fakeRule("git")];
+    const out = renderLoadReport({
+      picked: ["typescript", "git"],
+      rules,
+      sessionBaseline: ["typescript", "typescript/frontend"],
+    });
+    expect(out).toBe(
+      [
+        "===================================",
+        "||        Context Loaded",
+        "===================================",
+        "[typescript]: 1 rule",
+        "[git]: 1 rule (new)",
+      ].join("\n"),
+    );
+  });
 });
