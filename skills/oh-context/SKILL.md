@@ -38,26 +38,21 @@ Use proactively at the start of a session (check via `huh`), or when the user me
 
 ## Reporting loaded rules
 
-After any `load` / `list` / `check` invocation that shows currently-loaded rules, summarize for the user using this exact shape:
+After any `load` / `list` / `check` showing currently-loaded rules, report using this shape:
 
 ```
-<Topic> context is [already] loaded for this session. <N> folder(s) covering <M> rule(s):
+<topic>: N folders · M rules · loaded <timestamp>
 
-Loaded rules:
 - <folder>/<file>.md (<priority>)
-- <folder>/<file>.md (<priority>)
-- …
+- ...
 
-Loaded at <ISO timestamp>. <one-line follow-up — e.g. offer to reload, ask next step, or stop here>
+<one-line next-action>
 ```
 
-Rules:
-- Use the topic the user asked for ("TypeScript", "Rust", …) — capitalize naturally.
-- Include `already` only when the rules were already loaded before this call.
-- List every loaded rule from the CLI output verbatim — same path, same priority tag (`high` / `med` / `low`).
-- Keep the priority tag in lowercase parentheses, matching the CLI table.
-- Echo the `Loaded at:` timestamp from the CLI output as-is.
-- Close with one short follow-up line; do not pad with extra commentary.
+- Topic: use the user's term ("TypeScript", "Rust", …) — capitalize naturally.
+- List every rule verbatim (same path, same priority tag: `high` / `med` / `low`).
+- Timestamp: echo `Loaded at:` value as-is.
+- Close with one short next-action; no padding.
 
 ## Next-actions manifest
 
