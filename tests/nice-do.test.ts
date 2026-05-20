@@ -196,6 +196,36 @@ describe("nice do — init phase", () => {
     expect(selfAct!.role).toBe("coding");
   });
 
+  test("--no-fix: init phase report includes --no-fix in re-run command", () => {
+    const r = spawnCli(
+      ["nice", "do", "add a comment", "--no-fix"],
+      makeMinimalEnv({ CODING_AGENT: "mirai" }),
+    );
+    expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
+    const actions = parseNextActions(r.stderr);
+    const report = actions.find(
+      (a) => (a as { type: string }).type === "report",
+    ) as { type: string; message: string } | undefined;
+    expect(report).toBeDefined();
+    expect(report!.message).toContain("--phase=post-implement");
+    expect(report!.message).toContain("--no-fix");
+  });
+
+  test("no --no-fix: init phase report does NOT include --no-fix", () => {
+    const r = spawnCli(
+      ["nice", "do", "add a comment"],
+      makeMinimalEnv({ CODING_AGENT: "mirai" }),
+    );
+    expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
+    const actions = parseNextActions(r.stderr);
+    const report = actions.find(
+      (a) => (a as { type: string }).type === "report",
+    ) as { type: string; message: string } | undefined;
+    expect(report).toBeDefined();
+    expect(report!.message).toContain("--phase=post-implement");
+    expect(report!.message).not.toContain("--no-fix");
+  });
+
   test("--no-review: emits coding dispatch + done report, no post-implement re-run", () => {
     const r = spawnCli(
       ["nice", "do", "do the thing", "--no-review"],
@@ -352,6 +382,31 @@ describe("nice do — post-review phase", () => {
     // tmp file should be deleted
     const exists = await stat(reviewTmp).then(() => true).catch(() => false);
     expect(exists).toBe(false);
+  });
+
+  test("findings preceded by a header are still detected as unchecked (multiline regex)", async () => {
+    const reviewTmp = path.join(tmp, "oh-do-test-header-findings.md");
+    // Header before the first finding — previously the single-line regex missed this
+    await writeFile(reviewTmp, "## Review\n\n- [ ] **foo** — Suggested fix: bar\n");
+
+    const r = spawnCli(
+      ["nice", "do", "--phase=post-review", "--request", "x", "--review-tmp", reviewTmp],
+      makeMinimalEnv({ CODING_AGENT: "mirai" }),
+    );
+    expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
+    const actions = parseNextActions(r.stderr);
+    // Must dispatch a coding agent (not emit "no issues")
+    const agentAction = actions.find(
+      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+    ) as { type: string; role: string } | undefined;
+    expect(agentAction).toBeDefined();
+    expect(agentAction!.role).toBe("coding");
+    const report = actions.find(
+      (a) => (a as { type: string }).type === "report",
+    ) as { type: string; message: string } | undefined;
+    expect(report).toBeDefined();
+    // Should say complete/done, NOT "no issues"
+    expect(report!.message).not.toMatch(/no issues|clean/i);
   });
 
   test("missing --review-tmp exits non-zero", () => {
