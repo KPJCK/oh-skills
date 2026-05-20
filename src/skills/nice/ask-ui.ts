@@ -93,8 +93,8 @@ export function buildPlanPickerAskPayload(
   const questions: AskQuestion[] = chunks.map((chunk, idx) => ({
     question:
       chunks.length === 1
-        ? `Which plan should I ${subcommand}?`
-        : `Which plan? (group ${idx + 1} of ${chunks.length})`,
+        ? `Plan to ${subcommand}?`
+        : `Plan? (${idx + 1}/${chunks.length})`,
     header: chunks.length === 1 ? "Plan" : `Plan ${idx + 1}/${chunks.length}`,
     multiSelect: false,
     options: chunk.map((p) => ({
@@ -128,9 +128,9 @@ export function buildScopePickerAskPayload(): AskPayload {
         header: "Scope",
         multiSelect: false,
         options: [
-          { label: "branch", description: "Whole branch vs origin/main (default)" },
-          { label: "uncommitted", description: "Working tree + staged changes" },
-          { label: "last-n", description: "Last N commits (Claude will ask N separately)" },
+          { label: "branch", description: "vs origin/main (default)" },
+          { label: "uncommitted", description: "working tree + staged" },
+          { label: "last-n", description: "last N commits (ask N separately)" },
         ],
       },
     ],

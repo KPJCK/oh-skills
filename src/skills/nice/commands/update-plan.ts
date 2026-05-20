@@ -82,12 +82,12 @@ async function phaseInit(rest: string[]): Promise<void> {
 
   sharedBanner({
     title: "[OH! >> NICE >> UPDATE-PLAN]",
-    subtitle: `Repo: ${repo}  •  Iterating an existing plan (new ideas / improvements / feedback)`,
+    subtitle: `${repo} · iterate plan`,
     gradient: GRADIENTS.nice,
   });
 
   // pick plan
-  step(1, 3, "Pick a plan to update");
+  step(1, 3, "pick plan");
   let pickedSlug: string;
   if (slug) {
     pickedSlug = asSlug(slug);
@@ -121,7 +121,7 @@ async function phaseInit(rest: string[]): Promise<void> {
     `oh-nice-update-spec-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.md`,
   );
 
-  step(2, 3, "Brainstorming with superpowers (delta-only)");
+  step(2, 3, "brainstorm delta");
   hint(`existing spec: ${shortHome(paths.specMd)}`);
 
   const brainstormInstr = [
@@ -145,10 +145,7 @@ async function phaseInit(rest: string[]): Promise<void> {
     },
     {
       type: "report",
-      message: [
-        "After brainstorming returns, re-run:",
-        `  bun ${CLI} nice update-plan --phase=post-brainstorm ${shellQuote(tmpSpec)} --slug ${shellQuote(pickedSlug)}`,
-      ].join("\n"),
+      message: `brainstorm done → bun ${CLI} nice update-plan --phase=post-brainstorm ${shellQuote(tmpSpec)} --slug ${shellQuote(pickedSlug)}`,
     },
   ];
   emit("nice", actions);
@@ -188,27 +185,24 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
 
   sharedBanner({
     title: "[OH! >> NICE >> UPDATE-PLAN]",
-    subtitle: `Repo: ${repo}  •  Spec updated — research or write plan?`,
+    subtitle: `${repo} · spec updated`,
     gradient: GRADIENTS.nice,
   });
-  step(2, 3, "Research step (optional)");
-  hint("offering research step before writing the plan delta");
+  step(2, 3, "research (optional)");
+  hint("research step optional before writing plan delta");
 
   const actions: NextAction[] = [
     {
       type: "ask_user",
-      question: "Run research before writing the plan?",
+      question: "Research before plan?",
       options: ["Run research", "Skip research"],
     },
     {
       type: "report",
       message: [
-        `The next ask_user offers Run research / Skip research.`,
-        ``,
-        `If user picks "Run research", ask via AskUserQuestion which source to use (options: "knowledge" / "online" / "auto"), then re-run:`,
+        `Run research → ask source (knowledge / online / auto), then:`,
         `  bun ${CLI} nice update-plan --phase=research-go ${shellQuote(repo)} ${shellQuote(pickedSlug)} ${shellQuote(tmpSpec)} --source=<chosen>`,
-        ``,
-        `If user picks "Skip research", re-run:`,
+        `Skip research → re-run:`,
         `  bun ${CLI} nice update-plan --phase=write-plan ${shellQuote(repo)} ${shellQuote(pickedSlug)} ${shellQuote(tmpSpec)}`,
       ].join("\n"),
     },
@@ -261,11 +255,11 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
 
   sharedBanner({
     title: "[OH! >> NICE >> UPDATE-PLAN]",
-    subtitle: `Repo: ${repo}  •  Research (${source})`,
+    subtitle: `${repo} · research (${source})`,
     gradient: GRADIENTS.nice,
   });
-  step(3, 4, `Researching with source mode: ${source}`);
-  hint("dispatching research agent to enrich spec.md");
+  step(3, 4, `research · ${source}`);
+  hint("research agent → enrich spec.md");
 
   const env = loadOhEnv();
 
@@ -279,12 +273,10 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
     selfActPrompt,
   });
 
-  const saveToKnowledgeNote =
+  const saveNote =
     source === "knowledge"
-      ? `- --source was "knowledge": re-run directly (no save-to-knowledge prompt).`
-      : [
-          `- --source was "${source}": if the research agent performed web research, ask the user via AskUserQuestion: "Save these findings to the knowledge base?" (options: "Save" / "Skip"). If "Save", invoke the oh-search skill with \`add\` arguments per finding (the agent's output should suggest topic + title for each). If "Skip", continue.`,
-        ].join("\n");
+      ? `source=knowledge → re-run directly.`
+      : `web research → ask "Save to knowledge? YES/No" → invoke oh-search add per finding if YES.`;
 
   const tmpSpecPart = tmpSpec ? ` ${shellQuote(tmpSpec)}` : "";
 
@@ -293,9 +285,8 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
     {
       type: "report",
       message: [
-        `After the research agent finishes:`,
-        saveToKnowledgeNote,
-        `- Then re-run: \`bun ${CLI} nice update-plan --phase=write-plan ${shellQuote(repo)} ${shellQuote(slug)}${tmpSpecPart}\``,
+        `research done · ${saveNote}`,
+        `then: bun ${CLI} nice update-plan --phase=write-plan ${shellQuote(repo)} ${shellQuote(slug)}${tmpSpecPart}`,
       ].join("\n"),
     },
   ];
@@ -325,10 +316,10 @@ async function phaseWritePlan(rest: string[]): Promise<void> {
 
   sharedBanner({
     title: "[OH! >> NICE >> UPDATE-PLAN]",
-    subtitle: `Repo: ${repo}  •  Writing tasks for the update`,
+    subtitle: `${repo} · write plan delta`,
     gradient: GRADIENTS.nice,
   });
-  step(3, 4, "Writing plan delta with superpowers");
+  step(3, 4, "write plan delta");
 
   const writeInstr = [
     `This is an iteration on an existing plan — write **only the new tasks**, not a full rewrite.`,
@@ -349,10 +340,7 @@ async function phaseWritePlan(rest: string[]): Promise<void> {
     },
     {
       type: "report",
-      message: [
-        "After writing-plans returns, re-run:",
-        `  bun ${CLI} nice update-plan --phase=post-plan ${shellQuote(repo)} ${shellQuote(slug)} ${shellQuote(tmpPlan)}${tmpSpecPart}`,
-      ].join("\n"),
+      message: `writing-plans done → bun ${CLI} nice update-plan --phase=post-plan ${shellQuote(repo)} ${shellQuote(slug)} ${shellQuote(tmpPlan)}${tmpSpecPart}`,
     },
   ];
   emit("nice", actions);
@@ -386,7 +374,7 @@ async function phasePostPlan(rest: string[]): Promise<void> {
 
   sharedBanner({
     title: "[OH! >> NICE >> UPDATE-PLAN]",
-    subtitle: `New tasks in: ${shortHome(paths.planMd)}`,
+    subtitle: `${repoArg} · tasks appended`,
     gradient: GRADIENTS.nice,
   });
 
@@ -399,9 +387,8 @@ async function phasePostPlan(rest: string[]): Promise<void> {
     {
       type: "report",
       message: [
-        "If the user picks 'Implement now', run:",
-        `  bun ${CLI} nice go --slug ${shellQuote(slug)}`,
-        "Otherwise confirm the plan path and end.",
+        `Implement now → bun ${CLI} nice go --slug ${shellQuote(slug)}`,
+        `Stop here → confirm plan path, done.`,
       ].join("\n"),
     },
   ];

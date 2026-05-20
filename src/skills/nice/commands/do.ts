@@ -96,12 +96,12 @@ async function runInit(args: DoArgs): Promise<void> {
 
   sharedBanner({
     title: "[OH! >> NICE >> DO]",
-    subtitle: `Repo: ${repo}  •  ${agentTag} will implement`,
+    subtitle: `${repo} · ${agentTag} → implement`,
     subtitleHighlights: [agentTag],
     gradient: GRADIENTS.nice,
   });
 
-  step(1, args.noReview ? 1 : 2, "Dispatching implementer");
+  step(1, args.noReview ? 1 : 2, "dispatch implementer");
   if (args.request) {
     info(`request: ${args.request}`);
   } else {
@@ -120,14 +120,14 @@ async function runInit(args: DoArgs): Promise<void> {
   if (args.noReview) {
     actions.push({
       type: "report",
-      message: "Implementation dispatched. Review skipped (--no-review). done.",
+      message: "implemented · review skipped (--no-review)",
     });
   } else {
     const escapedRequest = args.request.replace(/'/g, "'\\''");
     const noFixFlag = args.noFix ? " --no-fix" : "";
     actions.push({
       type: "report",
-      message: `After the implementer returns, run:\n  bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice do --phase=post-implement --request '${escapedRequest}'${noFixFlag}`,
+      message: `implemented → bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice do --phase=post-implement --request '${escapedRequest}'${noFixFlag}`,
     });
   }
 
@@ -147,12 +147,12 @@ async function runPostImplement(args: DoArgs): Promise<void> {
 
   sharedBanner({
     title: "[OH! >> NICE >> DO >> REVIEW]",
-    subtitle: `Repo: ${repo}  •  ${agentTag} will review`,
+    subtitle: `${repo} · ${agentTag} → review`,
     subtitleHighlights: [agentTag],
     gradient: GRADIENTS.nice,
   });
 
-  step(1, args.noFix ? 1 : 2, "Dispatching reviewer");
+  step(1, args.noFix ? 1 : 2, "dispatch reviewer");
   info(`request: ${args.request}`);
 
   // Generate a unique tmp path for the review findings
@@ -172,13 +172,13 @@ async function runPostImplement(args: DoArgs): Promise<void> {
   if (args.noFix) {
     actions.push({
       type: "report",
-      message: `review-only mode — findings at ${reviewTmp} (--no-fix; no post-review run)`,
+      message: `reviewed · findings → ${reviewTmp} (--no-fix)`,
     });
   } else {
     const escapedRequest = args.request.replace(/'/g, "'\\''");
     actions.push({
       type: "report",
-      message: `After the reviewer returns, run:\n  bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice do --phase=post-review --request '${escapedRequest}' --review-tmp ${reviewTmp}`,
+      message: `reviewed → bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice do --phase=post-review --request '${escapedRequest}' --review-tmp ${reviewTmp}`,
     });
   }
 
@@ -198,11 +198,11 @@ async function runPostReview(args: DoArgs): Promise<void> {
 
   sharedBanner({
     title: "[OH! >> NICE >> DO >> FIX]",
-    subtitle: `Repo: ${repo}  •  reading review findings`,
+    subtitle: `${repo} · apply findings`,
     gradient: GRADIENTS.nice,
   });
 
-  step(1, 2, "Reading review findings");
+  step(1, 2, "read review findings");
   info(`review file: ${reviewTmp}`);
 
   // Read the review tmp file
@@ -216,23 +216,23 @@ async function runPostReview(args: DoArgs): Promise<void> {
   const isNoFindings = findings === "NO_FINDINGS" || !hasUnchecked;
 
   if (isNoFindings) {
-    step(2, 2, "No issues found — cleaning up");
-    hint("review was clean — skipping fix dispatch");
+    step(2, 2, "clean review");
+    hint("no findings — skip fix");
     // Delete the tmp file
     await unlink(reviewTmp).catch(() => {});
     emit("nice", [
       {
         type: "report",
-        message: "no issues found — do cycle complete. Clean review!",
+        message: "clean review · do cycle complete",
       },
     ]);
     return;
   }
 
-  step(2, 2, "Dispatching fix implementer");
+  step(2, 2, "dispatch fix implementer");
   const agentName = env.CODING_AGENT?.trim() || "main Claude";
   const agentTag = `[${agentName}]`;
-  info(`${agentTag} will apply ${(findings.match(/^\s*-\s+\[ \]/gm) ?? []).length} finding(s)`);
+  info(`${agentTag} → ${(findings.match(/^\s*-\s+\[ \]/gm) ?? []).length} finding(s)`);
 
   // Delete the tmp file before dispatch (agent gets findings inlined in prompt)
   await unlink(reviewTmp).catch(() => {});
@@ -247,7 +247,7 @@ async function runPostReview(args: DoArgs): Promise<void> {
     }),
     {
       type: "report",
-      message: "do cycle complete — implement → review → fix all done.",
+      message: "do cycle complete · implement → review → fix",
     },
   ];
   emit("nice", actions);

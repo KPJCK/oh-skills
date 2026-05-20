@@ -51,12 +51,12 @@ export async function run(args: string[]): Promise<void> {
   const agentTag = `[${agentName}]`;
   sharedBanner({
     title: "[OH! >> NICE >> GO]",
-    subtitle: `Repo: ${repo}  •  ${agentTag} will execute the plan`,
+    subtitle: `${repo} · ${agentTag} → execute`,
     subtitleHighlights: [agentTag],
     gradient: GRADIENTS.nice,
   });
 
-  step(1, 2, "Pick a plan to execute");
+  step(1, 2, "pick plan");
   let slug: string;
   if (slugArg) {
     slug = asSlug(slugArg);
@@ -95,9 +95,9 @@ export async function run(args: string[]): Promise<void> {
   const goal = extractGoal(planContent);
 
   if (goal) info(`goal: ${goal}`);
-  hint(`tasks (checkbox lines): ${taskCount}`);
+  hint(`tasks: ${taskCount}`);
 
-  step(2, 2, "Handing off to implementer");
+  step(2, 2, "dispatch implementer");
   const ctx = {
     planPath: paths.planMd,
     specPath: paths.specMd,
@@ -115,7 +115,7 @@ export async function run(args: string[]): Promise<void> {
     }),
     {
       type: "report",
-      message: `After execution completes, run '/oh-nice review' to get Yama's verdict.`,
+      message: `next: /oh-nice review`,
     },
   ];
   emit("nice", actions);

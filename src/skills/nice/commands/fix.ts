@@ -40,12 +40,12 @@ export async function run(args: string[]): Promise<void> {
   const agentTag = `[${agentName}]`;
   sharedBanner({
     title: "[OH! >> NICE >> FIX]",
-    subtitle: `Repo: ${repo}  •  ${agentTag} will apply the latest review round`,
+    subtitle: `${repo} · ${agentTag} → apply review`,
     subtitleHighlights: [agentTag],
     gradient: GRADIENTS.nice,
   });
 
-  step(1, 2, "Pick a plan with a review to apply");
+  step(1, 2, "pick plan with review");
   let slug: string;
   if (flags.plan) {
     slug = flags.plan;
@@ -84,8 +84,8 @@ export async function run(args: string[]): Promise<void> {
   const reviewContent = await readFile(paths.reviewMd, "utf-8");
   const latest = extractLatestRound(reviewContent);
 
-  step(2, 2, "Dispatching implementer to apply review feedback");
-  hint(`latest round: ${latest.heading || "(no round heading found)"}`);
+  step(2, 2, "dispatch implementer");
+  hint(`latest round: ${latest.heading || "(none)"}`);
 
   const ctx = {
     planPath: paths.planMd,
@@ -104,7 +104,7 @@ export async function run(args: string[]): Promise<void> {
     }),
     {
       type: "report",
-      message: `After the implementer returns, suggest running '/oh-nice review' for round ${latest.round + 1}.`,
+      message: `next: /oh-nice review · round ${latest.round + 1}`,
     },
   ];
   emit("nice", actions);

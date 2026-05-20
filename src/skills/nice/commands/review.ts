@@ -87,13 +87,13 @@ export async function run(args: string[]): Promise<void> {
   const agentTag = `[${agentName}]`;
   sharedBanner({
     title: "[OH! >> NICE >> REVIEW]",
-    subtitle: `Repo: ${repo}  •  ${agentTag} will append to review.md`,
+    subtitle: `${repo} · ${agentTag} → append review`,
     subtitleHighlights: [agentTag],
     gradient: GRADIENTS.nice,
   });
 
   // ── 1. Plan selection ──
-  step(1, 3, "Pick a plan to review against");
+  step(1, 3, "pick plan");
   let slug: string;
   if (flags.plan) {
     slug = flags.plan;
@@ -126,13 +126,13 @@ export async function run(args: string[]): Promise<void> {
   success(`selected: ${slug}`);
 
   // ── 2. Scope ──
-  step(2, 3, "Choose review scope");
+  step(2, 3, "choose scope");
   const scope = await chooseScope(flags);
   info(`scope: ${scope.describe}`);
   info(`refs: ${shortSha(scope.baseSha)}..${shortSha(scope.headSha)}`);
 
   // ── 3. Dispatch ──
-  step(3, 3, "Dispatching reviewer");
+  step(3, 3, "dispatch reviewer");
   const round = await nextReviewRound(repo, slug);
   const paths = planPaths(repo, slug);
   hint(`round ${round} → ${shortPath(paths.reviewMd)}`);
@@ -157,7 +157,7 @@ export async function run(args: string[]): Promise<void> {
     }),
     {
       type: "report",
-      message: `After the reviewer returns, the verdict will be at ${shortPath(paths.reviewMd)} (round ${round}).`,
+      message: `verdict → ${shortPath(paths.reviewMd)} · round ${round}`,
     },
   ];
   emit("nice", actions);
