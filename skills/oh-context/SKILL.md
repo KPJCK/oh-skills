@@ -42,4 +42,18 @@ stderr final line: `__OH_CONTEXT_NEXT_ACTIONS__<json>`. Actions: `invoke_skill`,
 
 Stdout from `load` is authoritative session context — apply it for the rest of the session. Stdout from `check` asks you to honestly quote rules verbatim; report drift plainly.
 
+## Response style — `load`
+
+When the user invokes `load` (any flag form), your visible output to them must be MINIMAL. The CLI's banner is the report; you echo it, nothing more.
+
+- **Before running the Bash command**, your one-line acknowledgement must be exactly: `loading…` (no plan, no preamble, no "I'll run X").
+- **After the Bash returns and after you've Read the payload chunks**, your reply MUST contain only:
+  ```
+  Context Loaded:
+  [<folder>]: <N> rule(s)
+  [<folder>]: <N> rule(s)  (new)   ← if applicable
+  ```
+  One line per folder loaded, matching the CLI banner. Nothing else.
+- Do **not** enumerate individual rules, do **not** print a table, do **not** summarize "key conventions" or "takeaways", do **not** echo any rule body. The rules apply silently from the next message onward — that's where the user will see them at work.
+
 For the full flag cheatsheet, `--emit-ask-json` walkthrough, frontmatter parsing details, and rule-conflict resolution: run `/oh help oh-context`.

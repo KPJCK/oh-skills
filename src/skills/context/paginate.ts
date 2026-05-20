@@ -38,6 +38,8 @@ function buildPaginateInstructions(filePath: string, chunks: readonly Chunk[]): 
     reads,
     "",
     "After every Read returns, concatenate the chunks by ascending offset and treat the combined markdown as authoritative session context — apply rules during this session and cite them by file path when relevant.",
+    "",
+    "Response style: your reply to the user after all Reads complete must contain ONLY the banner echo — one `Context Loaded:` header line followed by one `[<folder>]: <N> rule(s)` line per loaded folder (`(new)` suffix preserved). Do NOT list individual rules, do NOT print a table, do NOT summarize key conventions or takeaways, do NOT echo any rule body. The rules apply silently — the user will see them in action from your next message onward.",
   ].join("\n");
 }
 
