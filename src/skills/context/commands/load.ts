@@ -7,6 +7,7 @@ import { renderEmpty, renderLoadReport } from "../render.ts";
 import { deliverPayload } from "../paginate.ts";
 import { buildLoadAskPayload } from "../ask-ui.ts";
 import { step, info, error } from "../../../shared/ui.ts";
+import { formatTokens, estimateTokens } from "../tokens.ts";
 
 type Flags = {
   pick: string[] | null;
@@ -72,7 +73,7 @@ export async function run(args: string[]): Promise<void> {
     const prev = await loadCwd(cwd);
     const sessionBaseline = prev?.sessionBaselinePicks ?? null;
     await saveCwd(cwd, {
-      lastPicks: [],
+      lastPicks: picked,
       lastLoaded: rules.map((r) => ({
         file: path.relative(contextRoot, r.absPath),
         title: r.title,
@@ -84,6 +85,11 @@ export async function run(args: string[]): Promise<void> {
     process.stdout.write(
       renderLoadReport({ picked, rules, sessionBaseline }) + "\n",
     );
+    let total = 0;
+    for (const r of rules) {
+      try { total += await estimateTokens(r.absPath); } catch { /* skip */ }
+    }
+    process.stdout.write(`${formatTokens(total)} total\n`);
     await deliverPayload(rules);
     return;
   }
@@ -103,7 +109,6 @@ export async function run(args: string[]): Promise<void> {
   // AskUserQuestion, then re-invoke with --pick.
   if (flags.emitAskJson) {
     const prev = await loadCwd(cwd);
-    const { estimateTokens } = await import("../tokens.ts");
     const folderTokens = new Map<string, number>();
     for (const f of folders) {
       try {
