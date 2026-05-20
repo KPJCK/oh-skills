@@ -74,4 +74,13 @@ describe("prompt shape — cache-friendly (stable first, variable last)", () => 
     expect(head).toContain("review");
     expect(tail).toContain(DO_REVIEW_CTX.reviewTmp);
   });
+
+  test("doPrompts.fixQuick.dispatched — role in first 200, request+findings in last 200", () => {
+    const p = doPrompts.fixQuick.dispatched(DO_FIX_CTX);
+    const head = p.slice(0, 200);
+    const tail = p.slice(-200);
+    expect(head).toContain("fix");
+    expect(tail).toContain(DO_FIX_CTX.request);
+    expect(tail).toContain(DO_FIX_CTX.findings);
+  });
 });
