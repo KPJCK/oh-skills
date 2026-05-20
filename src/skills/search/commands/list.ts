@@ -60,7 +60,7 @@ export async function run(args: string[]): Promise<void> {
     for (const k of items) {
       const days = await ageDays(k.meta.updated);
       const ageStr = days === 0 ? "today" : days === 1 ? "1d" : `${days}d`;
-      const shape = k.shape === "folder" ? "📁" : "📄";
+      const shape = k.shape === "folder" ? "folder" : "file";
       lines.push(
         `| **${escapeMd(k.meta.title)}** | \`${topic}\` | ${shape} | ${(k.meta.sources ?? []).length} | ${ageStr} | \`${k.rel}\` |`,
       );
