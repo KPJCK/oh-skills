@@ -31,4 +31,29 @@ describe("renderLoadReport", () => {
       ].join("\n"),
     );
   });
+
+  test("subsequent load: folders not in baseline rendered after baseline with (new) suffix", () => {
+    const rules: Rule[] = [
+      fakeRule("typescript"),
+      fakeRule("typescript/frontend"),
+      fakeRule("git"),
+      ...Array.from({ length: 4 }, () => fakeRule("rust")),
+    ];
+    const out = renderLoadReport({
+      picked: ["typescript", "typescript/frontend", "git", "rust"],
+      rules,
+      sessionBaseline: ["typescript", "typescript/frontend"],
+    });
+    expect(out).toBe(
+      [
+        "===================================",
+        "||        Context Loaded",
+        "===================================",
+        "[typescript]: 1 rule",
+        "[typescript/frontend]: 1 rule",
+        "[git]: 1 rule (new)",
+        "[rust]: 4 rules (new)",
+      ].join("\n"),
+    );
+  });
 });
