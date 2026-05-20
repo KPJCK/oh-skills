@@ -9,6 +9,7 @@ import pc from "picocolors";
 import { loadOhEnv } from "../../env.ts";
 import { banner } from "../../shared/banner.ts";
 import { GRADIENTS } from "../../shared/banner-presets.ts";
+import { formatBytes } from "../../shared/format-bytes.ts";
 
 const HOME = os.homedir();
 const CLAUDE = path.join(HOME, ".claude");
@@ -402,12 +403,6 @@ export function parseFrontmatter(md: string): Frontmatter | null {
     fm[key] = val;
   }
   return fm;
-}
-
-export function formatBytes(n: number): string {
-  if (n < 1024) return `${n}B`;
-  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)}KB`;
-  return `${(n / 1024 / 1024).toFixed(1)}MB`;
 }
 
 function statusIcon(s: Status): string {

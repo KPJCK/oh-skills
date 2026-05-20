@@ -6,11 +6,11 @@ import { join } from "node:path";
 import { realpath } from "node:fs/promises";
 import {
   parseFrontmatter,
-  formatBytes,
   checkEnvDirs,
   checkShadowDirs,
   type Check,
 } from "../src/skills/doctor/index.ts";
+import { formatBytes } from "../src/shared/format-bytes.ts";
 import type { OhEnv } from "../src/env.ts";
 
 // ──────────────────────────────────────────────────────────────────────────────
