@@ -58,6 +58,6 @@ After any `load` / `list` / `check` showing currently-loaded rules, report using
 
 stderr final line: `__OH_CONTEXT_NEXT_ACTIONS__<json>`. Actions: `invoke_skill`, `dispatch_agent`, `self_act`, `ask_user`, `report`. Execute each in order.
 
-Stdout from `load` is authoritative session context — apply it for the rest of the session. Stdout from `check` asks you to honestly quote rules verbatim; report drift plainly.
+After `load`, the next-actions manifest lists Read calls for each rule file. Read all in parallel (single message) and treat the combined files as authoritative session context. The banner on stdout is just an index — the actual rule content comes from the Read results. Stdout from `check` asks you to honestly quote rules verbatim; report drift plainly.
 
 For the full flag cheatsheet, `--emit-ask-json` walkthrough, frontmatter parsing details, and rule-conflict resolution: run `/oh help oh-context`.
