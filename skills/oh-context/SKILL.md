@@ -36,6 +36,29 @@ If the user just types `/oh-context` with no args, run `load`.
 
 Use proactively at the start of a session (check via `huh`), or when the user mentions a tech domain without rules loaded. Interactive pickers need a TTY — always pass `--pick`/`--template` flags instead of running bare `load`.
 
+## Reporting loaded rules
+
+After any `load` / `list` / `check` invocation that shows currently-loaded rules, summarize for the user using this exact shape:
+
+```
+<Topic> context is [already] loaded for this session. <N> folder(s) covering <M> rule(s):
+
+Loaded rules:
+- <folder>/<file>.md (<priority>)
+- <folder>/<file>.md (<priority>)
+- …
+
+Loaded at <ISO timestamp>. <one-line follow-up — e.g. offer to reload, ask next step, or stop here>
+```
+
+Rules:
+- Use the topic the user asked for ("TypeScript", "Rust", …) — capitalize naturally.
+- Include `already` only when the rules were already loaded before this call.
+- List every loaded rule from the CLI output verbatim — same path, same priority tag (`high` / `med` / `low`).
+- Keep the priority tag in lowercase parentheses, matching the CLI table.
+- Echo the `Loaded at:` timestamp from the CLI output as-is.
+- Close with one short follow-up line; do not pad with extra commentary.
+
 ## Next-actions manifest
 
 stderr final line: `__OH_CONTEXT_NEXT_ACTIONS__<json>`. Actions: `invoke_skill`, `dispatch_agent`, `self_act`, `ask_user`, `report`. Execute each in order.
