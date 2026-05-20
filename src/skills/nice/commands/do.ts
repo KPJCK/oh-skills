@@ -124,9 +124,10 @@ async function runInit(args: DoArgs): Promise<void> {
     });
   } else {
     const escapedRequest = args.request.replace(/'/g, "'\\''");
+    const noFixFlag = args.noFix ? " --no-fix" : "";
     actions.push({
       type: "report",
-      message: `After the implementer returns, run:\n  bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice do --phase=post-implement --request '${escapedRequest}'`,
+      message: `After the implementer returns, run:\n  bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice do --phase=post-implement --request '${escapedRequest}'${noFixFlag}`,
     });
   }
 
@@ -211,7 +212,7 @@ async function runPostReview(args: DoArgs): Promise<void> {
   }
 
   const findings = readFileSync(reviewTmp, "utf-8").trim();
-  const hasUnchecked = /^\s*-\s+\[ \]/.test(findings.replace(/\r\n/g, "\n").split("\n").join("\n"));
+  const hasUnchecked = /^\s*-\s+\[ \]/m.test(findings);
   const isNoFindings = findings === "NO_FINDINGS" || !hasUnchecked;
 
   if (isNoFindings) {
