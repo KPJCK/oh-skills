@@ -82,3 +82,47 @@ export function renderClearDirective(): string {
 export function renderEmpty(reason: string): string {
   return `_(${reason})_`;
 }
+
+const BANNER_RULE = "===================================";
+const BANNER_TITLE = "||        Context Loaded";
+
+/**
+ * Banner-style post-load report. Lists each picked folder with its rule count.
+ * On subsequent loads in the same session (sessionBaseline non-null), folders
+ * not present in the baseline are suffixed with " (new)" and rendered after
+ * the baseline folders. Pure function — no I/O.
+ */
+export function renderLoadReport(opts: {
+  picked: readonly string[];
+  rules: readonly Rule[];
+  sessionBaseline: readonly string[] | null;
+}): string {
+  const counts = new Map<string, number>();
+  for (const r of opts.rules) {
+    counts.set(r.folder, (counts.get(r.folder) ?? 0) + 1);
+  }
+
+  const baselineSet =
+    opts.sessionBaseline === null ? null : new Set(opts.sessionBaseline);
+
+  const baselineLines: string[] = [];
+  const newLines: string[] = [];
+  for (const folder of opts.picked) {
+    const count = counts.get(folder) ?? 0;
+    const noun = count === 1 ? "rule" : "rules";
+    const base = `[${folder}]: ${count} ${noun}`;
+    if (baselineSet === null || baselineSet.has(folder)) {
+      baselineLines.push(base);
+    } else {
+      newLines.push(`${base} (new)`);
+    }
+  }
+
+  return [
+    BANNER_RULE,
+    BANNER_TITLE,
+    BANNER_RULE,
+    ...baselineLines,
+    ...newLines,
+  ].join("\n");
+}
