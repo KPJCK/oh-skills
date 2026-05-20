@@ -129,6 +129,11 @@ Use `do` for quick one-shot tasks that don't need a stored plan. It runs the sam
 
 /oh-nice do "add a TODO comment" --no-review
   → coding agent implements; review and fix skipped
+
+/oh-nice do "add a TODO comment" --no-fix
+  → coding agent implements + commits
+  → review agent checks diff and writes findings
+  → fix skipped; findings available for manual action
 ```
 
 Both `plan` and `update-plan` include an **optional research step** after brainstorming. When prompted, choose a source mode:
