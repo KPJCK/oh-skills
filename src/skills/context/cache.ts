@@ -18,6 +18,7 @@ export type CwdEntry = {
   lastPicks: string[];
   lastLoaded: LoadedRuleRef[];
   lastLoadedAt: string; // ISO
+  sessionBaselinePicks?: string[]; // folders from first load since this entry was created
 };
 
 export type CacheShape = {
