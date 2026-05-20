@@ -26,8 +26,9 @@ export async function run(args: string[]): Promise<void> {
   const sub =
     !first || first.startsWith("-") ? "load" : first;
 
-  // `huh` is machine-readable (outputs only `true`/`false`) — suppress banner
-  if (sub !== "huh") {
+  // `huh` is machine-readable (outputs only `true`/`false`) — suppress banner.
+  // `load` has its own banner-style report; the OH header would be redundant.
+  if (sub !== "huh" && sub !== "load") {
     banner({
       title: "[OH! >> CONTEXT]",
       gradient: GRADIENTS.context,

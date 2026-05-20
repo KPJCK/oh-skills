@@ -6,8 +6,8 @@ import { loadCwd, saveCwd } from "../cache.ts";
 import { renderEmpty, renderLoadReport } from "../render.ts";
 import { deliverPayload } from "../paginate.ts";
 import { buildLoadAskPayload } from "../ask-ui.ts";
-import { step, info, error } from "../../../shared/ui.ts";
-import { formatTokens, estimateTokens } from "../tokens.ts";
+import { step, error } from "../../../shared/ui.ts";
+import { estimateTokens } from "../tokens.ts";
 
 type Flags = {
   pick: string[] | null;
@@ -85,11 +85,6 @@ export async function run(args: string[]): Promise<void> {
     process.stdout.write(
       renderLoadReport({ picked, rules, sessionBaseline }) + "\n",
     );
-    let total = 0;
-    for (const r of rules) {
-      try { total += await estimateTokens(r.absPath); } catch { /* skip */ }
-    }
-    process.stdout.write(`${formatTokens(total)} total\n`);
     await deliverPayload(rules);
     return;
   }
@@ -130,7 +125,6 @@ export async function run(args: string[]): Promise<void> {
 
   if (flags.all) {
     picked = folders.map((f) => f.rel);
-    info(`loading ALL ${picked.length} folders via --all`);
   } else if (flags.pick !== null) {
     // Non-interactive (used by Claude through Bash tool).
     const validNames = new Set(folders.map((f) => f.rel));
@@ -143,7 +137,6 @@ export async function run(args: string[]): Promise<void> {
       process.exit(2);
     }
     picked = flags.pick;
-    info(`loading ${picked.length} folder${picked.length === 1 ? "" : "s"} via --pick`);
   } else {
     // Interactive picker — only works in a real terminal (TTY).
     // Claude's Bash tool runs with stdin = non-TTY → fail fast with a clear message
