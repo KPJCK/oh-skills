@@ -1,6 +1,7 @@
 ---
 name: oh-doctor
 description: Sanity-check the oh-skills installation. Verifies Bun, plugin node_modules, .oh-env loadability, configured paths exist, and configured agents resolve to known subagent_types.
+disable-model-invocation: true
 ---
 
 # oh-doctor

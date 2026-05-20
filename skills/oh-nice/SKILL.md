@@ -1,6 +1,7 @@
 ---
 name: oh-nice
 description: Personal dev-cycle orchestrator — subcommands `plan` / `update-plan` / `go` / `review` / `fix` / `do`. Use for: design a feature (plan), iterate an existing plan with new ideas/feedback/improvements (update-plan), implement (go), Yama review (review), apply review feedback (fix), or quick one-shot implement→review→fix without any plan artifacts (do). Run with no subcommand to pick interactively.
+disable-model-invocation: true
 ---
 
 # oh-nice

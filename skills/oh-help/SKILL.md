@@ -1,6 +1,7 @@
 ---
 name: oh-help
 description: Reference guide for the `oh-*` family of skills (oh-nice with plan/update-plan/go/review/fix, oh-context with load/list/check/huh/add/update/promote/template/clear, oh-search, oh-doctor, oh-help) plus the backup-now skill and the working sub-agents (mirai, yama, rudy). Use when the user asks "what do these oh-* tools do?", "/oh-help", "explain the setup", "remind me what's available", or any similar discovery question.
+disable-model-invocation: true
 ---
 
 # oh-help
