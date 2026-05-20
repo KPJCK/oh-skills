@@ -56,4 +56,22 @@ describe("renderLoadReport", () => {
       ].join("\n"),
     );
   });
+
+  test("subsequent load with picks identical to baseline → no (new) markers", () => {
+    const rules: Rule[] = [fakeRule("typescript"), fakeRule("git")];
+    const out = renderLoadReport({
+      picked: ["typescript", "git"],
+      rules,
+      sessionBaseline: ["typescript", "git"],
+    });
+    expect(out).toBe(
+      [
+        "===================================",
+        "||        Context Loaded",
+        "===================================",
+        "[typescript]: 1 rule",
+        "[git]: 1 rule",
+      ].join("\n"),
+    );
+  });
 });
