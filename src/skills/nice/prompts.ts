@@ -135,19 +135,19 @@ export const reviewPrompts = {
   },
 };
 
-export interface DoImplementContext {
+export type DoImplementContext = {
   request: string;
-}
+};
 
-export interface DoReviewContext {
+export type DoReviewContext = {
   request: string;
   reviewTmp: string;
-}
+};
 
-export interface DoFixContext {
+export type DoFixContext = {
   request: string;
   findings: string;
-}
+};
 
 export const doPrompts = {
   implement: {
