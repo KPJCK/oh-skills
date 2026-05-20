@@ -7,6 +7,7 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+- `/oh-nice do` — single-shot implement → review → fix without spec.md/plan.md/review.md artifacts. Three phases (`init` / `post-implement` / `post-review`) driven by `--phase`; review findings live in `os.tmpdir()` and are deleted after the fix pass. Supports `--no-review` (skip both review and fix) and `--no-fix` (review-only). No `PLAN_DIR/<repo>/<slug>/` directory is ever created.
 - Optional research step in `/oh-nice plan` and `/oh-nice update-plan`. After brainstorming produces `spec.md`, the user is asked "Run research before writing the plan?" with three source modes: `knowledge` (local oh-search only), `online` (WebSearch + WebFetch), `auto` (local-first, web fallback). Findings are appended to `spec.md` as `## Research` (or `### Research` under the latest `## Update` block for `update-plan`). Online research triggers a save-to-knowledge prompt before writing-plans runs.
 - New phases `research-go` and `write-plan` in both `plan.ts` and `update-plan.ts`; `tmpSpec` threaded through the update-plan phase chain to preserve cleanup.
 - Exported `buildResearchPrompt` helper in `plan.ts` (shared with `update-plan.ts`) that generates source-mode-specific prompts for both dispatched and self-act paths.

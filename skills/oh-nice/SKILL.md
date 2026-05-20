@@ -1,6 +1,6 @@
 ---
 name: oh-nice
-description: Personal dev-cycle orchestrator — subcommands `plan` / `update-plan` / `go` / `review` / `fix`. Use for: design a feature (plan), iterate an existing plan with new ideas/feedback/improvements (update-plan), implement (go), Yama review (review), apply review feedback (fix). Run with no subcommand to pick interactively.
+description: Personal dev-cycle orchestrator — subcommands `plan` / `update-plan` / `go` / `review` / `fix` / `do`. Use for: design a feature (plan), iterate an existing plan with new ideas/feedback/improvements (update-plan), implement (go), Yama review (review), apply review feedback (fix), or quick one-shot implement→review→fix without any plan artifacts (do). Run with no subcommand to pick interactively.
 ---
 
 # oh-nice
@@ -20,6 +20,7 @@ bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice <subcommand> [flags]
 | implement / continue / execute / start working on the plan | `go` |
 | review / verdict / check the code on plan X | `review` |
 | apply review / fix the review feedback | `fix` |
+| JFDI / quick / no-plan / implement+review+fix in one shot | `do` |
 | no clear subcommand (`/oh-nice` bare) | run with no args; CLI emits an ask_user picker |
 
 ## Picker payloads (--emit-ask-json)
@@ -65,5 +66,15 @@ For phased subcommands (`plan`, `update-plan`), `report` messages contain re-run
 | research-go | `--phase=research-go` | `<repo> <slug> [<tmpSpec>] --source=<mode>` | Dispatch research agent (Update-section aware) |
 | write-plan | `--phase=write-plan` | `<repo> <slug> [<tmpSpec>]` | Invoke writing-plans |
 | post-plan | `--phase=post-plan` | `<repo> <slug> <tmpPlan> [<tmpSpec>]` | Append plan delta + clean up |
+
+## Phase flags — do
+
+| Phase | CLI flag | Key args | Purpose |
+|---|---|---|---|
+| init (default) | _(none)_ | `[request...] [--no-review] [--no-fix]` | Banner + dispatch coding agent; if `--no-review`, emit done and stop |
+| post-implement | `--phase=post-implement` | `--request "<request>" [--no-fix]` | Generate tmp path + dispatch review agent; if `--no-fix`, emit review-only report and stop |
+| post-review | `--phase=post-review` | `--request "<request>" --review-tmp <path>` | Read findings; if empty/NO_FINDINGS → done; else dispatch coding agent for fixes |
+
+`--no-review` implies `--no-fix`. No plan directory is ever created. The `--review-tmp` file lives in `os.tmpdir()` and is deleted in phase 3.
 
 For the full flag cheatsheet, `--emit-ask-json` payload structure, phased state machine details, and path conventions: run `/oh help oh-nice`.

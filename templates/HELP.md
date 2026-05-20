@@ -62,6 +62,7 @@ Wraps the `superpowers` plugin's brainstorming / writing-plans / subagent-driven
 - **`/oh-nice go [--slug X]`** — picker (or pre-selected) → {{CODING_AGENT}} executes the plan task-by-task via `superpowers:subagent-driven-development`.
 - **`/oh-nice review`** — picker → ask scope (uncommitted / last N commits / whole branch vs main) → dispatch {{REVIEW_AGENT}} with git refs. {{REVIEW_AGENT}} appends `## Round N — YYYY-MM-DD` to `review.md`.
 - **`/oh-nice fix`** — picker (filtered to plans with `review.md`) → dispatch {{CODING_AGENT}} with the latest review round → {{CODING_AGENT}} implements Critical+Important, leaves Minor as TODOs unless trivial.
+- **`/oh-nice do [request] [--no-review] [--no-fix]`** — JFDI one-shot: implement → review → fix without creating any spec.md/plan.md/review.md artifacts. Three phases: `init` (dispatch coding agent), `post-implement` (dispatch review agent, findings to os.tmpdir()), `post-review` (dispatch fix agent if findings exist, delete tmp file). `--no-review` skips both review and fix; `--no-fix` dispatches reviewer but stops before fix.
 
 ### Artifacts
 

@@ -4,7 +4,7 @@ A [Claude Code](https://docs.claude.com/en/docs/claude-code) plugin that bundles
 
 | Skill | What it does |
 |---|---|
-| **oh-nice** | Plan / update-plan / go / review / fix orchestration |
+| **oh-nice** | Plan / update-plan / go / review / fix / do orchestration |
 | **oh-context** | Dynamic context-rule loader (DO/DO NOT/Details rules per domain) |
 | **oh-search** | Local knowledge base — check before WebSearch on stable topics |
 | **oh-doctor** | Sanity-check the plugin installation |
@@ -115,6 +115,20 @@ If you have a personal implementer/reviewer (e.g. registered as a sub-agent in C
 /oh-nice go                                   → implement
 /oh-nice review                               → review the changes against the plan
 /oh-nice fix                                  → apply the latest review feedback
+/oh-nice do "<one-shot request>"              → implement → review → fix without any plan artifacts
+```
+
+Use `do` for quick one-shot tasks that don't need a stored plan. It runs the same implement → review → fix loop but writes no artifacts under `PLAN_DIR`. Opt out of later phases with `--no-review` or `--no-fix`:
+
+```
+/oh-nice do "rename foo to bar"
+  → coding agent implements + commits
+  → review agent checks diff vs origin/main, writes findings to os.tmpdir()
+  → fix agent applies findings, tmp file deleted
+  → done
+
+/oh-nice do "add a TODO comment" --no-review
+  → coding agent implements; review and fix skipped
 ```
 
 Both `plan` and `update-plan` include an **optional research step** after brainstorming. When prompted, choose a source mode:
