@@ -19,11 +19,7 @@ export function renderContext(rules: readonly Rule[]): string {
   const folderCount = new Set(sorted.map((r) => r.folder)).size;
   const lines: string[] = [];
   lines.push(
-    `## Loaded context (${sorted.length} rule${sorted.length === 1 ? "" : "s"} from ${folderCount} folder${folderCount === 1 ? "" : "s"})`,
-  );
-  lines.push("");
-  lines.push(
-    "These are authoritative project rules for the rest of this session. Apply them when working in their domains. If two rules conflict, higher `priority` wins; if same priority, the rule from the more-specific folder wins. Cite the rule file when you apply or deviate.",
+    `## Authoritative rules · ${sorted.length} rule${sorted.length === 1 ? "" : "s"} · ${folderCount} folder${folderCount === 1 ? "" : "s"}`,
   );
   lines.push("");
 
