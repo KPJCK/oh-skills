@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] — 2026-05-20
+
+### Added
+- `tests/prompts-shape.test.ts`: 6 cases locking cache-friendly prompt shape (stable role+workflow first, variable paths last).
+- README: "Long-session token health" section — 5K/skill cap, 25K re-attach budget, paste-ready Compact Instructions block, `/compact focus on <topic>` usage.
+
+### Changed
+- `src/skills/nice/prompts.ts`: reordered all dispatched/selfAct prompts to `role → workflow → paths`. Variable content (paths, requests) moved last for prefix-cache stability. `goPrompts.dispatched` reduced from 424 → 230 chars (−46%).
+- `src/skills/context/render.ts`: replaced 2-line narrative preamble with `## Authoritative rules · N rules · M folders` header (~100 tok/load saved).
+- `src/skills/search/commands/find.ts`: dropped "How to use these" guidance block from stdout; table-only output.
+- `src/skills/search/commands/list.ts`: removed emoji from header.
+- `skills/oh-search/SKILL.md`: added `## Interpreting find / list output` section (moved guidance, terse style).
+- `skills/oh-nice/SKILL.md`, `skills/oh-doctor/SKILL.md`, `skills/oh-help/SKILL.md`: added `disable-model-invocation: true` — proactive triggering disabled on user-only skills.
+- `skills/oh-context/SKILL.md`: "Reporting loaded rules" template rewritten to header-line + bullets + next-action; dropped narrative framing.
+- `src/skills/nice/commands/{go,review,fix,plan,update-plan,do}.ts`: compact `report` messages (`outcome → artifact · next: <cmd>`), terse banner subtitles (`<repo> · <agent> → <verb>`), noun-phrase `step`/`hint` strings.
+- `src/skills/nice/ask-ui.ts`: terse question strings and description fragments in plan/scope pickers.
+
+#### Token deltas
+
+| Surface | Before | After | Δ |
+|---|---|---|---|
+| `goPrompts.dispatched` (chars) | 424 | 230 | −46% |
+| `nice go --emit-ask-json` stderr+stdout (bytes) | 568 | 556 | −2% |
+
 ## [Unreleased]
 
 ### Fixed
