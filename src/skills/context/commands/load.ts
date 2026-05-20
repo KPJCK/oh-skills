@@ -3,7 +3,8 @@ import { listFolders, loadRules } from "../registry.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { pickFolders } from "../picker.ts";
 import { loadCwd, saveCwd } from "../cache.ts";
-import { renderContext, renderEmpty } from "../render.ts";
+import { renderEmpty } from "../render.ts";
+import { deliverPayload } from "../paginate.ts";
 import { buildLoadAskPayload } from "../ask-ui.ts";
 import { step, info, success, error } from "../../../shared/ui.ts";
 
@@ -75,8 +76,7 @@ export async function run(args: string[]): Promise<void> {
     success(
       `loaded template "${flags.template}" · ${rules.length} rule${rules.length === 1 ? "" : "s"} (${formatTokens(total)} total)`,
     );
-    info("Claude — treat the markdown below as authoritative session context.");
-    process.stdout.write(renderContext(rules) + "\n");
+    await deliverPayload(rules);
     return;
   }
 
@@ -186,7 +186,6 @@ export async function run(args: string[]): Promise<void> {
   success(
     `loaded ${rules.length} rule${rules.length === 1 ? "" : "s"} from ${picked.length} folder${picked.length === 1 ? "" : "s"}`,
   );
-  info("Claude — treat the markdown below as authoritative session context.");
 
-  process.stdout.write(renderContext(rules) + "\n");
+  await deliverPayload(rules);
 }
