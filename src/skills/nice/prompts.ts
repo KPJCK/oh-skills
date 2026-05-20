@@ -4,7 +4,7 @@
 //   - dispatched: assumes a fresh sub-agent context, no prior conversation
 //   - selfAct:    assumes the main Claude conversation, may reference prior turns
 //
-// Selection happens at next-action emit time via buildAgentAction(...).
+// Structure: role → workflow → format → paths (variable content last for prefix cache)
 
 import { input, select, confirm } from "@inquirer/prompts";
 
@@ -55,30 +55,24 @@ export interface PromptContext {
 export const goPrompts = {
   dispatched(ctx: PromptContext): string {
     return [
-      `You are a focused implementer dispatched as a fresh sub-agent.`,
+      `Role: implementer · fresh sub-agent.`,
       ``,
-      `**Plan:** ${ctx.planPath}`,
-      `**Spec:** ${ctx.specPath}`,
+      `Workflow: read plan+spec → execute one task at a time (TDD where specified)`,
+      `→ mark checkboxes + commit after each task → STOP if ambiguous.`,
+      `Scope: plan only. No scope creep.`,
       ``,
-      `Workflow:`,
-      `1. Read the plan and spec in full.`,
-      `2. Execute the plan one task at a time, following TDD where it specifies tests.`,
-      `3. After each task, mark its checkboxes as completed in plan.md and commit.`,
-      `4. If a step fails or is ambiguous, STOP and report back — do not improvise.`,
-      ``,
-      `Implement only what the plan asks for. No scope creep.`,
+      `Plan: ${ctx.planPath}`,
+      `Spec: ${ctx.specPath}`,
     ].join("\n");
   },
 
   selfAct(ctx: PromptContext): string {
     return [
-      `Switch hats: act as the implementer for the plan at:`,
-      `  ${ctx.planPath}`,
+      `Act as implementer. One task at a time, TDD where specified.`,
+      `Mark plan.md checkboxes + commit per task. Ask if ambiguous.`,
       ``,
+      `Plan: ${ctx.planPath}`,
       `Spec: ${ctx.specPath}`,
-      ``,
-      `Execute the plan directly in this conversation. One task at a time, TDD where specified.`,
-      `Update plan.md checkboxes as you go and commit per task. Stop and ask if a step is ambiguous.`,
     ].join("\n");
   },
 };
@@ -87,50 +81,45 @@ export const reviewPrompts = {
   dispatched(ctx: PromptContext): string {
     const scopeLine =
       ctx.scope === "branch"
-        ? `Scope: all changes on the current branch since main.`
+        ? `scope: branch vs origin/main`
         : ctx.scope === "uncommitted"
-          ? `Scope: only uncommitted working-tree changes.`
+          ? `scope: uncommitted working-tree`
           : ctx.scope === "last-n"
-            ? `Scope: the last ${ctx.n ?? 1} commit(s).`
-            : `Scope: full branch.`;
+            ? `scope: last ${ctx.n ?? 1} commit(s)`
+            : `scope: full branch`;
     return [
-      `You are a strict code reviewer with NO prior context for this work.`,
+      `Role: strict code reviewer · fresh sub-agent.`,
       ``,
-      `**Plan:** ${ctx.planPath}`,
-      `**Spec:** ${ctx.specPath}`,
-      `**Review file:** ${ctx.reviewPath}  (append as ## Round N — YYYY-MM-DD)`,
+      `Workflow: read plan+spec → review code → for each finding quote file:line,`,
+      `state what's wrong (cite plan/spec), format as \`- [ ] **finding** — Suggested fix: ...\``,
+      `→ append to review.md as \`## Round N — YYYY-MM-DD\`. Do not modify code.`,
       ``,
-      scopeLine,
+      `${scopeLine}`,
       ``,
-      `For each finding:`,
-      `- Quote the offending code with file:line.`,
-      `- State what's wrong and why (cite the plan/spec where it diverges).`,
-      `- Format as a checkbox: \`- [ ] **finding** — Suggested fix: ...\``,
-      ``,
-      `Be specific. Be honest. Be terse. Append to review.md; do not modify code.`,
+      `Plan: ${ctx.planPath}`,
+      `Spec: ${ctx.specPath}`,
+      `Review: ${ctx.reviewPath}`,
     ].join("\n");
   },
 
   selfAct(ctx: PromptContext): string {
     const scopeLine =
       ctx.scope === "branch"
-        ? `Scope: all changes on the current branch since main.`
+        ? `scope: branch vs origin/main`
         : ctx.scope === "uncommitted"
-          ? `Scope: only uncommitted working-tree changes.`
+          ? `scope: uncommitted working-tree`
           : ctx.scope === "last-n"
-            ? `Scope: the last ${ctx.n ?? 1} commit(s).`
-            : `Scope: full branch.`;
+            ? `scope: last ${ctx.n ?? 1} commit(s)`
+            : `scope: full branch`;
     return [
-      `Switch hats and act as the reviewer for code you (or a prior turn) wrote in this conversation.`,
+      `Switch hats: act as reviewer. Each finding: \`- [ ] **finding** — Suggested fix: ...\``,
+      `Append as \`## Round N — YYYY-MM-DD\`. Do NOT modify code.`,
+      ``,
+      `${scopeLine}`,
       ``,
       `Plan: ${ctx.planPath}`,
       `Spec: ${ctx.specPath}`,
-      `Append findings to: ${ctx.reviewPath}  (## Round N — YYYY-MM-DD)`,
-      ``,
-      scopeLine,
-      ``,
-      `Be honest about regressions even though you wrote the code. Format each finding as a checkbox`,
-      `\`- [ ] **finding** — Suggested fix: ...\`. Do NOT modify code in this turn — only write review.md.`,
+      `Review: ${ctx.reviewPath}`,
     ].join("\n");
   },
 };
@@ -153,27 +142,21 @@ export const doPrompts = {
   implement: {
     dispatched(ctx: DoImplementContext): string {
       return [
-        `You are a focused implementer dispatched as a fresh sub-agent.`,
+        `Role: implementer · fresh sub-agent · no plan file.`,
         ``,
-        `**Task:** ${ctx.request}`,
+        `Workflow: read cwd → infer scope → make changes → commit per logical chunk.`,
+        `Ambiguous scope: STOP and ask. No scope creep.`,
         ``,
-        `No plan file exists for this task. Workflow:`,
-        `1. Read the cwd, understand the codebase structure, and infer scope from the request.`,
-        `2. Make the changes needed to fulfil the request.`,
-        `3. Commit per logical chunk with meaningful commit messages.`,
-        `4. If scope is ambiguous, STOP and ask before proceeding. Do not improvise beyond the ask.`,
-        ``,
-        `Implement only what was asked. No scope creep.`,
+        `Task: ${ctx.request}`,
       ].join("\n");
     },
 
     selfAct(ctx: DoImplementContext): string {
       return [
-        `Switch hats: act as the implementer for this task:`,
-        `  ${ctx.request}`,
+        `Act as implementer (no plan file). Infer scope, make changes, commit per chunk.`,
+        `Stop if ambiguous.`,
         ``,
-        `No plan file — read the cwd, infer scope from the request, make changes, commit per logical chunk.`,
-        `Stop and ask if scope is ambiguous.`,
+        `Task: ${ctx.request}`,
       ].join("\n");
     },
   },
@@ -181,37 +164,29 @@ export const doPrompts = {
   reviewQuick: {
     dispatched(ctx: DoReviewContext): string {
       return [
-        `You are a strict code reviewer with NO prior context for this work.`,
+        `Role: strict code reviewer · fresh sub-agent.`,
         ``,
-        `**Original ask:** ${ctx.request}`,
-        `**Review output file:** ${ctx.reviewTmp}`,
+        `Workflow: \`git diff origin/main..HEAD\` + uncommitted → judge vs original ask`,
+        `→ each finding: \`- [ ] **finding** — Suggested fix: ...\` → write to review file.`,
+        `No findings: write literal \`NO_FINDINGS\`. Do NOT modify source code.`,
         ``,
-        `Scope: all changes on the current branch vs origin/main, plus any uncommitted changes.`,
+        `scope: branch vs origin/main + uncommitted`,
         ``,
-        `Instructions:`,
-        `1. Run \`git diff origin/main..HEAD\` and check uncommitted changes.`,
-        `2. Judge the changes strictly against the original ask above.`,
-        `3. For each finding, write a line to ${ctx.reviewTmp}:`,
-        `   \`- [ ] **finding** — Suggested fix: ...\``,
-        `4. If there are no findings, write the literal line \`NO_FINDINGS\` to that file.`,
-        `5. Do NOT modify any source code. Write only to ${ctx.reviewTmp}.`,
-        ``,
-        `Be specific. Be honest. Be terse.`,
+        `Ask: ${ctx.request}`,
+        `Review file: ${ctx.reviewTmp}`,
       ].join("\n");
     },
 
     selfAct(ctx: DoReviewContext): string {
       return [
-        `Switch hats and act as the reviewer for the changes just made.`,
+        `Switch hats: reviewer for changes just made.`,
+        `Each finding: \`- [ ] **finding** — Suggested fix: ...\``,
+        `No findings: write \`NO_FINDINGS\`. Do NOT modify source code.`,
         ``,
-        `Original ask: ${ctx.request}`,
-        `Write your findings to: ${ctx.reviewTmp}`,
+        `scope: branch vs origin/main + uncommitted`,
         ``,
-        `Scope: branch vs origin/main + uncommitted changes.`,
-        ``,
-        `For each finding: \`- [ ] **finding** — Suggested fix: ...\``,
-        `If clean: write the literal line \`NO_FINDINGS\` to that file.`,
-        `Do NOT modify source code in this step — only write to the review file.`,
+        `Ask: ${ctx.request}`,
+        `Write findings to: ${ctx.reviewTmp}`,
       ].join("\n");
     },
   },
@@ -219,27 +194,25 @@ export const doPrompts = {
   fixQuick: {
     dispatched(ctx: DoFixContext): string {
       return [
-        `You are a fix-implementer dispatched as a fresh sub-agent.`,
+        `Role: fix-implementer · fresh sub-agent · transient pass.`,
         ``,
-        `**Original ask:** ${ctx.request}`,
+        `For each unchecked \`- [ ]\` finding: apply suggested fix, commit per fix or grouped.`,
+        `No status tags needed.`,
         ``,
-        `**Review findings (raw):**`,
+        `Ask: ${ctx.request}`,
+        ``,
+        `Findings:`,
         ctx.findings,
-        ``,
-        `For each unchecked \`- [ ]\` line above, apply the suggested fix.`,
-        `Commit per fix or grouped logically.`,
-        `This is a transient fix pass — no status tags needed.`,
       ].join("\n");
     },
 
     selfAct(ctx: DoFixContext): string {
       return [
-        `Apply the review findings for the original ask: ${ctx.request}`,
+        `Apply review findings for: ${ctx.request}`,
+        `Each unchecked \`- [ ]\`: apply fix and commit.`,
         ``,
         `Findings:`,
         ctx.findings,
-        ``,
-        `For each unchecked \`- [ ]\` line, apply the suggested fix and commit.`,
       ].join("\n");
     },
   },
@@ -248,32 +221,25 @@ export const doPrompts = {
 export const fixPrompts = {
   dispatched(ctx: PromptContext): string {
     return [
-      `You are a fix-implementer dispatched as a fresh sub-agent.`,
+      `Role: fix-implementer · fresh sub-agent.`,
       ``,
-      `**Plan:** ${ctx.planPath}`,
-      `**Review:** ${ctx.reviewPath}`,
+      `Workflow: open latest \`## Round N\` in review.md → for each unchecked finding:`,
+      `apply fix (or tag) → flip to \`- [x]\` → append status tag`,
+      `(\`fixed:\` / \`wont-fix:\` / \`reviewer-wrong:\` / \`not-applicable:\` / \`deferred:\`)`,
+      `→ commit per finding (or grouped).`,
       ``,
-      `Open the latest \`## Round N\` section in review.md. For each unchecked finding:`,
-      `1. Apply the fix (or decide not to and tag accordingly).`,
-      `2. Flip the checkbox to \`- [x]\` and append a status tag at the end of the line:`,
-      `   - \`fixed: <one-line summary>\``,
-      `   - \`wont-fix: <reason>\``,
-      `   - \`reviewer-wrong: <why>\``,
-      `   - \`not-applicable: <why>\``,
-      `   - \`deferred: <where it's tracked>\``,
-      `3. Commit per finding (or grouped logically).`,
+      `Plan: ${ctx.planPath}`,
+      `Review: ${ctx.reviewPath}`,
     ].join("\n");
   },
 
   selfAct(ctx: PromptContext): string {
     return [
-      `Apply the latest review round's findings at:`,
-      `  ${ctx.reviewPath}`,
+      `Apply latest review round. Each unchecked finding: fix (or tag), flip to \`- [x]\`,`,
+      `append status tag (fixed / wont-fix / reviewer-wrong / not-applicable / deferred).`,
       ``,
       `Plan: ${ctx.planPath}`,
-      ``,
-      `For each unchecked finding in the latest \`## Round N\` section, fix it (or tag it), flip the`,
-      `checkbox to \`- [x]\`, and append a status tag (fixed / wont-fix / reviewer-wrong / not-applicable / deferred).`,
+      `Review: ${ctx.reviewPath}`,
     ].join("\n");
   },
 };
