@@ -5,11 +5,10 @@
 // --phase=fix   (default) → dispatch Mirai + report with phase=trace re-run command
 // --phase=trace           → self_act detective prompt + terse report
 
-import path from "node:path";
 import os from "node:os";
 import { banner as sharedBanner } from "../../../shared/banner.ts";
 import { emit, buildAgentAction, type NextAction } from "../../../shared/next-action.ts";
-import { step, success, hint, info } from "../../../shared/ui.ts";
+import { step, hint } from "../../../shared/ui.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { detectRepo } from "../../nice/repo.ts";
 import { slugFromDescription, resolveTracePaths, tracePaths } from "../paths.ts";
@@ -112,7 +111,7 @@ async function phaseFix(ctx: { bug: string; slug: string }): Promise<void> {
     {
       type: "report",
       message: [
-        `fix applied · now run trace phase:`,
+        `fix dispatched · run trace phase when done:`,
         `  ${reRunCmd}`,
       ].join("\n"),
     },

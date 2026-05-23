@@ -275,9 +275,13 @@ describe("bug-tracing fix phase=trace", () => {
       (a) => (a as { type: string }).type === "self_act",
     ) as { type: string; prompt: string } | undefined;
     expect(selfAct).toBeDefined();
-    // The prompt should contain the trace path, which is under PLAN_DIR
-    expect(selfAct!.prompt).toContain("test-bug-slug");
-    expect(selfAct!.prompt).toContain("trace.md");
+    // Extract the "Write to: <path>" line from the prompt and assert it starts with planDir
+    const match = selfAct!.prompt.match(/Write to: (.+)/);
+    expect(match).not.toBeNull();
+    const tracePath = match![1].trim();
+    expect(tracePath).toStartWith(planDir);
+    expect(tracePath).toContain("test-bug-slug");
+    expect(tracePath).toEndWith("trace.md");
   });
 
   test("emits exactly two actions: self_act + report", () => {
