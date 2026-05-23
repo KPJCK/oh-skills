@@ -8,6 +8,7 @@ type SkillRunner = {
 
 const skills: Record<string, () => Promise<SkillRunner>> = {
   nice: () => import("./skills/nice/index.ts"),
+  "bug-tracing": () => import("./skills/bug-tracing/index.ts"),
   context: () => import("./skills/context/index.ts"),
   search: () => import("./skills/search/index.ts"),
   doctor: () => import("./skills/doctor/index.ts"),
@@ -45,12 +46,13 @@ Usage:
   bun src/cli.ts <skill> <subcommand> [flags]
 
 Skills:
-  nice      plan / update-plan / go / review / fix / do
-  context   load / list / check / add / update / promote / template / clear / huh
-  search    find / research / add / update / delete / list
-  doctor    sanity-check the installation
-  help      print the reference card
-  init      scaffold .oh-env in this project (or ~/.claude/.oh-env)
+  nice          plan / update-plan / go / review / fix / do
+  bug-tracing   fix — fix a bug + forensic trace.md
+  context       load / list / check / add / update / promote / template / clear / huh
+  search        find / research / add / update / delete / list
+  doctor        sanity-check the installation
+  help          print the reference card
+  init          scaffold .oh-env in this project (or ~/.claude/.oh-env)
 
 `);
 }

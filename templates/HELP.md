@@ -23,6 +23,7 @@ A family of skills and working sub-agents that turn `~/.claude/` into a token-ef
 | Skill | Purpose | Subcommands |
 |---|---|---|
 | **`/oh-nice`** | dev cycle: brainstorm → iterate → implement → review → fix | `plan` · `update-plan` · `go` · `review` · `fix` |
+| **`/oh-bug-tracing`** | fix a bug + write forensic trace.md | `fix` |
 | **`/oh-context`** | per-domain rule library | `load` · `list` · `check` · `huh` · `add` · `update` · `promote` · `clear` · `template` |
 | **`/oh-search`** | offline research knowledge base | `find` · `research` · `add` · `update` · `delete` · `list` |
 | **`/backup-now`** | snapshot `~/.claude/` (max 3 retained) | _(no subcommands)_ |
@@ -97,6 +98,46 @@ Wraps the `superpowers` plugin's brainstorming / writing-plans / subagent-driven
 
 /oh-nice review   (round 2)
   → APPROVE_WITH_NITS  ✅
+```
+
+---
+
+## `/oh-bug-tracing` — fix + forensic trace
+
+Ad-hoc bug fix with a structured post-mortem. Two phases:
+1. **fix** — dispatch {{CODING_AGENT}} to apply the minimal fix.
+2. **trace** — main thread does git archaeology, classifies root cause, writes `trace.md`.
+
+Outcome: bug gone + forensic record under `{{PLAN_DIR}}/<repo>/<slug>/trace.md`.
+
+### Subcommands
+
+- **`/oh-bug-tracing fix "<bug description>" [--slug=<name>]`** — run both phases in sequence.
+
+  Slug is auto-derived from the first 5–6 words of the description. Override with `--slug=<name>`.
+
+### Artifacts
+
+| File | Written by |
+|---|---|
+| `{{PLAN_DIR}}/<repo>/<slug>/trace.md` | main thread (trace phase) |
+
+### trace.md sections
+
+`Symptom` · `Fix` · `Origin` · `Dev intent at the time` · `Why this slipped` · `Root cause class` · `Prevention` · `External research`
+
+### Root cause classes
+
+`typo` · `off-by-one` · `wrong-abstraction` · `missing-validation` · `race` · `API-misuse` · `stale-cache` · `type-coercion` · `other`
+
+### Typical use
+
+```
+/oh-bug-tracing fix "off-by-one in pagination calculates wrong last page"
+  → {{CODING_AGENT}} fixes the bug
+  → main thread investigates: git blame → commit log → root cause
+  → writes trace.md with all sections
+  → terse summary: off-by-one bug · trace at ~/workspaces/plan/my-repo/off-by-one-in-pagination-calculates/trace.md · next: add regression test
 ```
 
 ---

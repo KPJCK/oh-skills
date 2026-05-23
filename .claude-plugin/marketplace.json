@@ -8,13 +8,13 @@
     {
       "name": "oh-skills",
       "source": "./",
-      "description": "Bundle of oh-nice, oh-context, oh-search, oh-doctor, oh-help skills + /oh init/doctor/help slash commands. Configurable via .oh-env. Requires Bun.",
+      "description": "Bundle of oh-nice, oh-bug-tracing, oh-context, oh-search, oh-doctor, oh-help skills + /oh init/doctor/help slash commands. Configurable via .oh-env. Requires Bun.",
       "version": "0.1.0",
       "author": {
         "name": "KPJCK"
       },
       "category": "workflow",
-      "tags": ["plan", "review", "context", "search", "skills", "workflow"]
+      "tags": ["plan", "review", "context", "search", "skills", "workflow", "bug-tracing", "forensics"]
     }
   ]
 }
