@@ -11,6 +11,11 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 - `nice do` init phase: `--no-fix` flag is now forwarded in the re-run command emitted to main Claude, so the post-implement phase honours the user's explicit opt-out.
 
 ### Added
+- `oh-bug-tracing` skill — single-shot bug fix + forensic post-mortem. `/oh-bug-tracing fix "<bug>"` dispatches the coding agent to fix, then the main thread does git archaeology (blame + log on the touched lines, reads the introducing commit/PR, reconstructs original dev intent) and writes a structured `trace.md` to `PLAN_DIR/<repo>/<bug-slug>/`. Eight enforced sections: Symptom · Fix · Origin · Dev intent at the time · Why this slipped · Root cause class · Prevention · External research.
+- Two-phase orchestration (`--phase=fix|trace`); slug derived from bug description (first ~6 words, kebab-case) or via `--slug=<name>`.
+- Tests: `tests/bug-tracing-fix.test.ts` (21 cases) covering both phases — next-action sentinel shape, dispatch-agent + report for phase=fix, self-act for phase=trace with all 8 section headers + root-cause classes, slug derivation, missing-description error, trace-path resolution under `PLAN_DIR`.
+- Wiring: registered in `src/cli.ts`, `src/shared/next-action.ts` sentinel union, `.claude-plugin/{plugin,marketplace}.json`, and `templates/HELP.md` reference card.
+- README: new `oh-bug-tracing` row in the skills table and a "Skills at a glance" subsection documenting the `trace.md` template; added `oh-bug-tracing` to the Compact Instructions skill list.
 - Test: `nice-do.test.ts` now covers `--no-fix` forwarding in the init-phase report (two cases: flag present and flag absent), and a multiline-regex regression guard for header-preceded findings.
 - README: added `--no-fix` usage example to the `oh-nice do` typical-use snippet.
 - `/oh-nice do` — single-shot implement → review → fix without spec.md/plan.md/review.md artifacts. Three phases (`init` / `post-implement` / `post-review`) driven by `--phase`; review findings live in `os.tmpdir()` and are deleted after the fix pass. Supports `--no-review` (skip both review and fix) and `--no-fix` (review-only). No `PLAN_DIR/<repo>/<slug>/` directory is ever created.

@@ -1,10 +1,11 @@
 # oh-skills
 
-A [Claude Code](https://docs.claude.com/en/docs/claude-code) plugin that bundles five personal dev-cycle skills:
+A [Claude Code](https://docs.claude.com/en/docs/claude-code) plugin that bundles six personal dev-cycle skills:
 
 | Skill | What it does |
 |---|---|
 | **oh-nice** | Plan / update-plan / go / review / fix / do orchestration |
+| **oh-bug-tracing** | Fix a bug AND write a forensic `trace.md` — git archaeology + root-cause class + prevention |
 | **oh-context** | Dynamic context-rule loader (DO/DO NOT/Details rules per domain) |
 | **oh-search** | Local knowledge base — check before WebSearch on stable topics |
 | **oh-doctor** | Sanity-check the plugin installation |
@@ -146,6 +147,18 @@ Both `plan` and `update-plan` include an **optional research step** after brains
 
 The research agent appends a `## Research` section (or a `### Research` subsection under the latest `## Update` block for `update-plan`) to `spec.md`. When online research is performed, you are asked whether to save findings to the knowledge base before writing the plan.
 
+### oh-bug-tracing
+
+```
+/oh-bug-tracing fix "<bug description or pasted error/log>"
+  → phase 1: coding agent fixes the bug
+  → phase 2: main thread does git archaeology — finds the introducing commit,
+             reconstructs the original dev's intent, classifies root cause,
+             writes structured trace.md to PLAN_DIR/<repo>/<bug-slug>/trace.md
+```
+
+The `trace.md` template has eight enforced sections: Symptom · Fix · Origin (commit/PR) · Dev intent at the time · Why this slipped · Root cause class · Prevention (TODO checkboxes) · External research. Use this when an ad-hoc bug deserves to leave behind institutional memory, not just a fix.
+
 ### oh-context
 
 ```
@@ -214,7 +227,7 @@ Focus hint keeps relevant context; everything else compresses.
 ```
 ## Compact Instructions
 
-Skills active: oh-nice / oh-context / oh-search / oh-doctor / oh-help.
+Skills active: oh-nice / oh-bug-tracing / oh-context / oh-search / oh-doctor / oh-help.
 Run: bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts <skill> <subcommand> [flags].
 Sentinel: __OH_NICE_NEXT_ACTIONS__<json> (stderr last line) — parse and execute.
 Env: PLAN_DIR / CONTEXT_DIR / KNOWLEDGE_DIR / CODING_AGENT / REVIEW_AGENT from .oh-env.
