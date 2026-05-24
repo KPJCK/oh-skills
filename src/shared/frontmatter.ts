@@ -1,10 +1,10 @@
 // src/shared/frontmatter.ts
 export type FrontmatterRaw = Record<string, string | number | boolean | string[]>;
 
-export interface ParsedFile {
+export type ParsedFile = {
   meta: FrontmatterRaw;
   body: string;
-}
+};
 
 const FENCE = "---";
 
@@ -105,11 +105,11 @@ function unquote(s: string): string {
 
 export type Priority = "low" | "medium" | "high";
 
-export interface RuleMeta {
+export type RuleMeta = {
   title: string;
   description: string;
   priority: Priority;
-}
+};
 
 export interface ParsedRule extends ParsedFile {
   meta: FrontmatterRaw & RuleMeta;
@@ -155,7 +155,7 @@ export function priorityRank(p: Priority): number {
 // Knowledge variant
 // ---------------------------------------------------------------------------
 
-export interface KnowledgeMeta {
+export type KnowledgeMeta = {
   topic: string;
   title: string;
   summary: string;
@@ -164,7 +164,7 @@ export interface KnowledgeMeta {
   query?: string;
   sources?: string[];
   tags?: string[];
-}
+};
 
 export interface ParsedKnowledge extends ParsedFile {
   meta: FrontmatterRaw & KnowledgeMeta;
@@ -182,10 +182,23 @@ export function parseKnowledge(content: string): ParsedKnowledge {
     }
   }
   // Apply defaults for optional fields that consumers expect to always be present
-  if (!parsed.meta["tags"]) parsed.meta["tags"] = [];
-  if (!parsed.meta["sources"]) parsed.meta["sources"] = [];
-  if (parsed.meta["query"] === undefined) parsed.meta["query"] = "";
-  return parsed as ParsedKnowledge;
+  const tags = (parsed.meta["tags"] as string[] | undefined) ?? [];
+  const sources = (parsed.meta["sources"] as string[] | undefined) ?? [];
+  const query = (parsed.meta["query"] as string | undefined) ?? "";
+  return {
+    body: parsed.body,
+    meta: {
+      ...parsed.meta,
+      topic: parsed.meta["topic"] as string,
+      title: parsed.meta["title"] as string,
+      summary: parsed.meta["summary"] as string,
+      created: parsed.meta["created"] as string,
+      updated: parsed.meta["updated"] as string,
+      query,
+      sources,
+      tags,
+    },
+  };
 }
 
 export function todayISO(): string {

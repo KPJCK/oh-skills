@@ -15,14 +15,14 @@ import { c } from "./ui.ts";
 // Types
 // ---------------------------------------------------------------------------
 
-export interface ChoiceItem<T = string> {
+export type ChoiceItem<T = string> = {
   /** Display label */
   name: string;
   /** Value returned when this choice is picked */
   value: T;
   /** Pre-check this item in a checkbox picker */
   checked?: boolean;
-}
+};
 
 // ---------------------------------------------------------------------------
 // Multi-select (checkbox)
@@ -129,7 +129,7 @@ export async function selectWithNewInput(
               message: opts.createNew!.inputMessage ?? "Enter a name",
               validate: opts.createNew!.validate,
             });
-            return val.trim() || null;
+            const t = val.trim(); return t.length > 0 ? t : null;
           } catch {
             return null;
           }

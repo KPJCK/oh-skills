@@ -22,19 +22,19 @@
  *     AskOption[], but the 18 existing tests assert string[], so we keep string[]).
  */
 
-export interface AskOption {
+export type AskOption = {
   label: string;
   description?: string;
-}
+};
 
-export interface AskQuestion {
+export type AskQuestion = {
   question: string;
   header: string;
   multiSelect: boolean;
   options: AskOption[];
-}
+};
 
-export interface AskPayload {
+export type AskPayload = {
   /** Questions to pass verbatim to the AskUserQuestion tool. Empty if autoPick or tooManyForUI. */
   questions: AskQuestion[];
   /** Shell command to run after user picks (Claude substitutes <result>). */
@@ -45,7 +45,7 @@ export interface AskPayload {
   tooManyForUI?: boolean;
   /** Numbered list shown to user when tooManyForUI=true. */
   plainText?: string;
-}
+};
 
 const MAX_OPTIONS_PER_QUESTION = 4;
 const MIN_OPTIONS_PER_QUESTION = 2;
