@@ -16,14 +16,16 @@
   "rules": {
     "eslint/no-debugger": "error",
     "typescript/no-explicit-any": "warn",
-    "typescript/no-non-null-assertion": "warn"
+    "typescript/no-non-null-assertion": "warn",
+    "eslint/no-await-in-loop": "off"
   },
   "ignorePatterns": ["dist/**", "build/**", "node_modules/**", "coverage/**", "*.gen.ts"],
   "overrides": [
     {
       "files": ["**/*.test.ts", "**/*.spec.ts"],
       "rules": {
-        "typescript/no-explicit-any": "off"
+        "typescript/no-explicit-any": "off",
+        "typescript/no-non-null-assertion": "off"
       }
     }
   ]
