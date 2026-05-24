@@ -218,6 +218,51 @@ export const doPrompts = {
   },
 };
 
+export type GoParallelContext = {
+  planPath: string;
+  taskId: string;
+  files: string[]; // verbatim list, already "Create: ..." / "Modify: ..." formatted
+};
+
+export const goParallelPrompts = {
+  dispatched(ctx: GoParallelContext): string {
+    return [
+      `Role: implementer (one task of a parallel batch) · fresh sub-agent.`,
+      ``,
+      `You are implementing ONE task from a plan that is being executed by parallel`,
+      `agents. Other agents are running siblings of your task concurrently.`,
+      ``,
+      `Plan: ${ctx.planPath}`,
+      `Your task ID: ${ctx.taskId}`,
+      ``,
+      `Read the plan; find your task block; implement only its steps.`,
+      ``,
+      `HARD CONSTRAINTS:`,
+      `- You may ONLY create/modify these files:`,
+      ...ctx.files.map((f) => `    ${f}`),
+      `- You may NOT touch any other file. If you discover you need to, halt and`,
+      `  report rather than expanding scope silently.`,
+      `- Commit your work when done.`,
+      ``,
+      `Return: "DONE ${ctx.taskId} @ <commit-sha>" on success, or`,
+      `"HALT ${ctx.taskId}: <reason>" if you cannot proceed.`,
+    ].join("\n");
+  },
+
+  selfAct(ctx: GoParallelContext): string {
+    return [
+      `Act as implementer for ONE task (parallel batch context).`,
+      `Plan: ${ctx.planPath}`,
+      `Task: ${ctx.taskId}`,
+      ``,
+      `Allowed files (do NOT touch others):`,
+      ...ctx.files.map((f) => `  ${f}`),
+      ``,
+      `Implement the task's steps; commit; report "DONE ${ctx.taskId} @ <sha>" or "HALT ${ctx.taskId}: <reason>".`,
+    ].join("\n");
+  },
+};
+
 export const fixPrompts = {
   dispatched(ctx: PromptContext): string {
     return [
