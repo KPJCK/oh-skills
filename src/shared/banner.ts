@@ -16,6 +16,7 @@ function lerp(a: number, b: number, t: number): number {
   return Math.round(a + (b - a) * t);
 }
 
+// oxlint-disable-next-line no-control-regex -- intentional: strips real ANSI escape sequences from output
 const ANSI_RE = /\x1b\[[0-9;]*m/g;
 
 export function stripAnsi(s: string): string {

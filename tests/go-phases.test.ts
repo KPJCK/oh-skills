@@ -44,7 +44,7 @@ async function runCli(args: string[], extraEnv: Record<string, string> = {}): Pr
 function parseSentinel(stderr: string): unknown[] {
   const line = stderr
     .split("\n")
-    .reverse()
+    .toReversed()
     .find((l) => l.startsWith("__OH_NICE_NEXT_ACTIONS__"));
   if (!line) return [];
   const json = line.slice("__OH_NICE_NEXT_ACTIONS__".length);

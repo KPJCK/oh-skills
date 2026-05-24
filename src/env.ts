@@ -89,10 +89,10 @@ export function loadOhEnv(opts: { cwd?: string; home?: string } = {}): OhEnv {
   }
 
   const env: OhEnv = {
-    CONTEXT_DIR: expandPath(merged.CONTEXT_DIR!, cwd, home),
-    CONTEXT_TEMPLATE_DIR: expandPath(merged.CONTEXT_TEMPLATE_DIR!, cwd, home),
-    KNOWLEDGE_DIR: expandPath(merged.KNOWLEDGE_DIR!, cwd, home),
-    PLAN_DIR: expandPath(merged.PLAN_DIR!, cwd, home),
+    CONTEXT_DIR: expandPath(merged.CONTEXT_DIR ?? "", cwd, home),
+    CONTEXT_TEMPLATE_DIR: expandPath(merged.CONTEXT_TEMPLATE_DIR ?? "", cwd, home),
+    KNOWLEDGE_DIR: expandPath(merged.KNOWLEDGE_DIR ?? "", cwd, home),
+    PLAN_DIR: expandPath(merged.PLAN_DIR ?? "", cwd, home),
   };
 
   // agent keys: only set if non-empty after trim

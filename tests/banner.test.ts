@@ -10,6 +10,7 @@ describe("gradientText", () => {
   test("emits one ANSI-colored segment per character", () => {
     const out = gradientText("ABC", ["#ff0000", "#00ff00"]);
     // 3 chars × (open + char + close) sequences
+    // oxlint-disable-next-line no-control-regex -- intentional: testing real ANSI escape sequences
     const resets = (out.match(/\x1b\[0m/g) ?? []).length;
     expect(resets).toBe(3);
     expect(stripAnsi(out)).toBe("ABC");
@@ -30,6 +31,7 @@ describe("gradientText", () => {
   test("middle char in 3-char string is interpolated midway", () => {
     const out = gradientText("ABC", ["#000000", "#ffffff"]);
     // middle char ~half-way: 127 or 128
+    // oxlint-disable-next-line no-control-regex -- intentional: testing real ANSI escape sequences
     expect(out).toMatch(/\x1b\[38;2;(127|128);(127|128);(127|128)m/);
   });
 });

@@ -76,11 +76,12 @@ export function bucketOptions<T>(items: T[]): T[][] {
   // Rebalance: if last chunk has < MIN, donate from previous until it's ≥ MIN
   // (but never let donor drop below MIN either)
   while (chunks.length > 1) {
-    const last = chunks[chunks.length - 1]!;
-    if (last.length >= MIN_OPTIONS_PER_QUESTION) break;
-    const donor = chunks[chunks.length - 2]!;
-    if (donor.length <= MIN_OPTIONS_PER_QUESTION) break; // can't donate
-    last.unshift(donor.pop()!);
+    const last = chunks[chunks.length - 1];
+    if (!last || last.length >= MIN_OPTIONS_PER_QUESTION) break;
+    const donor = chunks[chunks.length - 2];
+    if (!donor || donor.length <= MIN_OPTIONS_PER_QUESTION) break; // can't donate
+    const donated = donor.pop();
+    if (donated !== undefined) last.unshift(donated);
   }
 
   return chunks;
@@ -114,7 +115,7 @@ export function buildAskPayload(opts: {
   }
 
   if (options.length === 1) {
-    return { questions: [], next, autoPick: [options[0]!.label] };
+    return { questions: [], next, autoPick: [options[0]?.label ?? ""] };
   }
 
   if (options.length > MAX_TOTAL) {

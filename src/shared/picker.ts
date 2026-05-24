@@ -123,8 +123,8 @@ export async function selectWithNewInput(
         prompt: async (): Promise<string | null> => {
           try {
             const val = await input({
-              message: opts.createNew!.inputMessage ?? "Enter a name",
-              validate: opts.createNew!.validate,
+              message: opts.createNew?.inputMessage ?? "Enter a name",
+              validate: opts.createNew?.validate,
             });
             const t = val.trim();
             return t.length > 0 ? t : null;

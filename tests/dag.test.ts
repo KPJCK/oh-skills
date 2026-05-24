@@ -381,11 +381,11 @@ describe("validateModifyEdgesAreOrdered", () => {
   });
 });
 
-describe("nextReadySet", () => {
-  function buildDag(spec: string): ReturnType<typeof parsePlan> {
-    return parsePlan(spec);
-  }
+function buildDag(spec: string): ReturnType<typeof parsePlan> {
+  return parsePlan(spec);
+}
 
+describe("nextReadySet", () => {
   const diamond = [
     "### Task a: alpha",
     "**Files:**",
@@ -459,18 +459,18 @@ describe("nextReadySet", () => {
   });
 });
 
-describe("validateReadySetFileSafety", () => {
-  function node(id: string, creates: string[], modifies: string[] = []) {
-    return {
-      id,
-      title: id,
-      creates,
-      modifies,
-      dependsOn: [],
-      bodyStart: 0,
-    };
-  }
+function node(id: string, creates: string[], modifies: string[] = []) {
+  return {
+    id,
+    title: id,
+    creates,
+    modifies,
+    dependsOn: [],
+    bodyStart: 0,
+  };
+}
 
+describe("validateReadySetFileSafety", () => {
   test("pass: disjoint file sets", () => {
     expect(validateReadySetFileSafety([node("a", ["src/a.ts"]), node("b", ["src/b.ts"])])).toEqual(
       [],

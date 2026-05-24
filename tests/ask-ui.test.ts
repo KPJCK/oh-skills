@@ -181,7 +181,7 @@ describe("buildLoadAskPayload", () => {
     expect(p.questions[1]!.options).toHaveLength(2);
     // All 5 folders are represented (no drops)
     const allLabels = p.questions.flatMap((q) => q.options.map((o) => o.label));
-    expect(allLabels.sort()).toEqual([
+    expect(allLabels.toSorted()).toEqual([
       "git",
       "rust",
       "typescript",

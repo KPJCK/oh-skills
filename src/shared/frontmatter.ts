@@ -25,7 +25,7 @@ export function parseFrontmatter(content: string): ParsedFile {
   const meta: FrontmatterRaw = {};
 
   for (let i = 0; i < yamlLines.length; i++) {
-    const raw = yamlLines[i]!;
+    const raw = yamlLines[i] ?? "";
 
     // Block list item (  - value): handled when we encounter the parent key
     if (raw.startsWith("  - ")) continue;
@@ -43,8 +43,8 @@ export function parseFrontmatter(content: string): ParsedFile {
     if (val === "") {
       const items: string[] = [];
       let j = i + 1;
-      while (j < yamlLines.length && yamlLines[j]!.startsWith("  - ")) {
-        items.push(unquote(yamlLines[j]!.slice(4).trim()));
+      while (j < yamlLines.length && (yamlLines[j] ?? "").startsWith("  - ")) {
+        items.push(unquote((yamlLines[j] ?? "").slice(4).trim()));
         j++;
       }
       if (items.length > 0) {

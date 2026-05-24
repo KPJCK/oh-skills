@@ -92,12 +92,11 @@ describe("buildPlanPickerAskPayload", () => {
         hasReview: true,
       },
     ];
-    const p = buildPlanPickerAskPayload(plans, "review");
+    buildPlanPickerAskPayload(plans, "review");
     // autoPick path — no questions to inspect; verify other branch
-    const plans4 = [...plans, ...plans, ...plans, ...plans].map((p, i) => ({
-      ...p,
-      name: `p${i}`,
-    }));
+    const plans4 = [...plans, ...plans, ...plans, ...plans].map((item, i) =>
+      Object.assign({}, item, { name: `p${i}` }),
+    );
     const p2 = buildPlanPickerAskPayload(plans4, "review");
     const opt = p2.questions[0]!.options[0]!;
     expect(opt.description).toContain("plan+review+spec");

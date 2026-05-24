@@ -55,7 +55,7 @@ describe("add --template ask-json payload", () => {
     const payload = buildAddTemplateAskPayload(rules, tokens, "feat1");
     expect(payload.questions.length).toBeGreaterThan(0);
     const allOptions = payload.questions.flatMap((q) => q.options);
-    const labels = allOptions.map((o) => o.label).sort();
+    const labels = allOptions.map((o) => o.label).toSorted();
     expect(labels).toEqual(["ts/rule-x.md", "ts/rule-y.md"]);
     for (const o of allOptions) {
       expect(o.description).toMatch(/~\d+ tok/);

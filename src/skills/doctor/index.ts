@@ -361,7 +361,7 @@ async function checkAgentResolution(
     // Search plugin cache
     if (!found && existsSync(cacheBase)) {
       const glob = new Glob(`**/agents/${agentName}.md`);
-      for await (const _match of glob.scan(cacheBase)) {
+      for await (const _ of glob.scan(cacheBase)) {
         found = true;
         break;
       }
@@ -405,10 +405,6 @@ export function parseFrontmatter(md: string): Frontmatter | null {
 
 function statusIcon(s: Status): string {
   return s === "ok" ? "✅" : s === "warn" ? "⚠️" : "❌";
-}
-
-function statusColor(s: Status): (x: string) => string {
-  return s === "ok" ? pc.green : s === "warn" ? pc.yellow : pc.red;
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

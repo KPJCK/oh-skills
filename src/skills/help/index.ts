@@ -59,7 +59,7 @@ export async function run(args: string[]): Promise<void> {
     let sectionEnd = -1;
 
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i]!;
+      const line = lines[i] ?? "";
       if (line.startsWith("```")) {
         inFence = !inFence;
         continue;
