@@ -1,5 +1,52 @@
 # Release notes
 
+## 0.2.0 — 2026-05-24
+
+Major release. Highlights:
+
+**New skills + subcommands**
+
+- `oh-bug-tracing` skill — single-shot bug fix + forensic post-mortem.
+  `/oh-bug-tracing fix "<bug>"` dispatches the coding agent, then the main
+  thread does git archaeology and writes a structured `trace.md` (Symptom · Fix
+  · Origin · Dev intent · Why this slipped · Root cause class · Prevention ·
+  External research).
+- `/oh-nice do` — JFDI implement → review → fix without spec/plan/review
+  artifacts. Three phases driven by `--phase`; review findings live in
+  `os.tmpdir()`. Supports `--no-review` and `--no-fix`.
+- `/oh version` — prints `release <pkg.version> - <short-sha>`.
+
+**Workflow enhancements**
+
+- Optional research step in `/oh-nice plan` and `/oh-nice update-plan`. After
+  brainstorming produces `spec.md`, the user is asked "Run research before
+  writing the plan?" with three source modes: `knowledge` (local oh-search
+  only), `online` (WebSearch + WebFetch), `auto` (local-first, web fallback).
+- **Parallel-aware planning** — plan.md tasks declare `**Files:**` +
+  `**Depends-on:**`, `oh-nice go` parses a DAG and dispatches concurrent
+  coding agents per ready set (cap=3, configurable via
+  `OH_NICE_MAX_PARALLEL`). Legacy plans without DAG fields fall back to
+  single-agent sequential mode automatically.
+
+**Performance + UX**
+
+- Prompt cache optimization across nice subcommand prompts (role → workflow →
+  paths order; ~46% reduction in `goPrompts.dispatched` size).
+- Banner rewrite: single-line gradient title + subtitle with highlights;
+  dropped bordered-ASCII rendering and cfonts dependency.
+- Compact `report` messages, terse banner subtitles, header-line context-load
+  output (~100 tok/load saved).
+
+**Toolchain**
+
+- Adopted `oxlint` + `oxfmt` as standard dev-dependencies, with configs
+  adapted from the `new-ts-project` shared template. Lint baseline: 0
+  warnings. Repo-wide oxfmt pass applied (printWidth 100, trailing commas).
+- Stripped `.ts` / `.tsx` extensions from 223 relative imports per
+  `typescript/rule-shared-style`.
+
+See [CHANGELOG.md](./CHANGELOG.md) for the full per-item list.
+
 ## 0.1.0 — Initial release
 
 - Combine oh-context / oh-nice / oh-search / oh-doctor / oh-help into a single

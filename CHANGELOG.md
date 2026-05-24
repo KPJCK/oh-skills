@@ -6,8 +6,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-05-24
+
 ### Added
 
+- `/oh version` subcommand — prints `release <pkg.version> - <short-sha>` using
+  the oh-skills repo's HEAD, so the reported hash always identifies the
+  installed plugin version regardless of user cwd.
+- `.oxlintrc.json` and `.oxfmtrc.json` — adopted from the `new-ts-project`
+  shared template, adapted for this repo (`singleQuote: false`, vitest plugin
+  dropped since this repo uses `bun:test`). Wired `lint` / `fmt` npm scripts.
 - feat(nice): parallel-aware planning — plan.md tasks declare `**Files:**` +
   `**Depends-on:**`, `oh-nice go` parses a DAG, validates it (cycle detection,
   file-collision checks), and dispatches concurrent coding agents per ready DAG
@@ -94,9 +102,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Legacy `banner()` function in `src/skills/nice/ui.ts` (callers now use
   `src/shared/banner.ts` directly).
 
-## [0.2.0] — 2026-05-20
+### Style
 
-### Added
+- Repo-wide oxlint + oxfmt pass: 268 → 0 lint warnings (mix of code fixes and
+  scoped rule suppressions for idiomatic patterns — sequential CLI `await`s,
+  test fixture `x!.y` assertions). All 84 source files reformatted to the new
+  oxfmt config (printWidth 100, trailing commas).
+- Stripped `.ts` / `.tsx` extensions from 223 relative imports across src/ and
+  tests/ per `typescript/rule-shared-style` (bundler resolution finds the files
+  without extensions).
+
+### Earlier work queued for this release (originally drafted 2026-05-20)
 
 - `tests/prompts-shape.test.ts`: 6 cases locking cache-friendly prompt shape
   (stable role+workflow first, variable paths last).

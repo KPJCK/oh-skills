@@ -9,7 +9,7 @@
       "name": "oh-skills",
       "source": "./",
       "description": "Bundle of oh-nice, oh-bug-tracing, oh-context, oh-search, oh-doctor, oh-help skills + /oh init/doctor/help slash commands. Configurable via .oh-env. Requires Bun.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": {
         "name": "KPJCK"
       },
