@@ -8,8 +8,8 @@
 
 import { input, select, confirm } from "@inquirer/prompts";
 
-declare const __slugBrand: unique symbol;
-export type Slug = string & { readonly [__slugBrand]: true };
+declare const slugBrand: unique symbol;
+export type Slug = string & { readonly [slugBrand]: true };
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

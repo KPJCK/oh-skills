@@ -39,7 +39,7 @@ function parseArgs(args: string[]): Args {
   let phase: Phase = "init";
   let done: string[] = [];
   for (let i = 0; i < args.length; i++) {
-    const a = args[i]!;
+    const a = args[i] ?? "";
     if (a === "--slug" || a === "--plan") {
       slug = args[++i];
     } else if (a.startsWith("--slug=")) {

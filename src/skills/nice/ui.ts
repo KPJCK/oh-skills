@@ -50,9 +50,9 @@ export function warn(msg: string): void {
   process.stdout.write(`  ${c.warn(figures.warning)} ${msg}\n`);
 }
 
-export function error(msg: string, hint?: string): void {
+export function error(msg: string, hintMsg?: string): void {
   process.stderr.write(`  ${c.error(figures.cross)} ${c.error(msg)}\n`);
-  if (hint) process.stderr.write(`    ${c.hint(hint)}\n`);
+  if (hintMsg) process.stderr.write(`    ${c.hint(hintMsg)}\n`);
 }
 
 export function hint(msg: string): void {

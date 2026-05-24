@@ -58,7 +58,8 @@ export function buildPlanPickerAskPayload(
   }
 
   if (plans.length === 1) {
-    const only = plans[0]!;
+    const only = plans[0];
+    if (!only) return { questions: [], next: `(no plans available — run /oh-nice plan first)` };
     return {
       questions: [],
       next: `bun src/cli.ts nice ${subcommand} ${flag} "${only.name}"`,
@@ -142,11 +143,12 @@ export function chunkBalanced<T>(items: T[]): T[][] {
   }
 
   while (chunks.length > 1) {
-    const last = chunks[chunks.length - 1]!;
-    if (last.length >= MIN_OPTIONS_PER_QUESTION) break;
-    const donor = chunks[chunks.length - 2]!;
-    if (donor.length <= MIN_OPTIONS_PER_QUESTION) break;
-    last.unshift(donor.pop()!);
+    const last = chunks[chunks.length - 1];
+    if (!last || last.length >= MIN_OPTIONS_PER_QUESTION) break;
+    const donor = chunks[chunks.length - 2];
+    if (!donor || donor.length <= MIN_OPTIONS_PER_QUESTION) break;
+    const donated = donor.pop();
+    if (donated !== undefined) last.unshift(donated);
   }
 
   return chunks;

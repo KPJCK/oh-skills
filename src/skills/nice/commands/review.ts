@@ -29,7 +29,7 @@ type Flags = {
 function parseFlags(args: string[]): Flags {
   const flags: Flags = { plan: null, scope: null, n: null, emitAskJson: false };
   for (let i = 0; i < args.length; i++) {
-    const a = args[i]!;
+    const a = args[i] ?? "";
     switch (a) {
       case "--plan":
         flags.plan = args[++i] ?? null;

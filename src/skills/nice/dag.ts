@@ -46,15 +46,15 @@ export function parsePlan(planMd: string): Dag {
   };
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]!;
+    const line = lines[i] ?? "";
     const lineNo = i + 1;
 
     const headingMatch = line.match(TASK_HEADING_RE);
     if (headingMatch) {
       finishCurrent();
       current = {
-        id: headingMatch[1]!,
-        title: headingMatch[2]!,
+        id: headingMatch[1] ?? "",
+        title: headingMatch[2] ?? "",
         creates: [],
         modifies: [],
         dependsOn: [],
@@ -90,13 +90,13 @@ export function parsePlan(planMd: string): Dag {
       field = null;
       continue;
     }
-    const value = bullet[1]!;
+    const value = bullet[1] ?? "";
 
     if (field === "files") {
       const created = value.match(CREATE_RE);
       const modified = value.match(MODIFY_RE);
-      if (created) current.creates.push(created[1]!);
-      else if (modified) current.modifies.push(modified[1]!);
+      if (created) current.creates.push(created[1] ?? "");
+      else if (modified) current.modifies.push(modified[1] ?? "");
       // any other bullet shape is ignored (validator will catch missing files if needed)
     } else if (field === "depends") {
       if (value.trim().toLowerCase() === "none") continue;
@@ -169,7 +169,8 @@ export function validateNoCycle(dag: Dag): string[] {
 
   const removed = new Set<string>();
   while (queue.length > 0) {
-    const id = queue.shift()!;
+    const id = queue.shift();
+    if (id === undefined) break;
     removed.add(id);
     // for every node that depends on `id`, decrement its indegree
     for (const other of dag.nodes.values()) {
@@ -183,7 +184,7 @@ export function validateNoCycle(dag: Dag): string[] {
 
   const stuck = [...dag.nodes.keys()].filter((id) => !removed.has(id));
   if (stuck.length === 0) return [];
-  return [`cycle detected among tasks: ${stuck.sort().join(", ")}`];
+  return [`cycle detected among tasks: ${stuck.toSorted().join(", ")}`];
 }
 
 export function validateNoCreateCollisions(dag: Dag): string[] {
@@ -213,7 +214,8 @@ export function validateModifyEdgesAreOrdered(dag: Dag): string[] {
     const seen = new Set<string>();
     const stack: string[] = [...(dag.nodes.get(id)?.dependsOn ?? [])];
     while (stack.length > 0) {
-      const cur = stack.pop()!;
+      const cur = stack.pop();
+      if (cur === undefined) break;
       if (seen.has(cur)) continue;
       seen.add(cur);
       for (const d of dag.nodes.get(cur)?.dependsOn ?? []) stack.push(d);
@@ -238,8 +240,8 @@ export function validateModifyEdgesAreOrdered(dag: Dag): string[] {
     // For each unordered pair, verify one transitively depends on the other.
     for (let i = 0; i < ids.length; i++) {
       for (let j = i + 1; j < ids.length; j++) {
-        const a = ids[i]!;
-        const b = ids[j]!;
+        const a = ids[i] ?? "";
+        const b = ids[j] ?? "";
         const aDepsB = depsOf(a).has(b);
         const bDepsA = depsOf(b).has(a);
         if (!aDepsB && !bDepsA) {

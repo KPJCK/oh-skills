@@ -52,7 +52,7 @@ export function parseDoArgs(args: string[]): DoArgs {
   const positional: string[] = [];
 
   for (let i = 0; i < args.length; i++) {
-    const a = args[i]!;
+    const a = args[i] ?? "";
     if (a.startsWith("--phase=")) {
       const v = a.slice("--phase=".length);
       if (!isDoPhase(v)) throw new Error(`unknown phase: ${v}`);
@@ -200,7 +200,9 @@ async function runPostImplement(args: DoArgs): Promise<void> {
 // ──────────────────────────────────────────────────────────────────────────────
 
 async function runPostReview(args: DoArgs): Promise<void> {
-  const reviewTmp = args.reviewTmp!; // validated non-null in parseDoArgs
+  // parseDoArgs guarantees reviewTmp is defined for post-review phase
+  if (!args.reviewTmp) throw new Error("internal: reviewTmp missing in post-review phase");
+  const reviewTmp = args.reviewTmp;
 
   const { repo } = await detectRepo();
   const env = loadOhEnv();

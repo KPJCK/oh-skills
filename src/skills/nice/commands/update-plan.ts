@@ -62,7 +62,7 @@ async function phaseInit(rest: string[]): Promise<void> {
   let emitAskJson = false;
   const reqParts: string[] = [];
   for (let i = 0; i < rest.length; i++) {
-    const a = rest[i]!;
+    const a = rest[i] ?? "";
     if (a === "--slug") slug = rest[++i];
     else if (a.startsWith("--slug=")) slug = a.slice("--slug=".length);
     else if (a === "--emit-ask-json") emitAskJson = true;
@@ -158,7 +158,7 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
   let slug: string | undefined;
   const positional: string[] = [];
   for (let i = 0; i < rest.length; i++) {
-    const a = rest[i]!;
+    const a = rest[i] ?? "";
     if (a === "--slug") slug = rest[++i];
     else if (a.startsWith("--slug=")) slug = a.slice("--slug=".length);
     else positional.push(a);

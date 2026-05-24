@@ -15,7 +15,7 @@ type Flags = { plan: string | null; emitAskJson: boolean };
 function parseFlags(args: string[]): Flags {
   const flags: Flags = { plan: null, emitAskJson: false };
   for (let i = 0; i < args.length; i++) {
-    const a = args[i]!;
+    const a = args[i] ?? "";
     if (a === "--plan") flags.plan = args[++i] ?? null;
     else if (a === "--emit-ask-json") flags.emitAskJson = true;
     else throw new Error(`unknown flag: ${a}`);
@@ -123,7 +123,8 @@ function extractLatestRound(content: string): {
       maxIdx = i;
     }
   });
-  const target = matches[maxIdx]!;
+  const target = matches[maxIdx];
+  if (!target) return { round: 0, heading: "", body: content };
   const next = matches[maxIdx + 1];
   const start = target.index ?? 0;
   const end = next?.index ?? content.length;

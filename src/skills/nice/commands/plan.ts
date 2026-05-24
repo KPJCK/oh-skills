@@ -83,7 +83,7 @@ export async function run(args: string[]): Promise<void> {
 
 async function phaseInit(rest: string[]): Promise<void> {
   const request = rest.join(" ").trim() || "(no initial request given)";
-  const { repo, source, cwd } = await detectRepo();
+  const { repo } = await detectRepo();
 
   sharedBanner({
     title: "[OH! >> NICE >> PLAN]",
@@ -136,7 +136,7 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
   let slugFlag: string | null = null;
   const positional: string[] = [];
   for (let i = 0; i < rest.length; i++) {
-    const a = rest[i]!;
+    const a = rest[i] ?? "";
     if (a === "--slug") slugFlag = rest[++i] ?? null;
     else if (a.startsWith("--slug=")) slugFlag = a.slice("--slug=".length);
     else positional.push(a);
