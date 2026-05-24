@@ -2,7 +2,7 @@ import { test, expect, describe, beforeEach, afterEach } from "bun:test";
 import { mkdtemp, rm, writeFile, realpath, mkdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { estimateTokens, formatTokens } from "../src/skills/context/tokens.ts";
+import { estimateTokens, formatTokens } from "../src/skills/context/tokens";
 
 describe("tokens", () => {
   let tmpCwd: string;

@@ -1,6 +1,6 @@
 // src/shared/next-action.ts
-import type { OhEnv, AgentRole } from "../env.ts";
-import { resolveAgent } from "../env.ts";
+import type { OhEnv, AgentRole } from "../env";
+import { resolveAgent } from "../env";
 
 export type AgentDispatchAction = {
   type: "dispatch_agent";

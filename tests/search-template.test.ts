@@ -1,5 +1,5 @@
 import { test, expect, describe } from "bun:test";
-import { scaffoldKnowledge, slugify } from "../src/skills/search/template.ts";
+import { scaffoldKnowledge, slugify } from "../src/skills/search/template";
 
 describe("slugify", () => {
   test("basic lowercase-kebab", () => {

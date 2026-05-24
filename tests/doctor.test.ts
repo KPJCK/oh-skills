@@ -9,9 +9,9 @@ import {
   checkEnvDirs,
   checkShadowDirs,
   type Check,
-} from "../src/skills/doctor/index.ts";
-import { formatBytes } from "../src/shared/format-bytes.ts";
-import type { OhEnv } from "../src/env.ts";
+} from "../src/skills/doctor/index";
+import { formatBytes } from "../src/shared/format-bytes";
+import type { OhEnv } from "../src/env";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // parseFrontmatter

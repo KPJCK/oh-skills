@@ -1,7 +1,7 @@
 import { $ } from "bun";
-import { listPlans, type PlanInfo } from "./plans.ts";
-import { select } from "./prompts.ts";
-import { c, info } from "../../shared/ui.ts";
+import { listPlans, type PlanInfo } from "./plans";
+import { select } from "./prompts";
+import { c, info } from "../../shared/ui";
 
 export type PickerOptions = {
   filter?: (plan: PlanInfo) => boolean;

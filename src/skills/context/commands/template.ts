@@ -1,8 +1,8 @@
-import { deleteTemplate, listTemplates, readTemplate } from "../templates.ts";
-import { estimateTokens, formatTokens } from "../tokens.ts";
-import { loadOhEnv } from "../../../env.ts";
-import { renderEmpty } from "../render.ts";
-import { error, info } from "../../../shared/ui.ts";
+import { deleteTemplate, listTemplates, readTemplate } from "../templates";
+import { estimateTokens, formatTokens } from "../tokens";
+import { loadOhEnv } from "../../../env";
+import { renderEmpty } from "../render";
+import { error, info } from "../../../shared/ui";
 import path from "node:path";
 
 export async function run(args: string[]): Promise<void> {

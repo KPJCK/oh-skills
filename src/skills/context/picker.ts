@@ -1,5 +1,5 @@
 import { checkbox, select, input } from "@inquirer/prompts";
-import type { FolderInfo } from "./registry.ts";
+import type { FolderInfo } from "./registry";
 
 export async function pickFolders(
   folders: readonly FolderInfo[],

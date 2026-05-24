@@ -1,7 +1,7 @@
 // src/skills/context/index.ts
-import { error } from "../../shared/ui.ts";
-import { banner } from "../../shared/banner.ts";
-import { GRADIENTS } from "../../shared/banner-presets.ts";
+import { error } from "../../shared/ui";
+import { banner } from "../../shared/banner";
+import { GRADIENTS } from "../../shared/banner-presets";
 
 type SubRunner = {
   run: (args: string[]) => Promise<void>;

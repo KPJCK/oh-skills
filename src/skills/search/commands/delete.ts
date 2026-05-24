@@ -1,8 +1,8 @@
 // src/skills/search/commands/delete.ts
 import { $ } from "bun";
-import { resolve } from "../registry.ts";
-import { confirm } from "../prompts.ts";
-import { error, info, success } from "../../../shared/ui.ts";
+import { resolve } from "../registry";
+import { confirm } from "../prompts";
+import { error, info, success } from "../../../shared/ui";
 
 export async function run(args: string[]): Promise<void> {
   let yes = false;

@@ -9,8 +9,8 @@
  */
 
 import { test, expect, describe } from "bun:test";
-import { bucketOptions, buildAskPayload } from "../src/shared/ask-ui.ts";
-import type { AskOption, AskPayload } from "../src/shared/ask-ui.ts";
+import { bucketOptions, buildAskPayload } from "../src/shared/ask-ui";
+import type { AskOption, AskPayload } from "../src/shared/ask-ui";
 
 // ---------------------------------------------------------------------------
 // Test-only FolderInfo type and buildLoadAsk wrapper

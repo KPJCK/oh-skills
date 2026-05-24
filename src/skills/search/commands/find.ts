@@ -1,7 +1,7 @@
 // src/skills/search/commands/find.ts
-import { listAll, ageDays, knowledgeRoot } from "../registry.ts";
-import { rankAndFilter } from "../scoring.ts";
-import { info, error } from "../../../shared/ui.ts";
+import { listAll, ageDays, knowledgeRoot } from "../registry";
+import { rankAndFilter } from "../scoring";
+import { info, error } from "../../../shared/ui";
 
 export async function run(args: string[]): Promise<void> {
   const query = args.join(" ").trim();

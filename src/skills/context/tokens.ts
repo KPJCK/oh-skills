@@ -1,7 +1,7 @@
 import { readFile, stat, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { getEncoding } from "js-tiktoken";
-import { loadOhEnv } from "../../env.ts";
+import { loadOhEnv } from "../../env";
 
 function cachePath(): string {
   return path.join(loadOhEnv().CONTEXT_DIR, ".cache", "tokens.json");

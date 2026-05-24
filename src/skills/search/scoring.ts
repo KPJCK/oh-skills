@@ -1,5 +1,5 @@
 // src/skills/search/scoring.ts
-import type { Knowledge } from "./registry.ts";
+import type { Knowledge } from "./registry";
 
 const STOP_WORDS = new Set([
   "a",

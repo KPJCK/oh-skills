@@ -1,7 +1,7 @@
-import { listFolders } from "../registry.ts";
-import { loadOhEnv } from "../../../env.ts";
-import { loadCwd } from "../cache.ts";
-import type { Priority } from "../../../shared/frontmatter.ts";
+import { listFolders } from "../registry";
+import { loadOhEnv } from "../../../env";
+import { loadCwd } from "../cache";
+import type { Priority } from "../../../shared/frontmatter";
 
 export async function run(_args: string[]): Promise<void> {
   const folders = await listFolders();

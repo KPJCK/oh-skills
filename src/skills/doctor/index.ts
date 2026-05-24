@@ -6,10 +6,10 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import pc from "picocolors";
-import { loadOhEnv } from "../../env.ts";
-import { banner } from "../../shared/banner.ts";
-import { GRADIENTS } from "../../shared/banner-presets.ts";
-import { formatBytes } from "../../shared/format-bytes.ts";
+import { loadOhEnv } from "../../env";
+import { banner } from "../../shared/banner";
+import { GRADIENTS } from "../../shared/banner-presets";
+import { formatBytes } from "../../shared/format-bytes";
 
 const HOME = os.homedir();
 const CLAUDE = path.join(HOME, ".claude");

@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
-import { resolveRulePath } from "../registry.ts";
-import { error, info, hint } from "../../../shared/ui.ts";
+import { resolveRulePath } from "../registry";
+import { error, info, hint } from "../../../shared/ui";
 
 export async function run(args: string[]): Promise<void> {
   const target = args[0];

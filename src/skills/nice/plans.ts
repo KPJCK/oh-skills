@@ -1,7 +1,7 @@
 import { stat, mkdir, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import { loadOhEnv } from "../../env.ts";
-import type { Slug } from "./prompts.ts";
+import { loadOhEnv } from "../../env";
+import type { Slug } from "./prompts";
 
 function planRoot(): string {
   return loadOhEnv().PLAN_DIR;

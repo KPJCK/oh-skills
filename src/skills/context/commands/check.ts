@@ -1,6 +1,6 @@
-import { loadCwd } from "../cache.ts";
-import { renderCheckPayload, renderEmpty } from "../render.ts";
-import { info } from "../../../shared/ui.ts";
+import { loadCwd } from "../cache";
+import { renderCheckPayload, renderEmpty } from "../render";
+import { info } from "../../../shared/ui";
 
 export async function run(_args: string[]): Promise<void> {
   const cwd = process.cwd();

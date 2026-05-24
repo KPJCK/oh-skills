@@ -1,8 +1,8 @@
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { createHash } from "node:crypto";
-import { loadOhEnv } from "../../env.ts";
-import { parseRule, type ParsedRule, type Priority } from "../../shared/frontmatter.ts";
+import { loadOhEnv } from "../../env";
+import { parseRule, type ParsedRule, type Priority } from "../../shared/frontmatter";
 
 function contextRoot(): string {
   return loadOhEnv().CONTEXT_DIR;

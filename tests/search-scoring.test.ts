@@ -1,6 +1,6 @@
 import { test, expect, describe } from "bun:test";
-import { score, rankAndFilter } from "../src/skills/search/scoring.ts";
-import type { Knowledge } from "../src/skills/search/registry.ts";
+import { score, rankAndFilter } from "../src/skills/search/scoring";
+import type { Knowledge } from "../src/skills/search/registry";
 
 function fakeKnowledge(overrides: Partial<Knowledge["meta"]> & { name?: string }): Knowledge {
   const name = overrides.name ?? "test";

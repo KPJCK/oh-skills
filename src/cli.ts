@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // src/cli.ts
-import { error } from "./shared/ui.ts";
+import { error } from "./shared/ui";
 
 type SkillRunner = {
   run: (args: string[]) => Promise<void>;

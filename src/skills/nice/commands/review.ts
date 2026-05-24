@@ -1,16 +1,16 @@
 import { $ } from "bun";
 import os from "node:os";
-import { detectRepo } from "../repo.ts";
-import { planPaths, nextReviewRound, listPlans } from "../plans.ts";
-import { pickPlan } from "../picker.ts";
-import { select, input } from "../prompts.ts";
-import { buildPlanPickerAskPayload, buildScopePickerAskPayload } from "../ask-ui.ts";
-import { step, success, info, hint, error, c } from "../ui.ts";
-import { banner as sharedBanner } from "../../../shared/banner.ts";
-import { GRADIENTS } from "../../../shared/banner-presets.ts";
-import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action.ts";
-import { loadOhEnv } from "../../../env.ts";
-import { reviewPrompts } from "../prompts.ts";
+import { detectRepo } from "../repo";
+import { planPaths, nextReviewRound, listPlans } from "../plans";
+import { pickPlan } from "../picker";
+import { select, input } from "../prompts";
+import { buildPlanPickerAskPayload, buildScopePickerAskPayload } from "../ask-ui";
+import { step, success, info, hint, error, c } from "../ui";
+import { banner as sharedBanner } from "../../../shared/banner";
+import { GRADIENTS } from "../../../shared/banner-presets";
+import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action";
+import { loadOhEnv } from "../../../env";
+import { reviewPrompts } from "../prompts";
 
 type ScopeKind = "branch" | "uncommitted" | "last-n";
 

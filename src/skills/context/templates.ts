@@ -1,10 +1,10 @@
 import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { $ } from "bun";
-import { loadOhEnv } from "../../env.ts";
-import { loadRules, type Rule } from "./registry.ts";
-import { parseRule } from "../../shared/frontmatter.ts";
-import { estimateTokens } from "./tokens.ts";
+import { loadOhEnv } from "../../env";
+import { loadRules, type Rule } from "./registry";
+import { parseRule } from "../../shared/frontmatter";
+import { estimateTokens } from "./tokens";
 
 function templateRoot(): string {
   return loadOhEnv().CONTEXT_TEMPLATE_DIR;

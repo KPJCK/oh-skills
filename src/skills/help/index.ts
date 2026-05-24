@@ -1,9 +1,9 @@
 // src/skills/help/index.ts
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { loadOhEnv, type OhEnv } from "../../env.ts";
-import { banner } from "../../shared/banner.ts";
-import { GRADIENTS } from "../../shared/banner-presets.ts";
+import { loadOhEnv, type OhEnv } from "../../env";
+import { banner } from "../../shared/banner";
+import { GRADIENTS } from "../../shared/banner-presets";
 
 function pluginRoot(): string {
   return process.env.CLAUDE_PLUGIN_ROOT ?? path.resolve(import.meta.dir, "../../..");

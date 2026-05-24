@@ -1,5 +1,5 @@
 import { test, expect, describe } from "bun:test";
-import { parseRule, parseKnowledge, priorityRank, todayISO } from "../src/shared/frontmatter.ts";
+import { parseRule, parseKnowledge, priorityRank, todayISO } from "../src/shared/frontmatter";
 
 // ---------------------------------------------------------------------------
 // parseRule (ported from oh-context/tests/frontmatter.test.ts)

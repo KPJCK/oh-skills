@@ -1,8 +1,8 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import { listDrafts, listAllRuleMeta, type DraftInfo, type RuleMetaInfo } from "../registry.ts";
-import { loadOhEnv } from "../../../env.ts";
-import { info, error, success } from "../../../shared/ui.ts";
+import { listDrafts, listAllRuleMeta, type DraftInfo, type RuleMetaInfo } from "../registry";
+import { loadOhEnv } from "../../../env";
+import { info, error, success } from "../../../shared/ui";
 
 type Flags = {
   all: boolean;

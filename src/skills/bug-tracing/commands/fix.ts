@@ -6,13 +6,13 @@
 // --phase=trace           → self_act detective prompt + terse report
 
 import os from "node:os";
-import { banner as sharedBanner } from "../../../shared/banner.ts";
-import { emit, buildAgentAction, type NextAction } from "../../../shared/next-action.ts";
-import { step, hint } from "../../../shared/ui.ts";
-import { loadOhEnv } from "../../../env.ts";
-import { detectRepo } from "../../nice/repo.ts";
-import { slugFromDescription, resolveTracePaths, tracePaths } from "../paths.ts";
-import { fixPrompts, tracePrompts } from "../prompts.ts";
+import { banner as sharedBanner } from "../../../shared/banner";
+import { emit, buildAgentAction, type NextAction } from "../../../shared/next-action";
+import { step, hint } from "../../../shared/ui";
+import { loadOhEnv } from "../../../env";
+import { detectRepo } from "../../nice/repo";
+import { slugFromDescription, resolveTracePaths, tracePaths } from "../paths";
+import { fixPrompts, tracePrompts } from "../prompts";
 
 const CLI = "${CLAUDE_PLUGIN_ROOT}/src/cli.ts";
 

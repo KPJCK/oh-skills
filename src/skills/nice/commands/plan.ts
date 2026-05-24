@@ -1,14 +1,14 @@
 import { rename, readFile } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
-import { detectRepo } from "../repo.ts";
-import { createPlanDir, planPaths } from "../plans.ts";
-import { promptSlug, asSlug } from "../prompts.ts";
-import { step, success, info, hint, box } from "../ui.ts";
-import { banner as sharedBanner } from "../../../shared/banner.ts";
-import { GRADIENTS } from "../../../shared/banner-presets.ts";
-import { emit, buildAgentAction, type NextAction } from "../../../shared/next-action.ts";
-import { loadOhEnv } from "../../../env.ts";
+import { detectRepo } from "../repo";
+import { createPlanDir, planPaths } from "../plans";
+import { promptSlug, asSlug } from "../prompts";
+import { step, success, info, hint, box } from "../ui";
+import { banner as sharedBanner } from "../../../shared/banner";
+import { GRADIENTS } from "../../../shared/banner-presets";
+import { emit, buildAgentAction, type NextAction } from "../../../shared/next-action";
+import { loadOhEnv } from "../../../env";
 import {
   parsePlan,
   validateUniqueIds,
@@ -19,7 +19,7 @@ import {
   validateModifyEdgesAreOrdered,
   nextReadySet,
   type Dag,
-} from "../dag.ts";
+} from "../dag";
 
 const CLI = "${CLAUDE_PLUGIN_ROOT}/src/cli.ts";
 

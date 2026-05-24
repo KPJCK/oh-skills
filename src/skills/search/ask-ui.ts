@@ -3,8 +3,8 @@
 // Topic picker for `add`. Single-select with "(+ new topic)" sentinel.
 // Same constraints as elsewhere: 1-4 questions × 2-4 options = 16 max.
 
-import { bucketOptions } from "../../shared/ask-ui.ts";
-import type { AskQuestion, AskPayload } from "../../shared/ask-ui.ts";
+import { bucketOptions } from "../../shared/ask-ui";
+import type { AskQuestion, AskPayload } from "../../shared/ask-ui";
 
 const MAX_OPTIONS_PER_QUESTION = 4;
 const MIN_OPTIONS_PER_QUESTION = 2;

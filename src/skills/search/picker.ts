@@ -1,7 +1,7 @@
 // src/skills/search/picker.ts
 import { select } from "@inquirer/prompts";
-import { listTopics } from "./registry.ts";
-import { promptTopic } from "./prompts.ts";
+import { listTopics } from "./registry";
+import { promptTopic } from "./prompts";
 
 const NEW_TOPIC_SENTINEL = "__new__";
 

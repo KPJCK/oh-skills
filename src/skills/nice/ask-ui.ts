@@ -7,7 +7,7 @@
  *   - buildScopePickerAskPayload (fixed 3-option scope picker for review)
  */
 
-import type { PlanInfo } from "./plans.ts";
+import type { PlanInfo } from "./plans";
 
 export type AskOption = {
   label: string;

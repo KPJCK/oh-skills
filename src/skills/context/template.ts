@@ -1,4 +1,4 @@
-import type { Priority } from "../../shared/frontmatter.ts";
+import type { Priority } from "../../shared/frontmatter";
 
 export function slugify(title: string): string {
   return title

@@ -1,9 +1,9 @@
 import path from "node:path";
-import { loadOhEnv } from "../../env.ts";
-import { priorityRank } from "../../shared/frontmatter.ts";
-import { info } from "../../shared/ui.ts";
-import { emit } from "../../shared/next-action.ts";
-import type { Rule } from "./registry.ts";
+import { loadOhEnv } from "../../env";
+import { priorityRank } from "../../shared/frontmatter";
+import { info } from "../../shared/ui";
+import { emit } from "../../shared/next-action";
+import type { Rule } from "./registry";
 
 /**
  * Build the parallel-Read manifest prompt for a list of rules.

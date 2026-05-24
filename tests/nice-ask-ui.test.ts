@@ -3,8 +3,8 @@ import {
   buildPlanPickerAskPayload,
   buildScopePickerAskPayload,
   chunkBalanced,
-} from "../src/skills/nice/ask-ui.ts";
-import type { PlanInfo } from "../src/skills/nice/plans.ts";
+} from "../src/skills/nice/ask-ui";
+import type { PlanInfo } from "../src/skills/nice/plans";
 
 function fakePlans(names: string[]): PlanInfo[] {
   return names.map((name) => ({

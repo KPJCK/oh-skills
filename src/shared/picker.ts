@@ -9,7 +9,7 @@
 
 import { checkbox, select, input } from "@inquirer/prompts";
 import { $ } from "bun";
-import { c } from "./ui.ts";
+import { c } from "./ui";
 
 // ---------------------------------------------------------------------------
 // Types

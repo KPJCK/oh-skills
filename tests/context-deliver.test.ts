@@ -2,8 +2,8 @@ import { describe, test, expect, beforeEach, afterEach, spyOn } from "bun:test";
 import os from "node:os";
 import path from "node:path";
 import { mkdtemp, rm, realpath, writeFile, mkdir } from "node:fs/promises";
-import { deliverPayload, buildPerRuleInstructions } from "../src/skills/context/paginate.ts";
-import type { Rule } from "../src/skills/context/registry.ts";
+import { deliverPayload, buildPerRuleInstructions } from "../src/skills/context/paginate";
+import type { Rule } from "../src/skills/context/registry";
 
 // ---------------------------------------------------------------------------
 // helpers

@@ -1,7 +1,7 @@
 // src/skills/search/commands/research.ts
-import { info, error } from "../../../shared/ui.ts";
-import { buildAgentAction, emit } from "../../../shared/next-action.ts";
-import { loadOhEnv } from "../../../env.ts";
+import { info, error } from "../../../shared/ui";
+import { buildAgentAction, emit } from "../../../shared/next-action";
+import { loadOhEnv } from "../../../env";
 
 export async function run(args: string[]): Promise<void> {
   const query = args.join(" ").trim();

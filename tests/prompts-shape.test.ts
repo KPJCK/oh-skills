@@ -5,7 +5,7 @@
 // regression guard during refactor.
 
 import { describe, test, expect } from "bun:test";
-import { goPrompts, reviewPrompts, fixPrompts, doPrompts } from "../src/skills/nice/prompts.ts";
+import { goPrompts, reviewPrompts, fixPrompts, doPrompts } from "../src/skills/nice/prompts";
 
 const GO_CTX = {
   planPath: "/plans/test/plan.md",

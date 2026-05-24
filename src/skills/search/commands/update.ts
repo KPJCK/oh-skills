@@ -1,8 +1,8 @@
 // src/skills/search/commands/update.ts
 import { readFile } from "node:fs/promises";
-import { resolve } from "../registry.ts";
-import { todayISO } from "../../../shared/frontmatter.ts";
-import { error, info, hint } from "../../../shared/ui.ts";
+import { resolve } from "../registry";
+import { todayISO } from "../../../shared/frontmatter";
+import { error, info, hint } from "../../../shared/ui";
 
 export async function run(args: string[]): Promise<void> {
   const target = args[0];

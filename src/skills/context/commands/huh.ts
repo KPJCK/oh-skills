@@ -1,8 +1,8 @@
 import { realpathSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { loadOhEnv } from "../../../env.ts";
-import type { CacheShape } from "../cache.ts";
+import { loadOhEnv } from "../../../env";
+import type { CacheShape } from "../cache";
 
 async function isLoadedForCwd(cwd: string): Promise<boolean> {
   const contextDir = loadOhEnv().CONTEXT_DIR;

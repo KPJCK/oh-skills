@@ -1,6 +1,6 @@
-import { clearCwd } from "../cache.ts";
-import { renderClearDirective } from "../render.ts";
-import { success } from "../../../shared/ui.ts";
+import { clearCwd } from "../cache";
+import { renderClearDirective } from "../render";
+import { success } from "../../../shared/ui";
 
 export async function run(_args: string[]): Promise<void> {
   const cwd = process.cwd();

@@ -1,12 +1,12 @@
 import path from "node:path";
-import { listFolders, loadRules } from "../registry.ts";
-import { loadOhEnv } from "../../../env.ts";
-import { pickFolders } from "../picker.ts";
-import { loadCwd, saveCwd } from "../cache.ts";
-import { renderEmpty } from "../render.ts";
-import { deliverPayload } from "../paginate.ts";
-import { buildLoadAskPayload } from "../ask-ui.ts";
-import { step, info, success, error } from "../../../shared/ui.ts";
+import { listFolders, loadRules } from "../registry";
+import { loadOhEnv } from "../../../env";
+import { pickFolders } from "../picker";
+import { loadCwd, saveCwd } from "../cache";
+import { renderEmpty } from "../render";
+import { deliverPayload } from "../paginate";
+import { buildLoadAskPayload } from "../ask-ui";
+import { step, info, success, error } from "../../../shared/ui";
 
 type Flags = {
   pick: string[] | null;

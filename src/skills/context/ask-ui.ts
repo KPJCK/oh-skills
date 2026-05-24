@@ -7,10 +7,10 @@
  * literals expanded at build time.
  */
 
-import type { FolderInfo, RuleMetaInfo } from "./registry.ts";
-import { chunkBalanced } from "../../shared/ask-ui.ts";
-import type { AskQuestion, AskPayload } from "../../shared/ask-ui.ts";
-import { formatTokens } from "./tokens.ts";
+import type { FolderInfo, RuleMetaInfo } from "./registry";
+import { chunkBalanced } from "../../shared/ask-ui";
+import type { AskQuestion, AskPayload } from "../../shared/ask-ui";
+import { formatTokens } from "./tokens";
 
 const MAX_OPTIONS_PER_QUESTION = 4;
 const MAX_QUESTIONS_PER_CALL = 4;

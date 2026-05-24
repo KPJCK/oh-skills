@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
-import { loadOhEnv } from "../../env.ts";
-import type { Priority } from "../../shared/frontmatter.ts";
+import { loadOhEnv } from "../../env";
+import type { Priority } from "../../shared/frontmatter";
 
 function cachePath(): string {
   return path.join(loadOhEnv().CONTEXT_DIR, ".cache", "picks.json");

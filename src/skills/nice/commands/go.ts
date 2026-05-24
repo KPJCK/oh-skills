@@ -1,15 +1,15 @@
 import { readFile } from "node:fs/promises";
-import { detectRepo } from "../repo.ts";
-import { planPaths, listPlans } from "../plans.ts";
-import { pickPlan } from "../picker.ts";
-import { asSlug } from "../prompts.ts";
-import { buildPlanPickerAskPayload } from "../ask-ui.ts";
-import { step, success, info, hint, error, box } from "../ui.ts";
-import { banner as sharedBanner } from "../../../shared/banner.ts";
-import { GRADIENTS } from "../../../shared/banner-presets.ts";
-import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action.ts";
-import { loadOhEnv } from "../../../env.ts";
-import { goPrompts, goParallelPrompts } from "../prompts.ts";
+import { detectRepo } from "../repo";
+import { planPaths, listPlans } from "../plans";
+import { pickPlan } from "../picker";
+import { asSlug } from "../prompts";
+import { buildPlanPickerAskPayload } from "../ask-ui";
+import { step, success, info, hint, error, box } from "../ui";
+import { banner as sharedBanner } from "../../../shared/banner";
+import { GRADIENTS } from "../../../shared/banner-presets";
+import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action";
+import { loadOhEnv } from "../../../env";
+import { goPrompts, goParallelPrompts } from "../prompts";
 import {
   parsePlan,
   validateUniqueIds,
@@ -21,8 +21,8 @@ import {
   validateReadySetFileSafety,
   nextReadySet,
   type Dag,
-} from "../dag.ts";
-import { loadState, saveState, clearState } from "../go-state.ts";
+} from "../dag";
+import { loadState, saveState, clearState } from "../go-state";
 
 type Phase = "init" | "wave-done";
 

@@ -3,7 +3,7 @@ import { describe, test, expect, beforeEach, afterEach } from "bun:test";
 import { mkdtemp, writeFile, rm, realpath } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { loadOhEnv } from "../src/env.ts";
+import { loadOhEnv } from "../src/env";
 
 describe("loadOhEnv", () => {
   let tmpHome: string;

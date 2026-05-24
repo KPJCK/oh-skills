@@ -1,6 +1,6 @@
 // src/skills/search/commands/list.ts
-import { listAll, ageDays, knowledgeRoot } from "../registry.ts";
-import { info } from "../../../shared/ui.ts";
+import { listAll, ageDays, knowledgeRoot } from "../registry";
+import { info } from "../../../shared/ui";
 
 type Flags = {
   topic: string | null;

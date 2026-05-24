@@ -3,7 +3,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { realpath } from "node:fs/promises";
-import { loadState, saveState, clearState } from "../src/skills/nice/go-state.ts";
+import { loadState, saveState, clearState } from "../src/skills/nice/go-state";
 
 let tmp: string;
 

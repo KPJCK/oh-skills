@@ -5,8 +5,8 @@
 
 import path from "node:path";
 import { mkdir } from "node:fs/promises";
-import { loadOhEnv } from "../../env.ts";
-import { detectRepo } from "../nice/repo.ts";
+import { loadOhEnv } from "../../env";
+import { detectRepo } from "../nice/repo";
 
 export type TracePaths = {
   dir: string;

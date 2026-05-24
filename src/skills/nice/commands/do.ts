@@ -10,13 +10,13 @@ import { unlink } from "node:fs/promises";
 import { readFileSync, existsSync } from "node:fs";
 import os from "node:os";
 import crypto from "node:crypto";
-import { detectRepo } from "../repo.ts";
-import { step, success, info, hint, error, c } from "../ui.ts";
-import { banner as sharedBanner } from "../../../shared/banner.ts";
-import { GRADIENTS } from "../../../shared/banner-presets.ts";
-import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action.ts";
-import { loadOhEnv } from "../../../env.ts";
-import { doPrompts } from "../prompts.ts";
+import { detectRepo } from "../repo";
+import { step, success, info, hint, error, c } from "../ui";
+import { banner as sharedBanner } from "../../../shared/banner";
+import { GRADIENTS } from "../../../shared/banner-presets";
+import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action";
+import { loadOhEnv } from "../../../env";
+import { doPrompts } from "../prompts";
 
 // silence unused
 void c;

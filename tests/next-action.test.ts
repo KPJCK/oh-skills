@@ -1,7 +1,7 @@
 // tests/next-action.test.ts
 import { describe, test, expect } from "bun:test";
-import { buildAgentAction, type NextAction } from "../src/shared/next-action.ts";
-import type { OhEnv } from "../src/env.ts";
+import { buildAgentAction, type NextAction } from "../src/shared/next-action";
+import type { OhEnv } from "../src/env";
 
 const baseEnv: OhEnv = {
   CONTEXT_DIR: "/tmp/c",

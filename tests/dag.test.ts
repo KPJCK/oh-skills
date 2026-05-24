@@ -11,7 +11,7 @@ import {
   validateModifyEdgesAreOrdered,
   nextReadySet,
   validateReadySetFileSafety,
-} from "../src/skills/nice/dag.ts";
+} from "../src/skills/nice/dag";
 
 const FIXTURES = path.join(import.meta.dir, "fixtures", "plans");
 

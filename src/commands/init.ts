@@ -2,8 +2,8 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import os from "node:os";
-import { emit } from "../shared/next-action.ts";
-import { ok } from "../shared/ui.ts";
+import { emit } from "../shared/next-action";
+import { ok } from "../shared/ui";
 
 function pluginRoot(): string {
   return process.env.CLAUDE_PLUGIN_ROOT ?? path.resolve(import.meta.dir, "../..");

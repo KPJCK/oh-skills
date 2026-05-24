@@ -1,14 +1,14 @@
 import path from "node:path";
 import { writeFile } from "node:fs/promises";
-import { listFolders, ensureFolderExists, fileExists } from "../registry.ts";
-import { loadOhEnv } from "../../../env.ts";
-import { pickFolderForAdd } from "../picker.ts";
+import { listFolders, ensureFolderExists, fileExists } from "../registry";
+import { loadOhEnv } from "../../../env";
+import { pickFolderForAdd } from "../picker";
 import { input, select, confirm } from "@inquirer/prompts";
-import { scaffoldRule, slugify } from "../template.ts";
-import { openInEditor } from "../editor.ts";
-import { buildAddFolderAskPayload } from "../ask-ui.ts";
-import { step, success, info, hint, error } from "../../../shared/ui.ts";
-import type { Priority } from "../../../shared/frontmatter.ts";
+import { scaffoldRule, slugify } from "../template";
+import { openInEditor } from "../editor";
+import { buildAddFolderAskPayload } from "../ask-ui";
+import { step, success, info, hint, error } from "../../../shared/ui";
+import type { Priority } from "../../../shared/frontmatter";
 
 type Flags = {
   folder: string | null;

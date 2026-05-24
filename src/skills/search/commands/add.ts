@@ -1,12 +1,12 @@
 // src/skills/search/commands/add.ts
 import path from "node:path";
 import { writeFile, mkdir } from "node:fs/promises";
-import { ensureTopicDir, fileExists, knowledgeRoot, listTopics } from "../registry.ts";
-import { pickTopic } from "../picker.ts";
-import { buildAddTopicAskPayload } from "../ask-ui.ts";
-import { input, select, confirm, promptSlug, isValidSlug, isValidTopic } from "../prompts.ts";
-import { scaffoldKnowledge, slugify } from "../template.ts";
-import { step, success, info, hint, error } from "../../../shared/ui.ts";
+import { ensureTopicDir, fileExists, knowledgeRoot, listTopics } from "../registry";
+import { pickTopic } from "../picker";
+import { buildAddTopicAskPayload } from "../ask-ui";
+import { input, select, confirm, promptSlug, isValidSlug, isValidTopic } from "../prompts";
+import { scaffoldKnowledge, slugify } from "../template";
+import { step, success, info, hint, error } from "../../../shared/ui";
 
 type Flags = {
   name: string | null;

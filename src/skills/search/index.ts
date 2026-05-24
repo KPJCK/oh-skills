@@ -1,7 +1,7 @@
 // src/skills/search/index.ts
-import { error } from "../../shared/ui.ts";
-import { banner } from "../../shared/banner.ts";
-import { GRADIENTS } from "../../shared/banner-presets.ts";
+import { error } from "../../shared/ui";
+import { banner } from "../../shared/banner";
+import { GRADIENTS } from "../../shared/banner-presets";
 
 type Cmd = { run: (args: string[]) => Promise<void> };
 

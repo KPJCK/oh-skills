@@ -1,5 +1,5 @@
 // src/skills/bug-tracing/index.ts
-import { error } from "../../shared/ui.ts";
+import { error } from "../../shared/ui";
 
 type Cmd = { run: (args: string[]) => Promise<void> };
 

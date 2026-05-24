@@ -1,8 +1,8 @@
 import path from "node:path";
-import { loadOhEnv } from "../../env.ts";
-import { priorityRank } from "../../shared/frontmatter.ts";
-import type { Rule } from "./registry.ts";
-import type { LoadedRuleRef } from "./cache.ts";
+import { loadOhEnv } from "../../env";
+import { priorityRank } from "../../shared/frontmatter";
+import type { Rule } from "./registry";
+import type { LoadedRuleRef } from "./cache";
 
 /**
  * Full inject payload — printed to stdout, becomes part of the conversation.

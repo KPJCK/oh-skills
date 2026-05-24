@@ -1,8 +1,8 @@
 // src/skills/search/registry.ts
 import { readdir, readFile, stat, mkdir } from "node:fs/promises";
 import path from "node:path";
-import { parseKnowledge } from "../../shared/frontmatter.ts";
-import { loadOhEnv } from "../../env.ts";
+import { parseKnowledge } from "../../shared/frontmatter";
+import { loadOhEnv } from "../../env";
 
 export function knowledgeRoot(): string {
   return loadOhEnv().KNOWLEDGE_DIR;

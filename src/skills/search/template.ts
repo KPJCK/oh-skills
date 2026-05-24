@@ -1,5 +1,5 @@
 // src/skills/search/template.ts
-import { todayISO } from "../../shared/frontmatter.ts";
+import { todayISO } from "../../shared/frontmatter";
 
 export type ScaffoldOpts = {
   title: string;
