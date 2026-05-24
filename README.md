@@ -119,6 +119,12 @@ If you have a personal implementer/reviewer (e.g. registered as a sub-agent in C
 /oh-nice do "<one-shot request>"              → implement → review → fix without any plan artifacts
 ```
 
+### Parallel execution (DAG-driven)
+
+Plans authored via `/oh-nice plan` now include per-task `**Files:**` and `**Depends-on:**` annotations. When `/oh-nice go` sees these, it parses the plan into a dependency DAG, validates it (cycle detection, file-collision checks), and dispatches multiple coding agents concurrently for tasks whose dependencies are met. Concurrency is capped at 3 by default (override with `OH_NICE_MAX_PARALLEL`).
+
+Plans without DAG annotations fall back to the original single-agent sequential mode — no migration required.
+
 Use `do` for quick one-shot tasks that don't need a stored plan. It runs the same implement → review → fix loop but writes no artifacts under `PLAN_DIR`. Opt out of later phases with `--no-review` or `--no-fix`:
 
 ```

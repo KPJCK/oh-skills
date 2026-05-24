@@ -6,6 +6,9 @@ and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+- feat(nice): parallel-aware planning — plan.md tasks declare `**Files:**` + `**Depends-on:**`, `oh-nice go` parses a DAG, validates it (cycle detection, file-collision checks), and dispatches concurrent coding agents per ready DAG set (cap=3, configurable via `OH_NICE_MAX_PARALLEL`). Legacy plans without DAG fields fall back to single-agent sequential mode automatically.
+
 ### Fixed
 - `nice do` post-review phase: `hasUnchecked` regex now uses the `m` flag so findings preceded by a header are correctly detected instead of silently skipped.
 - `nice do` init phase: `--no-fix` flag is now forwarded in the re-run command emitted to main Claude, so the post-implement phase honours the user's explicit opt-out.
