@@ -59,7 +59,7 @@ export async function listAll(root?: string): Promise<Knowledge[]> {
       }
     }
   }
-  return out.sort((a, b) => a.rel.localeCompare(b.rel));
+  return out.toSorted((a, b) => a.rel.localeCompare(b.rel));
 }
 
 async function loadOne(
@@ -127,7 +127,7 @@ export async function listTopics(root?: string): Promise<string[]> {
     return entries
       .filter((e) => e.isDirectory() && !SKIP_DIRS.has(e.name))
       .map((e) => e.name)
-      .sort();
+      .toSorted();
   } catch {
     return [];
   }

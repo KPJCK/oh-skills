@@ -30,7 +30,7 @@ export async function run(args: string[]): Promise<void> {
   hint(`path: ${k.absPath}`);
 
   const content = await readFile(k.absPath, "utf-8");
-  const today_ = todayISO();
+  const today = todayISO();
 
   const lines: string[] = [];
   lines.push(`## Knowledge update — \`${k.rel}\``);
@@ -48,7 +48,7 @@ export async function run(args: string[]): Promise<void> {
   );
   lines.push(`2. Use your **Edit tool** to apply the change directly at:`);
   lines.push(`   \`${k.absPath}\``);
-  lines.push(`3. **Update the \`updated:\` field** in frontmatter to today's date: \`${today_}\``);
+  lines.push(`3. **Update the \`updated:\` field** in frontmatter to today's date: \`${today}\``);
   lines.push(
     `4. Preserve the rest of the frontmatter shape (\`title\`, \`summary\`, \`topic\`, \`tags\`, \`query\`, \`sources\`, \`created\`).`,
   );

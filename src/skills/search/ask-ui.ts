@@ -47,21 +47,24 @@ export function buildAddTopicAskPayload(topics: readonly string[]): AskPayload {
 
   const chunks = bucketOptions([...topics]);
   // Append sentinel to last chunk (or new chunk if last is full)
-  const lastChunk = chunks[chunks.length - 1]!;
+  const lastChunk = chunks[chunks.length - 1];
+  if (!lastChunk) throw new Error("bucketOptions returned empty array for non-empty topics");
   if (lastChunk.length < MAX_OPTIONS_PER_QUESTION) {
     lastChunk.push(NEW_TOPIC_SENTINEL);
   } else {
-    const borrowed = lastChunk.pop()!;
+    const borrowed = lastChunk.pop();
+    if (borrowed === undefined) throw new Error("unexpected empty chunk");
     chunks.push([borrowed, NEW_TOPIC_SENTINEL]);
   }
 
   // Ensure last chunk satisfies MIN_OPTIONS_PER_QUESTION after sentinel append
   while (chunks.length > 1) {
-    const last = chunks[chunks.length - 1]!;
-    if (last.length >= MIN_OPTIONS_PER_QUESTION) break;
-    const donor = chunks[chunks.length - 2]!;
-    if (donor.length <= MIN_OPTIONS_PER_QUESTION) break;
-    last.unshift(donor.pop()!);
+    const last = chunks[chunks.length - 1];
+    if (!last || last.length >= MIN_OPTIONS_PER_QUESTION) break;
+    const donor = chunks[chunks.length - 2];
+    if (!donor || donor.length <= MIN_OPTIONS_PER_QUESTION) break;
+    const item = donor.pop();
+    if (item !== undefined) last.unshift(item);
   }
 
   const questions: AskQuestion[] = chunks.map((chunk, idx) => ({

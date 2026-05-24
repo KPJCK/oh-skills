@@ -9,7 +9,8 @@ type Flags = {
 function parseFlags(args: string[]): Flags {
   const flags: Flags = { topic: null };
   for (let i = 0; i < args.length; i++) {
-    const a = args[i]!;
+    const a = args[i];
+    if (a === undefined) continue;
     if (a === "--topic") flags.topic = args[++i] ?? null;
   }
   return flags;
@@ -50,7 +51,7 @@ export async function run(args: string[]): Promise<void> {
   lines.push("");
   lines.push("| Knowledge | Topic | Shape | Sources | Age | Path |");
   lines.push("|:---|:---|:---:|---:|---:|:---|");
-  for (const [topic, items] of [...byTopic.entries()].sort()) {
+  for (const [topic, items] of [...byTopic.entries()].toSorted()) {
     for (const k of items) {
       const days = await ageDays(k.meta.updated);
       const ageStr = days === 0 ? "today" : days === 1 ? "1d" : `${days}d`;

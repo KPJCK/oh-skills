@@ -77,6 +77,6 @@ export function rankAndFilter(
   return knowledges
     .map((k) => ({ knowledge: k, score: score(query, k) }))
     .filter((r) => r.score >= threshold)
-    .sort((a, b) => b.score - a.score)
+    .toSorted((a, b) => b.score - a.score)
     .slice(0, limit);
 }

@@ -59,7 +59,7 @@ function renderListBlock(items: readonly string[]): string[] {
 
 function quoteIfNeeded(s: string): string {
   // YAML-safe: quote if it contains : # [ ] { } , & * ! | > ' " % @ ` or starts with -
-  return /[:#\[\]{},&*!|>'"%@`]|^-/.test(s) ? `"${s.replace(/"/g, '\\"')}"` : s;
+  return /[:#[\]{},&*!|>'"%@`]|^-/.test(s) ? `"${s.replace(/"/g, '\\"')}"` : s;
 }
 
 export function slugify(title: string): string {

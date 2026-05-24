@@ -41,7 +41,8 @@ function parseFlags(args: string[]): Flags {
     emitAskJson: false,
   };
   for (let i = 0; i < args.length; i++) {
-    const a = args[i]!;
+    const a = args[i];
+    if (a === undefined) continue;
     if (!a.startsWith("--") && flags.name === null) {
       flags.name = a;
       continue;
@@ -131,10 +132,13 @@ async function runProgrammatic(flags: Flags): Promise<void> {
     process.exit(3);
   }
 
-  const name = flags.name!;
-  const topic = flags.topic!;
-  const title = flags.title!;
-  const summary = flags.summary!;
+  if (!flags.name || !flags.topic || !flags.title || !flags.summary) {
+    throw new Error("runProgrammatic called without required flags (name/topic/title/summary)");
+  }
+  const name = flags.name;
+  const topic = flags.topic;
+  const title = flags.title;
+  const summary = flags.summary;;
 
   if (!isValidSlug(name)) throw new Error(`invalid name: ${name}`);
   if (!isValidTopic(topic)) throw new Error(`invalid topic: ${topic}`);
@@ -148,7 +152,8 @@ async function runProgrammatic(flags: Flags): Promise<void> {
     body = await readStdin();
   } else {
     const { readFile } = await import("node:fs/promises");
-    body = await readFile(flags.bodyFile!, "utf-8");
+    if (!flags.bodyFile) throw new Error("--body-file required when --body-stdin not set");
+    body = await readFile(flags.bodyFile, "utf-8");
   }
 
   const { absPath, rel } = await writeKnowledge({

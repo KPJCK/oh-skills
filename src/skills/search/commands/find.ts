@@ -42,7 +42,8 @@ export async function run(args: string[]): Promise<void> {
     );
   }
   lines.push("");
-  lines.push(`Top match: ${escapeMd(matches[0]!.knowledge.meta.summary)}`);
+  const topMatch = matches[0];
+  if (topMatch) lines.push(`Top match: ${escapeMd(topMatch.knowledge.meta.summary)}`);
 
   process.stdout.write(lines.join("\n") + "\n");
 }
