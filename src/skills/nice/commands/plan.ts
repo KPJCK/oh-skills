@@ -9,6 +9,17 @@ import { banner as sharedBanner } from "../../../shared/banner.ts";
 import { GRADIENTS } from "../../../shared/banner-presets.ts";
 import { emit, buildAgentAction, type NextAction } from "../../../shared/next-action.ts";
 import { loadOhEnv } from "../../../env.ts";
+import {
+  parsePlan,
+  validateUniqueIds,
+  validateMissingFields,
+  validateDependsOnExist,
+  validateNoCycle,
+  validateNoCreateCollisions,
+  validateModifyEdgesAreOrdered,
+  nextReadySet,
+  type Dag,
+} from "../dag.ts";
 
 const CLI = "${CLAUDE_PLUGIN_ROOT}/src/cli.ts";
 
@@ -93,6 +104,12 @@ async function phaseInit(rest: string[]): Promise<void> {
         `Save the resulting design spec to: ${tmpSpec}`,
         `Do NOT use the default save path (docs/superpowers/specs/...) — use the path above so 'oh-nice plan' can move it into the plan dir.`,
         `Run the full Socratic interview — do not truncate.`,
+        ``,
+        `After the design is approved by the user, append a final \`## Parallelizable decomposition\` section to spec.md.`,
+        `List the independent components ("tracks") that could be built by separate agents.`,
+        `For each track: a one-line goal, the contract it exposes to other tracks (types, function signatures, file paths it owns), and any tracks it depends on.`,
+        `The goal of this section is to make the boundaries explicit so the plan-writer can build a wide-fan-out DAG.`,
+        `If the feature is genuinely sequential (no good cuts), say so and explain why — don't invent fake parallelism.`,
       ].join("\n"),
     },
     {
@@ -305,6 +322,26 @@ async function phaseWritePlan(rest: string[]): Promise<void> {
         `Save the plan to: ${paths.planMd}`,
         `Do NOT use the default save path (docs/superpowers/plans/...) — use the path above.`,
         `Use bite-sized task granularity per superpowers convention.`,
+        ``,
+        `Read the \`## Parallelizable decomposition\` section in spec.md.`,
+        `Use the tracks as a guide for organizing tasks: tasks within a track are usually sequential to each other;`,
+        `tasks across tracks should be parallel-safe unless they touch the same file.`,
+        `Aim for maximum parallel width — if you find yourself writing many sequential tasks,`,
+        `ask whether they could be reorganized into independent ones.`,
+        ``,
+        `Every task heading MUST be \`### Task <ID>: <name>\` where \`<ID>\` is a stable kebab-case slug (e.g. \`parser-tokenize\`, NOT a number).`,
+        `Immediately after the heading and before the steps, every task MUST include:`,
+        `- \`**Files:**\` — bullet list of \`Create: path\` and \`Modify: path\` lines. Every file the task will touch.`,
+        `- \`**Depends-on:**\` — bullet list of task IDs that must complete first, or the literal \`none\`.`,
+        ``,
+        `Two tasks may share a \`Modify:\` file ONLY if one declares the other in its \`Depends-on:\` (i.e., they're forced sequential).`,
+        `Two tasks may NOT share a \`Create:\` file — split the file or merge the tasks.`,
+        ``,
+        `When you reach the Self-Review step, additionally check:`,
+        `- Does every task have \`**Files:**\` and \`**Depends-on:**\`?`,
+        `- Do any two tasks \`Create:\` the same file?`,
+        `- If two tasks \`Modify:\` the same file, does one transitively depend on the other?`,
+        `- Are there any obvious parallel cuts you missed — sequential tasks that could become parallel by moving a file boundary?`,
       ].join("\n"),
     },
     {
@@ -336,6 +373,50 @@ async function phasePostPlan(rest: string[]): Promise<void> {
     subtitle: `${repo} · plan written`,
     gradient: GRADIENTS.nice,
   });
+
+  // DAG validation + wave summary (skip if plan has no DAG-shaped tasks)
+  const dag = parsePlan(planContent);
+  const isDagPlan = dag.nodes.size > 0;
+
+  if (isDagPlan) {
+    const errs: string[] = [
+      ...validateUniqueIds(dag),
+      ...validateMissingFields(dag),
+      ...validateDependsOnExist(dag),
+      ...validateNoCycle(dag),
+      ...validateNoCreateCollisions(dag),
+      ...validateModifyEdgesAreOrdered(dag),
+    ];
+    if (errs.length > 0) {
+      box(errs.map((e) => `• ${e}`).join("\n"), {
+        title: "DAG validation FAILED",
+        color: "red",
+      });
+      const actions: NextAction[] = [
+        {
+          type: "ask_user",
+          question: "Plan failed DAG validation. What now?",
+          options: [
+            "Re-run writing-plans (regenerate plan.md)",
+            "Fix manually then re-run /oh-nice plan --phase=post-plan",
+            "Continue anyway (sequential fallback in /oh-nice go)",
+          ],
+        },
+        {
+          type: "report",
+          message: [
+            `Re-run write-plan: bun ${CLI} nice plan --phase=write-plan ${shellQuote(repo)} ${shellQuote(slug)}`,
+            `Re-run post-plan after manual edits: bun ${CLI} nice plan --phase=post-plan ${shellQuote(repo)} ${shellQuote(slug)}`,
+          ].join("\n"),
+        },
+      ];
+      emit("nice", actions);
+      return;
+    }
+    const waveSummary = renderWaveSummary(dag);
+    box(waveSummary, { title: "Wave structure", color: "green" });
+  }
+
   box(summary, { title: "Plan summary", color: "magenta" });
 
   const actions: NextAction[] = [
@@ -417,6 +498,29 @@ export function buildResearchPrompt(opts: {
     ``,
     webResearchNote,
   ].join("\n");
+}
+
+function renderWaveSummary(dag: Dag): string {
+  const done = new Set<string>();
+  const lines: string[] = [];
+  let waveNum = 0;
+  let maxWidth = 0;
+  while (done.size < dag.nodes.size) {
+    const ready = nextReadySet(dag, done);
+    if (ready.length === 0) break; // shouldn't happen post-validation
+    waveNum++;
+    if (ready.length > maxWidth) maxWidth = ready.length;
+    const names = ready.map((n) => n.id).join(", ");
+    lines.push(`Wave ${waveNum} (${ready.length} task${ready.length === 1 ? "" : "s"}): ${names}`);
+    for (const n of ready) done.add(n.id);
+  }
+  lines.push(``);
+  lines.push(`Total tasks: ${dag.nodes.size}`);
+  lines.push(`Waves: ${waveNum}`);
+  lines.push(`Max parallel width: ${maxWidth}`);
+  const speedup = waveNum > 0 ? (dag.nodes.size / waveNum).toFixed(1) : "n/a";
+  lines.push(`Naive speedup vs sequential (tasks/waves): ~${speedup}x`);
+  return lines.join("\n");
 }
 
 function summarizePlan(content: string): string {
