@@ -4,7 +4,7 @@
 // Lives at <plan-dir>/.oh-nice/go-state.json — created on phase=init,
 // updated on each phase=wave-done, removed on all-complete or --reset.
 
-import { mkdir, readFile, writeFile, rm, stat } from "node:fs/promises";
+import { mkdir, readFile, writeFile, rm } from "node:fs/promises";
 import path from "node:path";
 
 const STATE_DIR = ".oh-nice";
@@ -44,11 +44,5 @@ export async function saveState(planDir: string, state: GoState): Promise<void> 
 }
 
 export async function clearState(planDir: string): Promise<void> {
-  const p = statePath(planDir);
-  try {
-    await stat(p);
-  } catch {
-    return;
-  }
-  await rm(p, { force: true });
+  await rm(statePath(planDir), { force: true });
 }

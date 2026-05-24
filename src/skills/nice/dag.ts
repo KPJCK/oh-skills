@@ -154,6 +154,7 @@ export function validateDependsOnExist(dag: Dag): string[] {
 export function validateNoCycle(dag: Dag): string[] {
   // Kahn's algorithm: repeatedly remove zero-indegree nodes.
   // If any node remains at the end, those nodes are in (or downstream of) a cycle.
+  // TODO: build reverse-adjacency map if plan sizes grow (current inner loop is O(N²))
   const indegree = new Map<string, number>();
   for (const id of dag.nodes.keys()) indegree.set(id, 0);
   for (const node of dag.nodes.values()) {

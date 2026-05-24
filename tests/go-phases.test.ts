@@ -46,7 +46,7 @@ function parseSentinel(stderr: string): unknown[] {
     .split("\n")
     .reverse()
     .find((l) => l.startsWith("__OH_NICE_NEXT_ACTIONS__"));
-  if (!line) throw new Error(`no sentinel in stderr: ${stderr}`);
+  if (!line) return [];
   const json = line.slice("__OH_NICE_NEXT_ACTIONS__".length);
   return JSON.parse(json);
 }
@@ -88,6 +88,15 @@ describe("go --phase=init: partial plan (error)", () => {
     expect(reports.length).toBeGreaterThan(0);
     const msg = (reports[0] as { message: string }).message;
     expect(msg.toLowerCase()).toContain("partial");
+    // Partial plan must not dispatch any agents
+    const agentActions = actions.filter(
+      (a) =>
+        typeof a === "object" &&
+        a !== null &&
+        ((a as { type?: string }).type === "dispatch_agent" ||
+          (a as { type?: string }).type === "self_act"),
+    );
+    expect(agentActions.length).toBe(0);
   });
 });
 

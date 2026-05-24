@@ -4,7 +4,7 @@ import { planPaths, listPlans } from "../plans.ts";
 import { pickPlan } from "../picker.ts";
 import { asSlug } from "../prompts.ts";
 import { buildPlanPickerAskPayload } from "../ask-ui.ts";
-import { step, success, info, hint, error, box, c } from "../ui.ts";
+import { step, success, info, hint, error, box } from "../ui.ts";
 import { banner as sharedBanner } from "../../../shared/banner.ts";
 import { GRADIENTS } from "../../../shared/banner-presets.ts";
 import {
@@ -113,7 +113,8 @@ export async function run(args: string[]): Promise<void> {
     return;
   }
   if (shape === "partial") {
-    await reportPartial(planContent);
+    const taskishHeadings = (planContent.match(/^#{2,3}\s+Task\s+/gm) ?? []).length;
+    await reportPartial(dag, taskishHeadings);
     process.exit(2);
   }
 
@@ -126,6 +127,33 @@ export async function run(args: string[]): Promise<void> {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
+
+// Classify plan shape then report partial-DAG details. Accepts the already-
+// computed dag and taskishHeadings to avoid re-parsing the plan content.
+async function reportPartial(dag: Dag, taskishHeadings: number): Promise<void> {
+  const missing = validateMissingFields(dag);
+  const unparsedCount = taskishHeadings - dag.nodes.size;
+  const reasons: string[] = [];
+  if (unparsedCount > 0) {
+    reasons.push(
+      `${unparsedCount} task heading(s) do not match the required \`### Task <id>:\` shape`,
+    );
+  }
+  for (const m of missing) reasons.push(m);
+  box(reasons.map((r) => `• ${r}`).join("\n"), {
+    title: "Partial DAG plan — cannot run in parallel mode",
+    color: "red",
+  });
+  emit("nice", [
+    {
+      type: "report",
+      message: [
+        `partial DAG plan: some tasks have Files/Depends-on, some don't.`,
+        `Fix the plan so ALL tasks have DAG fields, or remove DAG fields from all tasks for legacy sequential mode.`,
+      ].join("\n"),
+    },
+  ]);
+}
 
 async function resolveSlug(repo: string, slugArg: string | undefined): Promise<string | null> {
   step(1, 2, "pick plan");
@@ -178,41 +206,12 @@ function classifyPlan(content: string, dag: Dag): PlanShape {
   return "parallel";
 }
 
-async function reportPartial(content: string): Promise<void> {
-  const dag = parsePlan(content);
-  const missing = validateMissingFields(dag);
-  const taskishHeadings = (content.match(/^#{2,3}\s+Task\s+/gm) ?? []).length;
-  const unparsedCount = taskishHeadings - dag.nodes.size;
-  const reasons: string[] = [];
-  if (unparsedCount > 0) {
-    reasons.push(
-      `${unparsedCount} task heading(s) do not match the required \`### Task <id>:\` shape`,
-    );
-  }
-  for (const m of missing) reasons.push(m);
-  box(reasons.map((r) => `• ${r}`).join("\n"), {
-    title: "Partial DAG plan — cannot run in parallel mode",
-    color: "red",
-  });
-  emit("nice", [
-    {
-      type: "report",
-      message: [
-        `partial DAG plan: some tasks have Files/Depends-on, some don't.`,
-        `Fix the plan so ALL tasks have DAG fields, or remove DAG fields from all tasks for legacy sequential mode.`,
-      ].join("\n"),
-    },
-  ]);
-}
-
 async function dispatchLegacy(
   paths: { planMd: string; specMd: string; reviewMd: string },
   slug: string,
   repo: string,
   env: ReturnType<typeof loadOhEnv>,
 ): Promise<void> {
-  void repo;
-  void slug;
   step(2, 2, "dispatch implementer (sequential)");
   const ctx = {
     planPath: paths.planMd,
@@ -270,7 +269,7 @@ async function runInit(
   await saveState(paths.dir, { done: [], startedAt });
 
   step(2, 2, "dispatch initial wave (parallel)");
-  await dispatchWave(paths, slug, dag, env, new Set(), startedAt);
+  await dispatchWave(paths, slug, dag, env, new Set());
 }
 
 async function runWaveDone(
@@ -317,7 +316,7 @@ async function runWaveDone(
   }
 
   step(2, 2, "dispatch next wave (parallel)");
-  await dispatchWave(paths, slug, dag, env, merged, state.startedAt);
+  await dispatchWave(paths, slug, dag, env, merged);
 }
 
 async function dispatchWave(
@@ -326,11 +325,7 @@ async function dispatchWave(
   dag: Dag,
   env: ReturnType<typeof loadOhEnv>,
   done: Set<string>,
-  startedAt: string,
 ): Promise<void> {
-  void slug;
-  void startedAt;
-
   const ready = nextReadySet(dag, done);
   if (ready.length === 0) {
     error(
@@ -389,6 +384,7 @@ async function dispatchWave(
       `Dispatch the ${batch.length} agent action(s) above in parallel (single message, multiple Agent tool calls).`,
       `When all complete, re-run with their IDs:`,
       `  bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice go --phase=wave-done --slug ${slug} --done ${ids}`,
+      `(only the IDs just completed in this wave — historical state is loaded from the sidecar)`,
       `If any agent returned HALT, re-run with only the succeeded IDs (e.g. --done <succeeded>),`,
       `then handle the failed task separately (see plan / retry).`,
     ].join("\n"),
@@ -396,6 +392,3 @@ async function dispatchWave(
 
   emit("nice", actions);
 }
-
-// silence unused
-void c;
