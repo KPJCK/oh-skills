@@ -24,10 +24,16 @@ export type CacheShape = {
   [absCwd: string]: CwdEntry;
 };
 
+function isCacheShape(v: unknown): v is CacheShape {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
 async function readCache(): Promise<CacheShape> {
   try {
     const content = await readFile(cachePath(), "utf-8");
-    return JSON.parse(content) as CacheShape;
+    const parsed: unknown = JSON.parse(content);
+    if (!isCacheShape(parsed)) return {};
+    return parsed;
   } catch {
     return {};
   }

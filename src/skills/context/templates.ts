@@ -50,14 +50,16 @@ export async function readTemplate(name: string): Promise<Template> {
     throw new Error(`template not found: ${name} (looked at ${fp})`);
   }
   const raw = await readFile(fp, "utf-8");
-  const parsed = JSON.parse(raw) as Template;
+  const parsed: unknown = JSON.parse(raw);
   if (
-    typeof parsed.templateName !== "string" ||
-    !Array.isArray(parsed.context)
+    typeof parsed !== "object" ||
+    parsed === null ||
+    typeof (parsed as Record<string, unknown>).templateName !== "string" ||
+    !Array.isArray((parsed as Record<string, unknown>).context)
   ) {
     throw new Error(`malformed template at ${fp}`);
   }
-  return parsed;
+  return parsed as Template;
 }
 
 export async function writeTemplate(

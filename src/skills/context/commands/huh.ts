@@ -9,7 +9,11 @@ async function isLoadedForCwd(cwd: string): Promise<boolean> {
   const cachePath = path.join(contextDir, ".cache", "picks.json");
   let cache: CacheShape;
   try {
-    cache = JSON.parse(await readFile(cachePath, "utf-8")) as CacheShape;
+    const parsed: unknown = JSON.parse(await readFile(cachePath, "utf-8"));
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+      return false;
+    }
+    cache = parsed as CacheShape;
   } catch {
     return false;
   }

@@ -16,9 +16,15 @@ function getEncoder() {
   return encoder;
 }
 
+function isTokenCache(v: unknown): v is TokenCache {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
 async function readCache(): Promise<TokenCache> {
   try {
-    return JSON.parse(await readFile(cachePath(), "utf-8")) as TokenCache;
+    const parsed: unknown = JSON.parse(await readFile(cachePath(), "utf-8"));
+    if (!isTokenCache(parsed)) return {};
+    return parsed;
   } catch {
     return {};
   }
