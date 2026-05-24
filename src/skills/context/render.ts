@@ -10,7 +10,7 @@ import type { LoadedRuleRef } from "./cache.ts";
  */
 export function renderContext(rules: readonly Rule[]): string {
   const contextRoot = loadOhEnv().CONTEXT_DIR;
-  const sorted = [...rules].sort((a, b) => {
+  const sorted = [...rules].toSorted((a, b) => {
     const pr = priorityRank(a.priority) - priorityRank(b.priority);
     if (pr !== 0) return pr;
     return a.absPath.localeCompare(b.absPath);

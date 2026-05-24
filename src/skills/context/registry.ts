@@ -79,7 +79,7 @@ export async function loadRules(folders: readonly string[]): Promise<Rule[]> {
         parsed = parseRule(content);
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        throw new Error(`${folder}/${e.name}: ${msg}`);
+        throw new Error(`${folder}/${e.name}: ${msg}`, { cause: err });
       }
       const hash = createHash("sha1").update(content).digest("hex").slice(0, 8);
       rules.push({

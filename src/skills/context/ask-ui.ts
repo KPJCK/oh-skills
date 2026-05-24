@@ -33,7 +33,8 @@ export function buildLoadAskPayload(
   }
 
   if (folders.length === 1) {
-    const only = folders[0]!;
+    const only = folders[0];
+    if (!only) return { questions: [], next: "(no folders available — nothing to load)" };
     return {
       questions: [],
       next: `bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts context load --pick "${only.rel}"`,
@@ -81,7 +82,7 @@ function describeFolder(
   folderTokens: ReadonlyMap<string, number>,
 ): string {
   const ruleBit = `${f.ruleCount} rule${f.ruleCount === 1 ? "" : "s"}`;
-  const tokBit = folderTokens.has(f.rel) ? ` · ${formatTokens(folderTokens.get(f.rel)!)}` : "";
+  const tokBit = folderTokens.has(f.rel) ? ` · ${formatTokens(folderTokens.get(f.rel) ?? 0)}` : "";
   const lastBit = lastPicks.includes(f.rel) ? " · last loaded" : "";
   return `${ruleBit}${tokBit}${lastBit}`;
 }
@@ -129,13 +130,15 @@ export function buildAddFolderAskPayload(folders: readonly FolderInfo[]): AskPay
   // Chunk folders, reserve last slot of last chunk for sentinel
   const chunks = chunkBalanced([...folders]);
   // Append sentinel to last chunk (if room) or as its own chunk
-  const lastChunk = chunks[chunks.length - 1]!;
+  const lastChunk = chunks[chunks.length - 1];
+  if (!lastChunk) throw new Error("chunkBalanced returned empty chunks array");
   const sentinelFolder: FolderInfo = { rel: NEW_FOLDER_SENTINEL, ruleCount: 0 };
   if (lastChunk.length < MAX_OPTIONS_PER_QUESTION) {
     lastChunk.push(sentinelFolder);
   } else {
     // Add new chunk with sentinel + 1 borrowed from prev (to satisfy min 2)
-    const borrowed = lastChunk.pop()!;
+    const borrowed = lastChunk.pop();
+    if (!borrowed) throw new Error("unexpected empty chunk when borrowing for sentinel");
     chunks.push([borrowed, sentinelFolder]);
   }
 
@@ -174,7 +177,8 @@ export function buildAddTemplateAskPayload(
     return { questions: [], next: "(no rule files found — nothing to template)" };
   }
   if (rules.length === 1) {
-    const only = rules[0]!;
+    const only = rules[0];
+    if (!only) return { questions: [], next: "(no rule files found — nothing to template)" };
     return {
       questions: [],
       next: `bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts context add --template "${templateName}" --pick "${only.rel}"`,

@@ -37,7 +37,8 @@ function parseFlags(args: string[]): Flags {
     pick: null,
   };
   for (let i = 0; i < args.length; i++) {
-    const a = args[i]!;
+    const a = args[i];
+    if (a === undefined) break;
     switch (a) {
       case "--folder":
         flags.folder = args[++i] ?? null;
@@ -124,10 +125,13 @@ export async function run(args: string[]): Promise<void> {
 // ──────────────────────────────────────────────────────────────────────────────
 
 async function runProgrammatic(flags: Flags): Promise<void> {
-  const folder = flags.folder!;
-  const title = flags.title!.trim();
-  const description = flags.description!.trim();
-  const priority = flags.priority!;
+  if (!flags.folder || !flags.title || !flags.description || !flags.priority) {
+    throw new Error("runProgrammatic called without required flags");
+  }
+  const folder = flags.folder;
+  const title = flags.title.trim();
+  const description = flags.description.trim();
+  const priority = flags.priority;
 
   if (title.length < 3) throw new Error("--title must be at least 3 characters");
   if (description.length < 5) throw new Error("--description must be at least 5 characters");
@@ -147,8 +151,9 @@ async function runProgrammatic(flags: Flags): Promise<void> {
   if (flags.bodyStdin) {
     body = await readStdin();
   } else {
+    if (!flags.bodyFile) throw new Error("--body-file is required when --body-stdin is not set");
     const { readFile } = await import("node:fs/promises");
-    body = await readFile(flags.bodyFile!, "utf-8");
+    body = await readFile(flags.bodyFile, "utf-8");
   }
 
   // Build full file content. If body starts with `# `, use it as-is after frontmatter.

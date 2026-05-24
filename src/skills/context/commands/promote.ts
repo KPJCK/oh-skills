@@ -12,7 +12,8 @@ type Flags = {
 function parseFlags(args: string[]): Flags {
   const flags: Flags = { all: false, target: null };
   for (let i = 0; i < args.length; i++) {
-    const a = args[i]!;
+    const a = args[i];
+    if (a === undefined) break;
     if (a === "--all") flags.all = true;
     else if (a === "--target") flags.target = args[++i] ?? null;
     else throw new Error(`unknown flag: ${a}`);

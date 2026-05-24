@@ -18,7 +18,8 @@ type Flags = {
 function parseFlags(args: string[]): Flags {
   const flags: Flags = { pick: null, all: false, emitAskJson: false, template: null };
   for (let i = 0; i < args.length; i++) {
-    const a = args[i]!;
+    const a = args[i];
+    if (a === undefined) break;
     if (a === "--pick") {
       const raw = args[++i] ?? "";
       flags.pick = raw
