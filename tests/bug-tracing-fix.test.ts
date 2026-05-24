@@ -297,7 +297,7 @@ describe("bug-tracing fix phase=trace", () => {
 
 describe("slugFromDescription", () => {
   test("derives slug from words, kebab-case, max 6 words", async () => {
-    const { slugFromDescription } = await import("../src/skills/bug-tracing/paths.ts");
+    const { slugFromDescription } = await import("../src/skills/bug-tracing/paths");
     // "off-by-one in array loop breaks pagination"
     // hyphens → spaces → words: off, by, one, in, array, loop, breaks, pagination
     // first 6: off, by, one, in, array, loop → "off-by-one-in-array-loop"
@@ -307,21 +307,21 @@ describe("slugFromDescription", () => {
   });
 
   test("strips non-alphanumeric characters", async () => {
-    const { slugFromDescription } = await import("../src/skills/bug-tracing/paths.ts");
+    const { slugFromDescription } = await import("../src/skills/bug-tracing/paths");
     const slug = slugFromDescription("TypeError: cannot read properties of undefined");
     expect(slug).toMatch(/^[a-z0-9-]+$/);
     expect(slug).toContain("typeerror");
   });
 
   test("max 6 words", async () => {
-    const { slugFromDescription } = await import("../src/skills/bug-tracing/paths.ts");
+    const { slugFromDescription } = await import("../src/skills/bug-tracing/paths");
     const slug = slugFromDescription("one two three four five six seven eight");
     const wordCount = slug.split("-").length;
     expect(wordCount).toBeLessThanOrEqual(6);
   });
 
   test("fallback for empty or whitespace input", async () => {
-    const { slugFromDescription } = await import("../src/skills/bug-tracing/paths.ts");
+    const { slugFromDescription } = await import("../src/skills/bug-tracing/paths");
     expect(slugFromDescription("  ")).toBe("bug-fix");
     expect(slugFromDescription("")).toBe("bug-fix");
   });

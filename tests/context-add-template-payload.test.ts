@@ -46,9 +46,9 @@ describe("add --template ask-json payload", () => {
       path.join(tsFolder, "rule-y.md"),
       "---\ntitle: Y\ndescription: y rule\npriority: medium\n---\n\n# Y\n",
     );
-    const { buildAddTemplateAskPayload } = await import("../src/skills/context/ask-ui.ts");
-    const { listAllRuleMeta } = await import("../src/skills/context/registry.ts");
-    const { estimateTokens } = await import("../src/skills/context/tokens.ts");
+    const { buildAddTemplateAskPayload } = await import("../src/skills/context/ask-ui");
+    const { listAllRuleMeta } = await import("../src/skills/context/registry");
+    const { estimateTokens } = await import("../src/skills/context/tokens");
     const rules = await listAllRuleMeta();
     const tokens = new Map<string, number>();
     for (const r of rules) tokens.set(r.rel, await estimateTokens(r.absPath));
@@ -69,9 +69,9 @@ describe("add --template ask-json payload", () => {
       path.join(tsFolder, "rule-only.md"),
       "---\ntitle: Only\ndescription: x rule\npriority: medium\n---\n\n# Only\n",
     );
-    const { buildAddTemplateAskPayload } = await import("../src/skills/context/ask-ui.ts");
-    const { listAllRuleMeta } = await import("../src/skills/context/registry.ts");
-    const { estimateTokens } = await import("../src/skills/context/tokens.ts");
+    const { buildAddTemplateAskPayload } = await import("../src/skills/context/ask-ui");
+    const { listAllRuleMeta } = await import("../src/skills/context/registry");
+    const { estimateTokens } = await import("../src/skills/context/tokens");
     const rules = await listAllRuleMeta();
     const tokens = new Map<string, number>();
     for (const r of rules) tokens.set(r.rel, await estimateTokens(r.absPath));

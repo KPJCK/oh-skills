@@ -279,9 +279,9 @@ async function runInteractive(_flags: Flags): Promise<void> {
 // ──────────────────────────────────────────────────────────────────────────────
 
 async function runAddTemplateAskJson(name: string): Promise<void> {
-  const { listAllRuleMeta } = await import("../registry.ts");
-  const { estimateTokens } = await import("../tokens.ts");
-  const { buildAddTemplateAskPayload } = await import("../ask-ui.ts");
+  const { listAllRuleMeta } = await import("../registry");
+  const { estimateTokens } = await import("../tokens");
+  const { buildAddTemplateAskPayload } = await import("../ask-ui");
   const rules = await listAllRuleMeta();
   const tokens = new Map<string, number>();
   for (const r of rules) tokens.set(r.rel, await estimateTokens(r.absPath));
@@ -290,9 +290,9 @@ async function runAddTemplateAskJson(name: string): Promise<void> {
 }
 
 async function runAddTemplate(name: string, pick: string[], overwrite: boolean): Promise<void> {
-  const { writeTemplate, listTemplates } = await import("../templates.ts");
-  const { estimateTokens } = await import("../tokens.ts");
-  const { formatTokens } = await import("../tokens.ts");
+  const { writeTemplate, listTemplates } = await import("../templates");
+  const { estimateTokens } = await import("../tokens");
+  const { formatTokens } = await import("../tokens");
   if (pick.length === 0) {
     error("--pick must include at least one rule path");
     process.exit(2);

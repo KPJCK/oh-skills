@@ -61,7 +61,7 @@ function spawnCli(args: string[], extraEnv: Record<string, string> = {}): SpawnR
 
 describe("parseDoArgs", () => {
   test("defaults: phase=init, no request, no flags", async () => {
-    const { parseDoArgs } = await import("../src/skills/nice/commands/do.ts");
+    const { parseDoArgs } = await import("../src/skills/nice/commands/do");
     const args = parseDoArgs([]);
     expect(args.phase).toBe("init");
     expect(args.request).toBe("");
@@ -71,26 +71,26 @@ describe("parseDoArgs", () => {
   });
 
   test("positional args are joined as request", async () => {
-    const { parseDoArgs } = await import("../src/skills/nice/commands/do.ts");
+    const { parseDoArgs } = await import("../src/skills/nice/commands/do");
     const args = parseDoArgs(["add", "a", "comment"]);
     expect(args.phase).toBe("init");
     expect(args.request).toBe("add a comment");
   });
 
   test("--phase=post-implement sets phase correctly", async () => {
-    const { parseDoArgs } = await import("../src/skills/nice/commands/do.ts");
+    const { parseDoArgs } = await import("../src/skills/nice/commands/do");
     const args = parseDoArgs(["--phase=post-implement", "--request", "do the thing"]);
     expect(args.phase).toBe("post-implement");
     expect(args.request).toBe("do the thing");
   });
 
   test("--phase=post-review requires --review-tmp", async () => {
-    const { parseDoArgs } = await import("../src/skills/nice/commands/do.ts");
+    const { parseDoArgs } = await import("../src/skills/nice/commands/do");
     expect(() => parseDoArgs(["--phase=post-review", "--request", "x"])).toThrow(/--review-tmp/);
   });
 
   test("--phase=post-review with --review-tmp parses correctly", async () => {
-    const { parseDoArgs } = await import("../src/skills/nice/commands/do.ts");
+    const { parseDoArgs } = await import("../src/skills/nice/commands/do");
     const args = parseDoArgs([
       "--phase=post-review",
       "--request",
@@ -103,27 +103,27 @@ describe("parseDoArgs", () => {
   });
 
   test("--no-review sets noReview=true and noFix=true (implied)", async () => {
-    const { parseDoArgs } = await import("../src/skills/nice/commands/do.ts");
+    const { parseDoArgs } = await import("../src/skills/nice/commands/do");
     const args = parseDoArgs(["add a thing", "--no-review"]);
     expect(args.noReview).toBe(true);
     expect(args.noFix).toBe(true);
   });
 
   test("--no-fix sets noFix=true but not noReview", async () => {
-    const { parseDoArgs } = await import("../src/skills/nice/commands/do.ts");
+    const { parseDoArgs } = await import("../src/skills/nice/commands/do");
     const args = parseDoArgs(["--phase=post-implement", "--request", "x", "--no-fix"]);
     expect(args.noFix).toBe(true);
     expect(args.noReview).toBe(false);
   });
 
   test("--request flag value overrides positional args for non-init phases", async () => {
-    const { parseDoArgs } = await import("../src/skills/nice/commands/do.ts");
+    const { parseDoArgs } = await import("../src/skills/nice/commands/do");
     const args = parseDoArgs(["--phase=post-implement", "--request=the request"]);
     expect(args.request).toBe("the request");
   });
 
   test("throws on unknown flag", async () => {
-    const { parseDoArgs } = await import("../src/skills/nice/commands/do.ts");
+    const { parseDoArgs } = await import("../src/skills/nice/commands/do");
     expect(() => parseDoArgs(["--bogus-flag"])).toThrow(/unknown flag/i);
   });
 });

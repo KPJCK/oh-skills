@@ -54,7 +54,7 @@ describe("templates", () => {
   });
 
   test("writeTemplate then readTemplate round-trips", async () => {
-    const { writeTemplate, readTemplate } = await import("../src/skills/context/templates.ts");
+    const { writeTemplate, readTemplate } = await import("../src/skills/context/templates");
     await writeTemplate("alpha", ["ts/rule-x.md"]);
     const got = await readTemplate("alpha");
     expect(got.templateName).toBe("alpha");
@@ -65,13 +65,13 @@ describe("templates", () => {
   });
 
   test("writeTemplate refuses duplicate name without overwrite", async () => {
-    const { writeTemplate } = await import("../src/skills/context/templates.ts");
+    const { writeTemplate } = await import("../src/skills/context/templates");
     await writeTemplate("alpha", ["ts/rule-x.md"]);
     await expect(writeTemplate("alpha", ["ts/rule-x.md"])).rejects.toThrow(/exists/);
   });
 
   test("writeTemplate with overwrite=true replaces", async () => {
-    const { writeTemplate, readTemplate } = await import("../src/skills/context/templates.ts");
+    const { writeTemplate, readTemplate } = await import("../src/skills/context/templates");
     await writeTemplate("alpha", ["ts/rule-x.md"]);
     await writeTemplate("alpha", ["ts/rule-x.md"], { overwrite: true });
     const got = await readTemplate("alpha");
@@ -79,14 +79,14 @@ describe("templates", () => {
   });
 
   test("writeTemplate errors if a path does not resolve to a rule", async () => {
-    const { writeTemplate } = await import("../src/skills/context/templates.ts");
+    const { writeTemplate } = await import("../src/skills/context/templates");
     await expect(writeTemplate("bad", ["ts/rule-missing.md"])).rejects.toThrow(
       /missing|not.*found|no such/i,
     );
   });
 
   test("listTemplates returns metadata for each file", async () => {
-    const { writeTemplate, listTemplates } = await import("../src/skills/context/templates.ts");
+    const { writeTemplate, listTemplates } = await import("../src/skills/context/templates");
     await writeTemplate("alpha", ["ts/rule-x.md"]);
     const list = await listTemplates();
     expect(list).toHaveLength(1);
@@ -96,7 +96,7 @@ describe("templates", () => {
   });
 
   test("resolveTemplate returns full Rule objects", async () => {
-    const { writeTemplate, resolveTemplate } = await import("../src/skills/context/templates.ts");
+    const { writeTemplate, resolveTemplate } = await import("../src/skills/context/templates");
     await writeTemplate("alpha", ["ts/rule-x.md"]);
     const rules = await resolveTemplate("alpha");
     expect(rules).toHaveLength(1);
@@ -106,7 +106,7 @@ describe("templates", () => {
 
   test("deleteTemplate removes the file", async () => {
     const { writeTemplate, deleteTemplate, listTemplates } =
-      await import("../src/skills/context/templates.ts");
+      await import("../src/skills/context/templates");
     await writeTemplate("alpha", ["ts/rule-x.md"]);
     await deleteTemplate("alpha");
     const list = await listTemplates();

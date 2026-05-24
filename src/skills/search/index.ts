@@ -6,12 +6,12 @@ import { GRADIENTS } from "../../shared/banner-presets";
 type Cmd = { run: (args: string[]) => Promise<void> };
 
 const commands: Record<string, () => Promise<Cmd>> = {
-  find: () => import("./commands/find.ts"),
-  research: () => import("./commands/research.ts"),
-  add: () => import("./commands/add.ts"),
-  update: () => import("./commands/update.ts"),
-  delete: () => import("./commands/delete.ts"),
-  list: () => import("./commands/list.ts"),
+  find: () => import("./commands/find"),
+  research: () => import("./commands/research"),
+  add: () => import("./commands/add"),
+  update: () => import("./commands/update"),
+  delete: () => import("./commands/delete"),
+  list: () => import("./commands/list"),
 };
 
 export async function run(args: string[]): Promise<void> {

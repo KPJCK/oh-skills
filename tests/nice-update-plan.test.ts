@@ -73,7 +73,7 @@ describe("update-plan helpers", () => {
   });
 
   test("appendDatedSection adds a fresh dated H2 when none exists today", async () => {
-    const { appendDatedSection } = await import("../src/skills/nice/commands/update-plan.ts");
+    const { appendDatedSection } = await import("../src/skills/nice/commands/update-plan");
     const file = path.join(tmp, "spec.md");
     await writeFile(file, "# Spec\n\nOriginal body.\n");
     await appendDatedSection(file, "2026-05-18", "Some delta.\n");
@@ -85,7 +85,7 @@ describe("update-plan helpers", () => {
   });
 
   test("appendDatedSection adds a (2) suffix on same-day re-update", async () => {
-    const { appendDatedSection } = await import("../src/skills/nice/commands/update-plan.ts");
+    const { appendDatedSection } = await import("../src/skills/nice/commands/update-plan");
     const file = path.join(tmp, "spec.md");
     await writeFile(file, "# Spec\n\nOriginal.\n");
     await appendDatedSection(file, "2026-05-18", "First update.\n");
@@ -98,7 +98,7 @@ describe("update-plan helpers", () => {
   });
 
   test("appendDatedSection creates the file if missing", async () => {
-    const { appendDatedSection } = await import("../src/skills/nice/commands/update-plan.ts");
+    const { appendDatedSection } = await import("../src/skills/nice/commands/update-plan");
     const file = path.join(tmp, "spec.md");
     await appendDatedSection(file, "2026-05-18", "Brand new content.\n");
     const got = await readFile(file, "utf-8");

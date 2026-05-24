@@ -1,6 +1,6 @@
 ---
-description: Run an oh-skills meta-command (init / doctor / help)
-argument-hint: <init|doctor|help> [args...]
+description: Run an oh-skills meta-command (init / doctor / help / version)
+argument-hint: <init|doctor|help|version> [args...]
 ---
 
 # /oh
@@ -13,6 +13,7 @@ forwarded.
 | `init`     | Scaffold `.oh-env` (project or `~/.claude/.oh-env`)         |
 | `doctor`   | Sanity-check the installation, paths, and configured agents |
 | `help`     | Print the reference card (with your env values substituted) |
+| `version`  | Print the release version + short commit hash               |
 
 ## How to invoke
 

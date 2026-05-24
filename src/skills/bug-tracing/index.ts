@@ -7,7 +7,7 @@ const subcommands: { name: string; short: string; load: () => Promise<Cmd> }[] =
   {
     name: "fix",
     short: "Fix a bug + write forensic trace.md",
-    load: () => import("./commands/fix.ts"),
+    load: () => import("./commands/fix"),
   },
 ];
 
@@ -16,7 +16,7 @@ export async function run(args: string[]): Promise<void> {
   const rest = args.slice(1);
 
   if (!sub) {
-    const { emit } = await import("../../shared/next-action.ts");
+    const { emit } = await import("../../shared/next-action");
     emit("bug-tracing", [
       {
         type: "ask_user",

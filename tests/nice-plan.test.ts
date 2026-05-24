@@ -287,7 +287,7 @@ describe("plan post-brainstorm research opt-in", () => {
 
 describe("buildResearchPrompt", () => {
   test("knowledge mode: prompt mentions knowledge-only search", async () => {
-    const { buildResearchPrompt } = await import("../src/skills/nice/commands/plan.ts");
+    const { buildResearchPrompt } = await import("../src/skills/nice/commands/plan");
     const prompt = buildResearchPrompt({
       specPath: "/tmp/spec.md",
       source: "knowledge",
@@ -300,7 +300,7 @@ describe("buildResearchPrompt", () => {
   });
 
   test("online mode: prompt mentions WebSearch", async () => {
-    const { buildResearchPrompt } = await import("../src/skills/nice/commands/plan.ts");
+    const { buildResearchPrompt } = await import("../src/skills/nice/commands/plan");
     const prompt = buildResearchPrompt({
       specPath: "/tmp/spec.md",
       source: "online",
@@ -311,7 +311,7 @@ describe("buildResearchPrompt", () => {
   });
 
   test("auto mode: prompt mentions fallback to web", async () => {
-    const { buildResearchPrompt } = await import("../src/skills/nice/commands/plan.ts");
+    const { buildResearchPrompt } = await import("../src/skills/nice/commands/plan");
     const prompt = buildResearchPrompt({
       specPath: "/tmp/spec.md",
       source: "auto",
@@ -322,7 +322,7 @@ describe("buildResearchPrompt", () => {
   });
 
   test("isUpdatePlan=true: prompt does NOT create top-level Research heading when Update section exists", async () => {
-    const { buildResearchPrompt } = await import("../src/skills/nice/commands/plan.ts");
+    const { buildResearchPrompt } = await import("../src/skills/nice/commands/plan");
     const prompt = buildResearchPrompt({
       specPath: "/tmp/spec.md",
       source: "auto",

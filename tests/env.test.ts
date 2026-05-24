@@ -127,7 +127,7 @@ describe("loadOhEnv", () => {
   test("resolveAgent helper returns null for unset, string for set", async () => {
     await writeFile(path.join(tmpCwd, ".oh-env"), "CONTEXT_DIR=/tmp/c\nCODING_AGENT=mirai\n");
     const env = loadOhEnv();
-    const { resolveAgent } = await import("../src/env.ts");
+    const { resolveAgent } = await import("../src/env");
     expect(resolveAgent("coding", env)).toBe("mirai");
     expect(resolveAgent("review", env)).toBeNull();
   });

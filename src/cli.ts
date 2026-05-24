@@ -7,13 +7,14 @@ type SkillRunner = {
 };
 
 const skills: Record<string, () => Promise<SkillRunner>> = {
-  nice: () => import("./skills/nice/index.ts"),
-  "bug-tracing": () => import("./skills/bug-tracing/index.ts"),
-  context: () => import("./skills/context/index.ts"),
-  search: () => import("./skills/search/index.ts"),
-  doctor: () => import("./skills/doctor/index.ts"),
-  help: () => import("./skills/help/index.ts"),
-  init: () => import("./commands/init.ts"),
+  nice: () => import("./skills/nice/index"),
+  "bug-tracing": () => import("./skills/bug-tracing/index"),
+  context: () => import("./skills/context/index"),
+  search: () => import("./skills/search/index"),
+  doctor: () => import("./skills/doctor/index"),
+  help: () => import("./skills/help/index"),
+  init: () => import("./commands/init"),
+  version: () => import("./commands/version"),
 };
 
 async function main(): Promise<void> {
@@ -50,6 +51,7 @@ Skills:
   doctor        sanity-check the installation
   help          print the reference card
   init          scaffold .oh-env in this project (or ~/.claude/.oh-env)
+  version       print the release version + short commit hash
 
 `);
 }

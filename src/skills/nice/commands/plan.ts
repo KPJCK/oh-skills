@@ -164,7 +164,7 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
     info(`using --slug ${slug}`);
   } else {
     if (!process.stdin.isTTY) {
-      const { error } = await import("../ui.ts");
+      const { error } = await import("../ui");
       error(
         "post-brainstorm needs a slug — interactive prompt requires a TTY",
         `pass --slug <slug>. Example:\n         bun ${CLI} nice plan --phase=post-brainstorm ${specPath} ${JSON.stringify(request)} --slug add-auth-flow`,
@@ -228,19 +228,19 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
 
   const [repoArg, slugArg] = positional;
   if (!repoArg || !slugArg) {
-    const { error } = await import("../ui.ts");
+    const { error } = await import("../ui");
     error("research-go needs <repo> <slug> args");
     process.exit(2);
   }
 
   if (!sourceMode) {
-    const { error } = await import("../ui.ts");
+    const { error } = await import("../ui");
     error("research-go needs --source=<mode>", `valid values: ${VALID_SOURCES.join(", ")}`);
     process.exit(2);
   }
 
   if (!isSourceMode(sourceMode)) {
-    const { error } = await import("../ui.ts");
+    const { error } = await import("../ui");
     error(`unknown source mode: ${sourceMode}`, `valid values: ${VALID_SOURCES.join(", ")}`);
     process.exit(2);
   }

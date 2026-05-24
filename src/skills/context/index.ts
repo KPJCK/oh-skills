@@ -8,15 +8,15 @@ type SubRunner = {
 };
 
 const SUBS: Record<string, () => Promise<SubRunner>> = {
-  load: () => import("./commands/load.ts"),
-  list: () => import("./commands/list.ts"),
-  check: () => import("./commands/check.ts"),
-  add: () => import("./commands/add.ts"),
-  update: () => import("./commands/update.ts"),
-  promote: () => import("./commands/promote.ts"),
-  template: () => import("./commands/template.ts"),
-  clear: () => import("./commands/clear.ts"),
-  huh: () => import("./commands/huh.ts"),
+  load: () => import("./commands/load"),
+  list: () => import("./commands/list"),
+  check: () => import("./commands/check"),
+  add: () => import("./commands/add"),
+  update: () => import("./commands/update"),
+  promote: () => import("./commands/promote"),
+  template: () => import("./commands/template"),
+  clear: () => import("./commands/clear"),
+  huh: () => import("./commands/huh"),
 };
 
 export async function run(args: string[]): Promise<void> {

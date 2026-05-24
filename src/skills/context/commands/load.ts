@@ -52,7 +52,7 @@ export async function run(args: string[]): Promise<void> {
 
   // Template branch — resolves a saved preset directly, no folder picker needed.
   if (flags.template !== null) {
-    const { resolveTemplate } = await import("../templates.ts");
+    const { resolveTemplate } = await import("../templates");
     const rules = await resolveTemplate(flags.template);
     if (rules.length === 0) {
       process.stdout.write(
@@ -70,7 +70,7 @@ export async function run(args: string[]): Promise<void> {
         hash: r.hash,
       })),
     });
-    const { formatTokens, estimateTokens } = await import("../tokens.ts");
+    const { formatTokens, estimateTokens } = await import("../tokens");
     let total = 0;
     for (const r of rules) {
       try {
@@ -99,7 +99,7 @@ export async function run(args: string[]): Promise<void> {
   // AskUserQuestion, then re-invoke with --pick.
   if (flags.emitAskJson) {
     const prev = await loadCwd(cwd);
-    const { estimateTokens } = await import("../tokens.ts");
+    const { estimateTokens } = await import("../tokens");
     const folderTokens = new Map<string, number>();
     for (const f of folders) {
       try {
