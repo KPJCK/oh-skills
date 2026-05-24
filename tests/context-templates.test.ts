@@ -67,9 +67,7 @@ describe("templates", () => {
   test("writeTemplate refuses duplicate name without overwrite", async () => {
     const { writeTemplate } = await import("../src/skills/context/templates.ts");
     await writeTemplate("alpha", ["ts/rule-x.md"]);
-    await expect(
-      writeTemplate("alpha", ["ts/rule-x.md"]),
-    ).rejects.toThrow(/exists/);
+    await expect(writeTemplate("alpha", ["ts/rule-x.md"])).rejects.toThrow(/exists/);
   });
 
   test("writeTemplate with overwrite=true replaces", async () => {
@@ -82,9 +80,9 @@ describe("templates", () => {
 
   test("writeTemplate errors if a path does not resolve to a rule", async () => {
     const { writeTemplate } = await import("../src/skills/context/templates.ts");
-    await expect(
-      writeTemplate("bad", ["ts/rule-missing.md"]),
-    ).rejects.toThrow(/missing|not.*found|no such/i);
+    await expect(writeTemplate("bad", ["ts/rule-missing.md"])).rejects.toThrow(
+      /missing|not.*found|no such/i,
+    );
   });
 
   test("listTemplates returns metadata for each file", async () => {
@@ -107,9 +105,8 @@ describe("templates", () => {
   });
 
   test("deleteTemplate removes the file", async () => {
-    const { writeTemplate, deleteTemplate, listTemplates } = await import(
-      "../src/skills/context/templates.ts"
-    );
+    const { writeTemplate, deleteTemplate, listTemplates } =
+      await import("../src/skills/context/templates.ts");
     await writeTemplate("alpha", ["ts/rule-x.md"]);
     await deleteTemplate("alpha");
     const list = await listTemplates();

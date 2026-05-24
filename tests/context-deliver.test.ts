@@ -2,10 +2,7 @@ import { describe, test, expect, beforeEach, afterEach, spyOn } from "bun:test";
 import os from "node:os";
 import path from "node:path";
 import { mkdtemp, rm, realpath, writeFile, mkdir } from "node:fs/promises";
-import {
-  deliverPayload,
-  buildPerRuleInstructions,
-} from "../src/skills/context/paginate.ts";
+import { deliverPayload, buildPerRuleInstructions } from "../src/skills/context/paginate.ts";
 import type { Rule } from "../src/skills/context/registry.ts";
 
 // ---------------------------------------------------------------------------
@@ -55,18 +52,14 @@ async function setup() {
   stdoutChunks = [];
   stderrChunks = [];
 
-  stdoutSpy = spyOn(process.stdout, "write").mockImplementation(
-    (chunk: string | Uint8Array) => {
-      stdoutChunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString());
-      return true;
-    },
-  );
-  stderrSpy = spyOn(process.stderr, "write").mockImplementation(
-    (chunk: string | Uint8Array) => {
-      stderrChunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString());
-      return true;
-    },
-  );
+  stdoutSpy = spyOn(process.stdout, "write").mockImplementation((chunk: string | Uint8Array) => {
+    stdoutChunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString());
+    return true;
+  });
+  stderrSpy = spyOn(process.stderr, "write").mockImplementation((chunk: string | Uint8Array) => {
+    stderrChunks.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString());
+    return true;
+  });
 }
 
 async function teardown() {
@@ -105,9 +98,21 @@ describe("deliverPayload — 3 rules mixed priorities", () => {
 
   function makeThreeRules() {
     return [
-      makeRule({ folder: "typescript/frontend", absPath: path.join(contextDir, "typescript/frontend/rule-react-hooks.md"), priority: "high" }),
-      makeRule({ folder: "general", absPath: path.join(contextDir, "general/rule-commits.md"), priority: "low" }),
-      makeRule({ folder: "typescript/backend", absPath: path.join(contextDir, "typescript/backend/rule-bun-runtime.md"), priority: "high" }),
+      makeRule({
+        folder: "typescript/frontend",
+        absPath: path.join(contextDir, "typescript/frontend/rule-react-hooks.md"),
+        priority: "high",
+      }),
+      makeRule({
+        folder: "general",
+        absPath: path.join(contextDir, "general/rule-commits.md"),
+        priority: "low",
+      }),
+      makeRule({
+        folder: "typescript/backend",
+        absPath: path.join(contextDir, "typescript/backend/rule-bun-runtime.md"),
+        priority: "high",
+      }),
     ];
   }
 

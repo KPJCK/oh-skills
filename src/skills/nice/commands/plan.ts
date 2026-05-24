@@ -145,9 +145,7 @@ async function phasePostBrainstorm(rest: string[]): Promise<void> {
   const [specPathArg, ...requestParts] = positional;
   const request = requestParts.join(" ").trim() || "(no initial request)";
   if (!specPathArg) {
-    throw new Error(
-      "post-brainstorm needs the spec file path as the first argument",
-    );
+    throw new Error("post-brainstorm needs the spec file path as the first argument");
   }
   const specPath = specPathArg;
 
@@ -237,19 +235,13 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
 
   if (!sourceMode) {
     const { error } = await import("../ui.ts");
-    error(
-      "research-go needs --source=<mode>",
-      `valid values: ${VALID_SOURCES.join(", ")}`,
-    );
+    error("research-go needs --source=<mode>", `valid values: ${VALID_SOURCES.join(", ")}`);
     process.exit(2);
   }
 
   if (!isSourceMode(sourceMode)) {
     const { error } = await import("../ui.ts");
-    error(
-      `unknown source mode: ${sourceMode}`,
-      `valid values: ${VALID_SOURCES.join(", ")}`,
-    );
+    error(`unknown source mode: ${sourceMode}`, `valid values: ${VALID_SOURCES.join(", ")}`);
     process.exit(2);
   }
 
@@ -268,8 +260,18 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
 
   const env = loadOhEnv();
 
-  const dispatchedPrompt = buildResearchPrompt({ specPath: paths.specMd, source, isUpdatePlan: false, dispatched: true });
-  const selfActPrompt = buildResearchPrompt({ specPath: paths.specMd, source, isUpdatePlan: false, dispatched: false });
+  const dispatchedPrompt = buildResearchPrompt({
+    specPath: paths.specMd,
+    source,
+    isUpdatePlan: false,
+    dispatched: true,
+  });
+  const selfActPrompt = buildResearchPrompt({
+    specPath: paths.specMd,
+    source,
+    isUpdatePlan: false,
+    dispatched: false,
+  });
 
   const agentAction = buildAgentAction({
     role: "research",
@@ -534,11 +536,7 @@ function summarizePlan(content: string): string {
   for (const line of lines) {
     if (items.length >= 5) break;
     const trimmed = line.trim();
-    if (
-      /^##+\s+/.test(trimmed) ||
-      /^[-*]\s+\[ \]\s+/.test(trimmed) ||
-      /^\d+\.\s+/.test(trimmed)
-    ) {
+    if (/^##+\s+/.test(trimmed) || /^[-*]\s+\[ \]\s+/.test(trimmed) || /^\d+\.\s+/.test(trimmed)) {
       const cleaned = trimmed
         .replace(/^##+\s+/, "")
         .replace(/^[-*]\s+\[ \]\s+/, "")
@@ -563,4 +561,3 @@ function shellQuote(s: string): string {
   if (/^[A-Za-z0-9_./-]+$/.test(s)) return s;
   return `'${s.replace(/'/g, "'\\''")}'`;
 }
-

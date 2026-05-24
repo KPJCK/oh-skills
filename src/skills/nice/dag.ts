@@ -129,9 +129,7 @@ export function validateMissingFields(dag: Dag): string[] {
   const errs: string[] = [];
   for (const node of dag.nodes.values()) {
     if (node.creates.length === 0 && node.modifies.length === 0) {
-      errs.push(
-        `task '${node.id}' (line ${node.bodyStart}) has no Files declared`,
-      );
+      errs.push(`task '${node.id}' (line ${node.bodyStart}) has no Files declared`);
     }
   }
   return errs;
@@ -142,9 +140,7 @@ export function validateDependsOnExist(dag: Dag): string[] {
   for (const node of dag.nodes.values()) {
     for (const dep of node.dependsOn) {
       if (!dag.nodes.has(dep)) {
-        errs.push(
-          `task '${node.id}' depends on unknown task '${dep}'`,
-        );
+        errs.push(`task '${node.id}' depends on unknown task '${dep}'`);
       }
     }
   }
@@ -202,9 +198,7 @@ export function validateNoCreateCollisions(dag: Dag): string[] {
   const errs: string[] = [];
   for (const [file, ids] of owners) {
     if (ids.length > 1) {
-      errs.push(
-        `file '${file}' is Created by multiple tasks: ${ids.join(", ")}`,
-      );
+      errs.push(`file '${file}' is Created by multiple tasks: ${ids.join(", ")}`);
     }
   }
   return errs;

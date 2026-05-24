@@ -26,7 +26,15 @@ describe("loadOhEnv", () => {
     await rm(tmpHome, { recursive: true, force: true });
     await rm(tmpCwd, { recursive: true, force: true });
     // wipe process.env overrides set during tests
-    for (const k of ["CONTEXT_DIR", "PLAN_DIR", "KNOWLEDGE_DIR", "CONTEXT_TEMPLATE_DIR", "CODING_AGENT", "REVIEW_AGENT", "RESEARCH_AGENT"]) {
+    for (const k of [
+      "CONTEXT_DIR",
+      "PLAN_DIR",
+      "KNOWLEDGE_DIR",
+      "CONTEXT_TEMPLATE_DIR",
+      "CODING_AGENT",
+      "REVIEW_AGENT",
+      "RESEARCH_AGENT",
+    ]) {
       delete process.env[k];
     }
   });
@@ -42,22 +50,26 @@ describe("loadOhEnv", () => {
   });
 
   test("loads from ~/.claude/.oh-env when project file missing", async () => {
-    await import("node:fs/promises").then((m) => m.mkdir(path.join(tmpHome, ".claude"), { recursive: true }));
+    await import("node:fs/promises").then((m) =>
+      m.mkdir(path.join(tmpHome, ".claude"), { recursive: true }),
+    );
     await writeFile(path.join(tmpHome, ".claude", ".oh-env"), "CONTEXT_DIR=/tmp/home-context\n");
     const env = loadOhEnv();
     expect(env.CONTEXT_DIR).toBe("/tmp/home-context");
   });
 
   test("project file overrides home file per-key (merge, not replace)", async () => {
-    await import("node:fs/promises").then((m) => m.mkdir(path.join(tmpHome, ".claude"), { recursive: true }));
+    await import("node:fs/promises").then((m) =>
+      m.mkdir(path.join(tmpHome, ".claude"), { recursive: true }),
+    );
     await writeFile(
       path.join(tmpHome, ".claude", ".oh-env"),
-      "CONTEXT_DIR=/tmp/home-context\nPLAN_DIR=/tmp/home-plan\n"
+      "CONTEXT_DIR=/tmp/home-context\nPLAN_DIR=/tmp/home-plan\n",
     );
     await writeFile(path.join(tmpCwd, ".oh-env"), "PLAN_DIR=/tmp/proj-plan\n");
     const env = loadOhEnv();
     expect(env.CONTEXT_DIR).toBe("/tmp/home-context"); // from home
-    expect(env.PLAN_DIR).toBe("/tmp/proj-plan");       // overridden by project
+    expect(env.PLAN_DIR).toBe("/tmp/proj-plan"); // overridden by project
   });
 
   test("expands ~ to home directory", async () => {
@@ -82,7 +94,7 @@ describe("loadOhEnv", () => {
   test("agent keys: empty string treated as unset", async () => {
     await writeFile(
       path.join(tmpCwd, ".oh-env"),
-      "CONTEXT_DIR=/tmp/c\nCODING_AGENT=\nREVIEW_AGENT=  \n"
+      "CONTEXT_DIR=/tmp/c\nCODING_AGENT=\nREVIEW_AGENT=  \n",
     );
     const env = loadOhEnv();
     expect(env.CODING_AGENT).toBeUndefined();
@@ -98,7 +110,7 @@ describe("loadOhEnv", () => {
   test("ignores comment lines and blank lines", async () => {
     await writeFile(
       path.join(tmpCwd, ".oh-env"),
-      "# this is a comment\n\nCONTEXT_DIR=/tmp/c\n  # indented comment\n"
+      "# this is a comment\n\nCONTEXT_DIR=/tmp/c\n  # indented comment\n",
     );
     const env = loadOhEnv();
     expect(env.CONTEXT_DIR).toBe("/tmp/c");
@@ -107,7 +119,7 @@ describe("loadOhEnv", () => {
   test("built-in defaults used when key missing from all sources", async () => {
     await writeFile(path.join(tmpCwd, ".oh-env"), "CONTEXT_DIR=/tmp/c\n");
     const env = loadOhEnv();
-    expect(env.PLAN_DIR).toBe(path.join(tmpCwd, ".oh", "plan"));         // default
+    expect(env.PLAN_DIR).toBe(path.join(tmpCwd, ".oh", "plan")); // default
     expect(env.KNOWLEDGE_DIR).toBe(path.join(tmpCwd, ".oh", "knowledge")); // default
     expect(env.CONTEXT_TEMPLATE_DIR).toBe(path.join(tmpCwd, ".oh", "context-templates"));
   });

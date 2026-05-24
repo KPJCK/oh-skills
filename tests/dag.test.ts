@@ -17,17 +17,9 @@ const FIXTURES = path.join(import.meta.dir, "fixtures", "plans");
 
 describe("parsePlan", () => {
   test("parses a valid 4-task parallel plan", async () => {
-    const content = await readFile(
-      path.join(FIXTURES, "valid-parallel.md"),
-      "utf-8",
-    );
+    const content = await readFile(path.join(FIXTURES, "valid-parallel.md"), "utf-8");
     const dag = parsePlan(content);
-    expect(dag.order).toEqual([
-      "types-define",
-      "parser-tokenize",
-      "renderer-init",
-      "index-wire",
-    ]);
+    expect(dag.order).toEqual(["types-define", "parser-tokenize", "renderer-init", "index-wire"]);
     expect(dag.nodes.size).toBe(4);
 
     const types = dag.nodes.get("types-define")!;
@@ -37,10 +29,7 @@ describe("parsePlan", () => {
     expect(types.dependsOn).toEqual([]);
 
     const tokenize = dag.nodes.get("parser-tokenize")!;
-    expect(tokenize.creates).toEqual([
-      "src/parser/tokenize.ts",
-      "tests/parser/tokenize.test.ts",
-    ]);
+    expect(tokenize.creates).toEqual(["src/parser/tokenize.ts", "tests/parser/tokenize.test.ts"]);
     expect(tokenize.dependsOn).toEqual(["types-define"]);
 
     const wire = dag.nodes.get("index-wire")!;
@@ -50,13 +39,9 @@ describe("parsePlan", () => {
   });
 
   test("task missing Files block → empty creates/modifies", () => {
-    const md = [
-      "### Task only-deps: no files declared",
-      "",
-      "**Depends-on:**",
-      "- none",
-      "",
-    ].join("\n");
+    const md = ["### Task only-deps: no files declared", "", "**Depends-on:**", "- none", ""].join(
+      "\n",
+    );
     const dag = parsePlan(md);
     const n = dag.nodes.get("only-deps")!;
     expect(n.creates).toEqual([]);
@@ -165,25 +150,13 @@ describe("validateUniqueIds", () => {
 describe("validateMissingFields", () => {
   test("pass: all tasks have both fields", () => {
     const dag = parsePlan(
-      [
-        "### Task a: alpha",
-        "**Files:**",
-        "- Create: a.ts",
-        "**Depends-on:**",
-        "- none",
-      ].join("\n"),
+      ["### Task a: alpha", "**Files:**", "- Create: a.ts", "**Depends-on:**", "- none"].join("\n"),
     );
     expect(validateMissingFields(dag)).toEqual([]);
   });
 
   test("fail: task missing Files is flagged", () => {
-    const dag = parsePlan(
-      [
-        "### Task a: alpha",
-        "**Depends-on:**",
-        "- none",
-      ].join("\n"),
-    );
+    const dag = parsePlan(["### Task a: alpha", "**Depends-on:**", "- none"].join("\n"));
     const errs = validateMissingFields(dag);
     expect(errs.length).toBe(1);
     expect(errs[0]).toContain("a");
@@ -212,13 +185,9 @@ describe("validateDependsOnExist", () => {
 
   test("fail: dependsOn references unknown ID", () => {
     const dag = parsePlan(
-      [
-        "### Task a: alpha",
-        "**Files:**",
-        "- Create: a.ts",
-        "**Depends-on:**",
-        "- ghost",
-      ].join("\n"),
+      ["### Task a: alpha", "**Files:**", "- Create: a.ts", "**Depends-on:**", "- ghost"].join(
+        "\n",
+      ),
     );
     const errs = validateDependsOnExist(dag);
     expect(errs.length).toBe(1);
@@ -503,12 +472,9 @@ describe("validateReadySetFileSafety", () => {
   }
 
   test("pass: disjoint file sets", () => {
-    expect(
-      validateReadySetFileSafety([
-        node("a", ["src/a.ts"]),
-        node("b", ["src/b.ts"]),
-      ]),
-    ).toEqual([]);
+    expect(validateReadySetFileSafety([node("a", ["src/a.ts"]), node("b", ["src/b.ts"])])).toEqual(
+      [],
+    );
   });
 
   test("fail: Create collision within set", () => {
@@ -530,10 +496,7 @@ describe("validateReadySetFileSafety", () => {
   });
 
   test("fail: Create-vs-Modify collision within set", () => {
-    const errs = validateReadySetFileSafety([
-      node("a", ["src/x.ts"]),
-      node("b", [], ["src/x.ts"]),
-    ]);
+    const errs = validateReadySetFileSafety([node("a", ["src/x.ts"]), node("b", [], ["src/x.ts"])]);
     expect(errs.length).toBe(1);
     expect(errs[0]).toContain("src/x.ts");
   });

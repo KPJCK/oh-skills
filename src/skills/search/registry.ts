@@ -83,7 +83,10 @@ async function loadOne(
   }
   const baseName =
     shape === "simple"
-      ? path.basename(absPath).replace(/^search-/, "").replace(/\.md$/, "")
+      ? path
+          .basename(absPath)
+          .replace(/^search-/, "")
+          .replace(/\.md$/, "")
       : path.basename(absRoot).replace(/^search-/, "");
   return {
     meta: parsed.meta,
@@ -97,11 +100,7 @@ async function loadOne(
   };
 }
 
-export async function resolve(
-  topic: string,
-  name: string,
-  root?: string,
-): Promise<Knowledge> {
+export async function resolve(topic: string, name: string, root?: string): Promise<Knowledge> {
   const KNOWLEDGES_ROOT = root ?? knowledgeRoot();
   const topicDir = path.join(KNOWLEDGES_ROOT, topic);
   const simpleAbs = path.join(topicDir, `search-${name}.md`);

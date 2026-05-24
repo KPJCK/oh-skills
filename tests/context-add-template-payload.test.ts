@@ -18,10 +18,7 @@ describe("add --template ask-json payload", () => {
     tmpCtx = await realpath(await mkdtemp(path.join(os.tmpdir(), "add-tpl-ctx-")));
     tmpCwd = await realpath(await mkdtemp(path.join(os.tmpdir(), "add-tpl-cwd-")));
 
-    await writeFile(
-      path.join(tmpCwd, ".oh-env"),
-      `CONTEXT_DIR=${tmpCtx}\n`,
-    );
+    await writeFile(path.join(tmpCwd, ".oh-env"), `CONTEXT_DIR=${tmpCtx}\n`);
     process.chdir(tmpCwd);
 
     tsFolder = path.join(tmpCtx, "ts");

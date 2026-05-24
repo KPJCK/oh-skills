@@ -43,8 +43,7 @@ export async function run(args: string[]): Promise<void> {
   const cwd = process.cwd();
 
   // Mutual exclusion
-  const exclusiveCount =
-    (flags.pick ? 1 : 0) + (flags.all ? 1 : 0) + (flags.template ? 1 : 0);
+  const exclusiveCount = (flags.pick ? 1 : 0) + (flags.all ? 1 : 0) + (flags.template ? 1 : 0);
   if (exclusiveCount > 1) {
     error("flags --pick, --all, and --template are mutually exclusive");
     process.exit(2);
@@ -55,7 +54,9 @@ export async function run(args: string[]): Promise<void> {
     const { resolveTemplate } = await import("../templates.ts");
     const rules = await resolveTemplate(flags.template);
     if (rules.length === 0) {
-      process.stdout.write(renderEmpty(`template "${flags.template}" resolved to zero rules`) + "\n");
+      process.stdout.write(
+        renderEmpty(`template "${flags.template}" resolved to zero rules`) + "\n",
+      );
       return;
     }
     const contextRoot = loadOhEnv().CONTEXT_DIR;
@@ -71,7 +72,11 @@ export async function run(args: string[]): Promise<void> {
     const { formatTokens, estimateTokens } = await import("../tokens.ts");
     let total = 0;
     for (const r of rules) {
-      try { total += await estimateTokens(r.absPath); } catch { /* skip */ }
+      try {
+        total += await estimateTokens(r.absPath);
+      } catch {
+        /* skip */
+      }
     }
     success(
       `loaded template "${flags.template}" · ${rules.length} rule${rules.length === 1 ? "" : "s"} (${formatTokens(total)} total)`,
@@ -84,9 +89,7 @@ export async function run(args: string[]): Promise<void> {
 
   if (folders.length === 0) {
     const contextRoot = loadOhEnv().CONTEXT_DIR;
-    process.stdout.write(
-      renderEmpty(`no rule folders found under ${contextRoot}`) + "\n",
-    );
+    process.stdout.write(renderEmpty(`no rule folders found under ${contextRoot}`) + "\n");
     return;
   }
 
@@ -156,9 +159,7 @@ export async function run(args: string[]): Promise<void> {
       return;
     }
     if (result.length === 0) {
-      process.stdout.write(
-        renderEmpty("nothing selected — no context loaded") + "\n",
-      );
+      process.stdout.write(renderEmpty("nothing selected — no context loaded") + "\n");
       return;
     }
     picked = result;
@@ -166,9 +167,7 @@ export async function run(args: string[]): Promise<void> {
 
   const rules = await loadRules(picked);
   if (rules.length === 0) {
-    process.stdout.write(
-      renderEmpty("selected folders had no rule-*.md files") + "\n",
-    );
+    process.stdout.write(renderEmpty("selected folders had no rule-*.md files") + "\n");
     return;
   }
 

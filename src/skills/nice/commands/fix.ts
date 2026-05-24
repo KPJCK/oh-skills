@@ -54,13 +54,8 @@ export async function run(args: string[]): Promise<void> {
     const plans = await listPlans(repo);
     const reviewable = plans.filter((p) => p.hasReview);
     if (reviewable.length === 0) {
-      error(
-        "no plans with review.md found for this repo",
-        "run /oh-nice review first",
-      );
-      emit("nice", [
-        { type: "report", message: "no reviewable plans — exiting" },
-      ]);
+      error("no plans with review.md found for this repo", "run /oh-nice review first");
+      emit("nice", [{ type: "report", message: "no reviewable plans — exiting" }]);
       return;
     }
     if (!process.stdin.isTTY) {

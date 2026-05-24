@@ -59,10 +59,7 @@ export async function run(args: string[]): Promise<void> {
   }
 
   // Copy template to target
-  const template = readFileSync(
-    path.join(pluginRoot(), "templates", ".oh-env.example"),
-    "utf-8",
-  );
+  const template = readFileSync(path.join(pluginRoot(), "templates", ".oh-env.example"), "utf-8");
   const targetDir = path.dirname(targetPath);
   if (!existsSync(targetDir)) mkdirSync(targetDir, { recursive: true });
   writeFileSync(targetPath, template, "utf-8");

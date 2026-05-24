@@ -71,7 +71,7 @@ export function loadOhEnv(opts: { cwd?: string; home?: string } = {}): OhEnv {
     const allFromEnv = PATH_KEYS.every((k) => process.env[k]);
     if (!allFromEnv) {
       throw new Error(
-        "No .oh-env found at ./.oh-env or ~/.claude/.oh-env. Run /oh init to scaffold one."
+        "No .oh-env found at ./.oh-env or ~/.claude/.oh-env. Run /oh init to scaffold one.",
       );
     }
   }
@@ -105,6 +105,7 @@ export function loadOhEnv(opts: { cwd?: string; home?: string } = {}): OhEnv {
 }
 
 export function resolveAgent(role: AgentRole, env: OhEnv): string | null {
-  const key = role === "coding" ? "CODING_AGENT" : role === "review" ? "REVIEW_AGENT" : "RESEARCH_AGENT";
+  const key =
+    role === "coding" ? "CODING_AGENT" : role === "review" ? "REVIEW_AGENT" : "RESEARCH_AGENT";
   return env[key]?.trim() || null;
 }

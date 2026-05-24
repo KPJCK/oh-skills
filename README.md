@@ -1,22 +1,27 @@
 # oh-skills
 
-A [Claude Code](https://docs.claude.com/en/docs/claude-code) plugin that bundles six personal dev-cycle skills:
+A [Claude Code](https://docs.claude.com/en/docs/claude-code) plugin that bundles
+six personal dev-cycle skills:
 
-| Skill | What it does |
-|---|---|
-| **oh-nice** | Plan / update-plan / go / review / fix / do orchestration |
+| Skill              | What it does                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------- |
+| **oh-nice**        | Plan / update-plan / go / review / fix / do orchestration                                   |
 | **oh-bug-tracing** | Fix a bug AND write a forensic `trace.md` — git archaeology + root-cause class + prevention |
-| **oh-context** | Dynamic context-rule loader (DO/DO NOT/Details rules per domain) |
-| **oh-search** | Local knowledge base — check before WebSearch on stable topics |
-| **oh-doctor** | Sanity-check the plugin installation |
-| **oh-help** | Reference card with your config substituted in |
+| **oh-context**     | Dynamic context-rule loader (DO/DO NOT/Details rules per domain)                            |
+| **oh-search**      | Local knowledge base — check before WebSearch on stable topics                              |
+| **oh-doctor**      | Sanity-check the plugin installation                                                        |
+| **oh-help**        | Reference card with your config substituted in                                              |
 
 ## Requirements
 
-- [Bun](https://bun.com) — required runtime. Install: `curl -fsSL https://bun.sh/install | bash`.
-- [Claude Code](https://docs.claude.com/en/docs/claude-code) — the harness this plugin loads into.
+- [Bun](https://bun.com) — required runtime. Install:
+  `curl -fsSL https://bun.sh/install | bash`.
+- [Claude Code](https://docs.claude.com/en/docs/claude-code) — the harness this
+  plugin loads into.
 - Git — for cloning and for `/oh-nice`'s repo detection.
-- `trash` CLI (recommended, optional) — used by `/oh-search delete` and the migration helpers. Install on macOS: `brew install trash`. Without it, those commands fall back to `rm` with a confirmation prompt.
+- `trash` CLI (recommended, optional) — used by `/oh-search delete` and the
+  migration helpers. Install on macOS: `brew install trash`. Without it, those
+  commands fall back to `rm` with a confirmation prompt.
 
 ## Install — marketplace
 
@@ -35,7 +40,9 @@ Then in any project:
 
 ## Install — manual (clone + ask Claude)
 
-Useful when the marketplace mechanism is unavailable, or for forks. Run these steps yourself, or hand them to a Claude Code session and ask it to perform them.
+Useful when the marketplace mechanism is unavailable, or for forks. Run these
+steps yourself, or hand them to a Claude Code session and ask it to perform
+them.
 
 ```bash
 # 1. Clone the repo to a stable path
@@ -57,11 +64,18 @@ Then **inside Claude Code**, with your repo as the cwd:
 /oh doctor
 ```
 
-If you'd rather have an agent install this for you, open Claude Code, point it at the cloned repo, and prompt:
+If you'd rather have an agent install this for you, open Claude Code, point it
+at the cloned repo, and prompt:
 
-> Read `README.md` in this repo and follow the **Install — manual (clone + ask Claude)** steps. Use the path I cloned to (`~/workspaces/oh-skills` unless told otherwise). After install, run `/oh doctor` and report any non-green rows.
+> Read `README.md` in this repo and follow the **Install — manual (clone + ask
+> Claude)** steps. Use the path I cloned to (`~/workspaces/oh-skills` unless
+> told otherwise). After install, run `/oh doctor` and report any non-green
+> rows.
 
-The agent will: clone (if not already done), run `bun install`, add the local path as a marketplace, install the plugin, scaffold `.oh-env` via `/oh init`, and run `/oh doctor`. It should stop before deleting any pre-existing `~/.claude/skills/oh-*` directories — you confirm those manually.
+The agent will: clone (if not already done), run `bun install`, add the local
+path as a marketplace, install the plugin, scaffold `.oh-env` via `/oh init`,
+and run `/oh doctor`. It should stop before deleting any pre-existing
+`~/.claude/skills/oh-*` directories — you confirm those manually.
 
 ## Uninstall
 
@@ -91,7 +105,9 @@ trash ~/workspaces/oh-skills
 
 ## Configuration — `.oh-env`
 
-`/oh init` scaffolds either `./.oh-env` (project, gitignored) or `~/.claude/.oh-env` (user-global). Project values override home values per-key. Process environment variables override both.
+`/oh init` scaffolds either `./.oh-env` (project, gitignored) or
+`~/.claude/.oh-env` (user-global). Project values override home values per-key.
+Process environment variables override both.
 
 ```bash
 CONTEXT_DIR=./.oh/context              # rule-*.md storage
@@ -104,7 +120,9 @@ REVIEW_AGENT=      # optional; empty = main Claude reviews
 RESEARCH_AGENT=    # optional; empty = main Claude researches
 ```
 
-If you have a personal implementer/reviewer (e.g. registered as a sub-agent in Claude Code), set the env vars. Otherwise leave them empty and the main conversation handles those roles.
+If you have a personal implementer/reviewer (e.g. registered as a sub-agent in
+Claude Code), set the env vars. Otherwise leave them empty and the main
+conversation handles those roles.
 
 ## Skills at a glance
 
@@ -121,11 +139,19 @@ If you have a personal implementer/reviewer (e.g. registered as a sub-agent in C
 
 ### Parallel execution (DAG-driven)
 
-Plans authored via `/oh-nice plan` now include per-task `**Files:**` and `**Depends-on:**` annotations. When `/oh-nice go` sees these, it parses the plan into a dependency DAG, validates it (cycle detection, file-collision checks), and dispatches multiple coding agents concurrently for tasks whose dependencies are met. Concurrency is capped at 3 by default (override with `OH_NICE_MAX_PARALLEL`).
+Plans authored via `/oh-nice plan` now include per-task `**Files:**` and
+`**Depends-on:**` annotations. When `/oh-nice go` sees these, it parses the plan
+into a dependency DAG, validates it (cycle detection, file-collision checks),
+and dispatches multiple coding agents concurrently for tasks whose dependencies
+are met. Concurrency is capped at 3 by default (override with
+`OH_NICE_MAX_PARALLEL`).
 
-Plans without DAG annotations fall back to the original single-agent sequential mode — no migration required.
+Plans without DAG annotations fall back to the original single-agent sequential
+mode — no migration required.
 
-Use `do` for quick one-shot tasks that don't need a stored plan. It runs the same implement → review → fix loop but writes no artifacts under `PLAN_DIR`. Opt out of later phases with `--no-review` or `--no-fix`:
+Use `do` for quick one-shot tasks that don't need a stored plan. It runs the
+same implement → review → fix loop but writes no artifacts under `PLAN_DIR`. Opt
+out of later phases with `--no-review` or `--no-fix`:
 
 ```
 /oh-nice do "rename foo to bar"
@@ -143,15 +169,19 @@ Use `do` for quick one-shot tasks that don't need a stored plan. It runs the sam
   → fix skipped; findings available for manual action
 ```
 
-Both `plan` and `update-plan` include an **optional research step** after brainstorming. When prompted, choose a source mode:
+Both `plan` and `update-plan` include an **optional research step** after
+brainstorming. When prompted, choose a source mode:
 
-| Mode | Behaviour |
-|---|---|
+| Mode        | Behaviour                                                                                |
+| ----------- | ---------------------------------------------------------------------------------------- |
 | `knowledge` | Searches the local oh-search knowledge base only; leaves spec.md unchanged if no matches |
-| `online` | Skips local search; uses WebSearch + WebFetch directly (3-5 sources per topic) |
-| `auto` | Local-first; falls back to web for topics with no local hit |
+| `online`    | Skips local search; uses WebSearch + WebFetch directly (3-5 sources per topic)           |
+| `auto`      | Local-first; falls back to web for topics with no local hit                              |
 
-The research agent appends a `## Research` section (or a `### Research` subsection under the latest `## Update` block for `update-plan`) to `spec.md`. When online research is performed, you are asked whether to save findings to the knowledge base before writing the plan.
+The research agent appends a `## Research` section (or a `### Research`
+subsection under the latest `## Update` block for `update-plan`) to `spec.md`.
+When online research is performed, you are asked whether to save findings to the
+knowledge base before writing the plan.
 
 ### oh-bug-tracing
 
@@ -163,7 +193,10 @@ The research agent appends a `## Research` section (or a `### Research` subsecti
              writes structured trace.md to PLAN_DIR/<repo>/<bug-slug>/trace.md
 ```
 
-The `trace.md` template has eight enforced sections: Symptom · Fix · Origin (commit/PR) · Dev intent at the time · Why this slipped · Root cause class · Prevention (TODO checkboxes) · External research. Use this when an ad-hoc bug deserves to leave behind institutional memory, not just a fix.
+The `trace.md` template has eight enforced sections: Symptom · Fix · Origin
+(commit/PR) · Dev intent at the time · Why this slipped · Root cause class ·
+Prevention (TODO checkboxes) · External research. Use this when an ad-hoc bug
+deserves to leave behind institutional memory, not just a fix.
 
 ### oh-context
 
@@ -203,22 +236,32 @@ Local install for development:
 
 These rules apply to every change made to this repository.
 
-1. **Always update `CHANGELOG.md`.** Every code-changing commit MUST append at least one entry under the `## [Unreleased]` heading, grouped into `Added` / `Changed` / `Fixed` / `Removed` subheadings. We use the [Keep a Changelog](https://keepachangelog.com/) format. CHANGELOG-only commits do not need to update CHANGELOG.md.
-2. **Version sync.** `package.json` and `.claude-plugin/plugin.json` must carry the same `version`. CI fails if they drift (`scripts/check-version.ts`).
-3. **No hardcoded paths or agent names** in `src/`. Every path comes from `.oh-env` via `loadOhEnv()`; every agent role from `resolveAgent(role, env)`.
-4. **Tests first** for new behavior in `src/env.ts`, `src/cli.ts`, `src/shared/`. Port-only changes can skip TDD when the test already exists.
-5. **Bun-only.** No Node-only APIs that don't work on Bun; no `npm`/`pnpm`/`yarn` scripts.
+1. **Always update `CHANGELOG.md`.** Every code-changing commit MUST append at
+   least one entry under the `## [Unreleased]` heading, grouped into `Added` /
+   `Changed` / `Fixed` / `Removed` subheadings. We use the
+   [Keep a Changelog](https://keepachangelog.com/) format. CHANGELOG-only
+   commits do not need to update CHANGELOG.md.
+2. **Version sync.** `package.json` and `.claude-plugin/plugin.json` must carry
+   the same `version`. CI fails if they drift (`scripts/check-version.ts`).
+3. **No hardcoded paths or agent names** in `src/`. Every path comes from
+   `.oh-env` via `loadOhEnv()`; every agent role from `resolveAgent(role, env)`.
+4. **Tests first** for new behavior in `src/env.ts`, `src/cli.ts`,
+   `src/shared/`. Port-only changes can skip TDD when the test already exists.
+5. **Bun-only.** No Node-only APIs that don't work on Bun; no
+   `npm`/`pnpm`/`yarn` scripts.
 
 ## Long-session token health
 
 Token context fills up over a long session. Compact before it impacts quality.
 
 **Caps (post-compaction estimates):**
+
 - Single skill invocation: ~5K tokens.
 - Combined re-attach budget: ~25K (newest-first on re-attach).
 - Hit either cap → compact before the next heavy command.
 
-**When to compact:** after `go` finishes, after `review` returns, or whenever `/oh-nice` responses feel sluggish.
+**When to compact:** after `go` finishes, after `review` returns, or whenever
+`/oh-nice` responses feel sluggish.
 
 **How to compact:**
 
@@ -228,7 +271,8 @@ Token context fills up over a long session. Compact before it impacts quality.
 
 Focus hint keeps relevant context; everything else compresses.
 
-**Compact-instructions block** — paste into the conversation after any compact to restore skill state:
+**Compact-instructions block** — paste into the conversation after any compact
+to restore skill state:
 
 ```
 ## Compact Instructions
@@ -240,7 +284,8 @@ Env: PLAN_DIR / CONTEXT_DIR / KNOWLEDGE_DIR / CODING_AGENT / REVIEW_AGENT from .
 Next action: [fill in what you were doing].
 ```
 
-**Proactive context reload:** after compact, run `/oh-context check` to verify rules survived. If not, `/oh-context load` to reload.
+**Proactive context reload:** after compact, run `/oh-context check` to verify
+rules survived. If not, `/oh-context load` to reload.
 
 ## License
 

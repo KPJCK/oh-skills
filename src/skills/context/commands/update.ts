@@ -29,9 +29,7 @@ export async function run(args: string[]): Promise<void> {
   const lines: string[] = [];
   lines.push(`## Rule update — \`${resolved.rel}\``);
   lines.push("");
-  lines.push(
-    `The user wants to update this rule. Here is the **current content**:`,
-  );
+  lines.push(`The user wants to update this rule. Here is the **current content**:`);
   lines.push("");
   lines.push("```markdown");
   lines.push(current.trimEnd());
@@ -42,9 +40,7 @@ export async function run(args: string[]): Promise<void> {
   lines.push(
     `1. Ask the user what they want to change (in natural language — they'll say "change priority to high", "add a DO about hooks rules", "remove the third DO NOT bullet", etc.).`,
   );
-  lines.push(
-    `2. Use your **Edit tool** to apply the change directly to the file at:`,
-  );
+  lines.push(`2. Use your **Edit tool** to apply the change directly to the file at:`);
   lines.push(`   \`${resolved.absPath}\``);
   lines.push(
     `3. Preserve the file structure: frontmatter (\`title\`, \`description\`, \`priority\`) at the top, then \`# <title>\`, then \`## DO\`, \`## DO NOT\`, optional \`## Details\`.`,

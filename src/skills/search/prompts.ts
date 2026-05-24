@@ -12,30 +12,21 @@ export function isValidTopic(value: string): boolean {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value) && value.length <= 32;
 }
 
-export async function promptSlug(opts?: {
-  message?: string;
-  default?: string;
-}): Promise<string> {
+export async function promptSlug(opts?: { message?: string; default?: string }): Promise<string> {
   const raw = await input({
     message: opts?.message ?? "slug",
     ...(opts?.default !== undefined && { default: opts.default }),
-    validate: (v) =>
-      isValidSlug(v.trim()) ||
-      "lowercase-kebab, 2-64 chars, [a-z0-9-]",
+    validate: (v) => isValidSlug(v.trim()) || "lowercase-kebab, 2-64 chars, [a-z0-9-]",
   });
   return raw.trim();
 }
 
-export async function promptTopic(opts?: {
-  message?: string;
-  default?: string;
-}): Promise<string> {
+export async function promptTopic(opts?: { message?: string; default?: string }): Promise<string> {
   const raw = await input({
     message: opts?.message ?? "topic",
     ...(opts?.default !== undefined && { default: opts.default }),
     validate: (v) =>
-      isValidTopic(v.trim()) ||
-      "lowercase-kebab, max 32 chars, single segment (no slashes)",
+      isValidTopic(v.trim()) || "lowercase-kebab, max 32 chars, single segment (no slashes)",
   });
   return raw.trim();
 }

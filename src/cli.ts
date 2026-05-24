@@ -27,10 +27,7 @@ async function main(): Promise<void> {
 
   const loader = skills[skill];
   if (!loader) {
-    error(
-      `unknown skill: ${skill}`,
-      `expected one of: ${Object.keys(skills).join(", ")}`,
-    );
+    error(`unknown skill: ${skill}`, `expected one of: ${Object.keys(skills).join(", ")}`);
     process.exit(2);
   }
 

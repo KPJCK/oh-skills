@@ -14,7 +14,16 @@
         "name": "KPJCK"
       },
       "category": "workflow",
-      "tags": ["plan", "review", "context", "search", "skills", "workflow", "bug-tracing", "forensics"]
+      "tags": [
+        "plan",
+        "review",
+        "context",
+        "search",
+        "skills",
+        "workflow",
+        "bug-tracing",
+        "forensics"
+      ]
     }
   ]
 }

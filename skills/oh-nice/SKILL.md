@@ -14,68 +14,74 @@ bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice <subcommand> [flags]
 
 ## Subcommand routing
 
-| User says… | Run |
-|---|---|
-| design / brainstorm / new feature / before coding | `plan` |
-| iterate / update plan / add to plan / apply feedback to plan / new idea | `update-plan` |
-| implement / continue / execute / start working on the plan | `go` |
-| review / verdict / check the code on plan X | `review` |
-| apply review / fix the review feedback | `fix` |
-| JFDI / quick / no-plan / implement+review+fix in one shot | `do` |
-| no clear subcommand (`/oh-nice` bare) | run with no args; CLI emits an ask_user picker |
+| User says…                                                              | Run                                            |
+| ----------------------------------------------------------------------- | ---------------------------------------------- |
+| design / brainstorm / new feature / before coding                       | `plan`                                         |
+| iterate / update plan / add to plan / apply feedback to plan / new idea | `update-plan`                                  |
+| implement / continue / execute / start working on the plan              | `go`                                           |
+| review / verdict / check the code on plan X                             | `review`                                       |
+| apply review / fix the review feedback                                  | `fix`                                          |
+| JFDI / quick / no-plan / implement+review+fix in one shot               | `do`                                           |
+| no clear subcommand (`/oh-nice` bare)                                   | run with no args; CLI emits an ask_user picker |
 
 ## Picker payloads (--emit-ask-json)
 
 For `go`, `review`, `fix`: prefer the `--emit-ask-json` pattern.
 
 1. Run `bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice <subcommand> --emit-ask-json`
-2. Parse the JSON. If `autoPick`: skip AskUserQuestion. If `tooManyForUI`: show `plainText`. Otherwise pass `questions` verbatim to AskUserQuestion.
+2. Parse the JSON. If `autoPick`: skip AskUserQuestion. If `tooManyForUI`: show
+   `plainText`. Otherwise pass `questions` verbatim to AskUserQuestion.
 3. Re-run with the chosen flags.
 
 ## Next-actions manifest
 
-stderr final line: `__OH_NICE_NEXT_ACTIONS__<json>`. The JSON is an array of NextAction objects:
+stderr final line: `__OH_NICE_NEXT_ACTIONS__<json>`. The JSON is an array of
+NextAction objects:
 
-| `type` | Tool | Action |
-|---|---|---|
-| `invoke_skill` | Skill | Call `skill` with `instructions` |
-| `dispatch_agent` | Agent | `subagent_type: <agent>`, pass `prompt` verbatim |
-| `self_act` | (none) | Do the work yourself in this conversation, treating `prompt` as your brief |
-| `ask_user` | AskUserQuestion | Present `question` with `options` |
-| `report` | (none) | Print `message` |
+| `type`           | Tool            | Action                                                                     |
+| ---------------- | --------------- | -------------------------------------------------------------------------- |
+| `invoke_skill`   | Skill           | Call `skill` with `instructions`                                           |
+| `dispatch_agent` | Agent           | `subagent_type: <agent>`, pass `prompt` verbatim                           |
+| `self_act`       | (none)          | Do the work yourself in this conversation, treating `prompt` as your brief |
+| `ask_user`       | AskUserQuestion | Present `question` with `options`                                          |
+| `report`         | (none)          | Print `message`                                                            |
 
-For phased subcommands (`plan`, `update-plan`), `report` messages contain re-run instructions. Execute them after the prior action completes, then re-read the new sentinel line.
+For phased subcommands (`plan`, `update-plan`), `report` messages contain re-run
+instructions. Execute them after the prior action completes, then re-read the
+new sentinel line.
 
 ## Phase flags — plan
 
-| Phase | CLI flag | Positional args | Purpose |
-|---|---|---|---|
-| init | `--phase=init` | `[request...]` | Banner + brainstorm |
+| Phase           | CLI flag                  | Positional args                        | Purpose                     |
+| --------------- | ------------------------- | -------------------------------------- | --------------------------- |
+| init            | `--phase=init`            | `[request...]`                         | Banner + brainstorm         |
 | post-brainstorm | `--phase=post-brainstorm` | `<tmpSpec> [request...] --slug <slug>` | Name plan + research opt-in |
-| research-go | `--phase=research-go` | `<repo> <slug> --source=<mode>` | Dispatch research agent |
-| write-plan | `--phase=write-plan` | `<repo> <slug>` | Invoke writing-plans |
-| post-plan | `--phase=post-plan` | `<repo> <slug>` | Summarize + implement? |
+| research-go     | `--phase=research-go`     | `<repo> <slug> --source=<mode>`        | Dispatch research agent     |
+| write-plan      | `--phase=write-plan`      | `<repo> <slug>`                        | Invoke writing-plans        |
+| post-plan       | `--phase=post-plan`       | `<repo> <slug>`                        | Summarize + implement?      |
 
 `--source` accepts: `knowledge` | `online` | `auto` (see README for semantics).
 
 ## Phase flags — update-plan
 
-| Phase | CLI flag | Positional args | Purpose |
-|---|---|---|---|
-| init | `--phase=init` | `[request...] --slug <slug>` | Pick plan + brainstorm |
-| post-brainstorm | `--phase=post-brainstorm` | `<tmpSpec> --slug <slug>` | Append spec delta + research opt-in |
-| research-go | `--phase=research-go` | `<repo> <slug> [<tmpSpec>] --source=<mode>` | Dispatch research agent (Update-section aware) |
-| write-plan | `--phase=write-plan` | `<repo> <slug> [<tmpSpec>]` | Invoke writing-plans |
-| post-plan | `--phase=post-plan` | `<repo> <slug> <tmpPlan> [<tmpSpec>]` | Append plan delta + clean up |
+| Phase           | CLI flag                  | Positional args                             | Purpose                                        |
+| --------------- | ------------------------- | ------------------------------------------- | ---------------------------------------------- |
+| init            | `--phase=init`            | `[request...] --slug <slug>`                | Pick plan + brainstorm                         |
+| post-brainstorm | `--phase=post-brainstorm` | `<tmpSpec> --slug <slug>`                   | Append spec delta + research opt-in            |
+| research-go     | `--phase=research-go`     | `<repo> <slug> [<tmpSpec>] --source=<mode>` | Dispatch research agent (Update-section aware) |
+| write-plan      | `--phase=write-plan`      | `<repo> <slug> [<tmpSpec>]`                 | Invoke writing-plans                           |
+| post-plan       | `--phase=post-plan`       | `<repo> <slug> <tmpPlan> [<tmpSpec>]`       | Append plan delta + clean up                   |
 
 ## Phase flags — do
 
-| Phase | CLI flag | Key args | Purpose |
-|---|---|---|---|
-| init (default) | _(none)_ | `[request...] [--no-review] [--no-fix]` | Banner + dispatch coding agent; if `--no-review`, emit done and stop |
-| post-implement | `--phase=post-implement` | `--request "<request>" [--no-fix]` | Generate tmp path + dispatch review agent; if `--no-fix`, emit review-only report and stop |
-| post-review | `--phase=post-review` | `--request "<request>" --review-tmp <path>` | Read findings; if empty/NO_FINDINGS → done; else dispatch coding agent for fixes |
+| Phase          | CLI flag                 | Key args                                    | Purpose                                                                                    |
+| -------------- | ------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| init (default) | _(none)_                 | `[request...] [--no-review] [--no-fix]`     | Banner + dispatch coding agent; if `--no-review`, emit done and stop                       |
+| post-implement | `--phase=post-implement` | `--request "<request>" [--no-fix]`          | Generate tmp path + dispatch review agent; if `--no-fix`, emit review-only report and stop |
+| post-review    | `--phase=post-review`    | `--request "<request>" --review-tmp <path>` | Read findings; if empty/NO_FINDINGS → done; else dispatch coding agent for fixes           |
 
-`--no-review` implies `--no-fix`. No plan directory is ever created. The `--review-tmp` file lives in `os.tmpdir()` and is deleted in phase 3.
+`--no-review` implies `--no-fix`. No plan directory is ever created. The
+`--review-tmp` file lives in `os.tmpdir()` and is deleted in phase 3.
 
-For the full flag cheatsheet, `--emit-ask-json` payload structure, phased state machine details, and path conventions: run `/oh help oh-nice`.
+For the full flag cheatsheet, `--emit-ask-json` payload structure, phased state
+machine details, and path conventions: run `/oh help oh-nice`.

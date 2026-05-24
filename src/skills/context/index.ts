@@ -23,8 +23,7 @@ export async function run(args: string[]): Promise<void> {
   const first = args[0];
 
   // Default to `load` when no subcommand or it looks like a flag (e.g. --pick, --all, --template)
-  const sub =
-    !first || first.startsWith("-") ? "load" : first;
+  const sub = !first || first.startsWith("-") ? "load" : first;
 
   // `huh` is machine-readable (outputs only `true`/`false`) — suppress banner
   if (sub !== "huh") {
@@ -37,10 +36,7 @@ export async function run(args: string[]): Promise<void> {
 
   const loader = SUBS[sub];
   if (!loader) {
-    error(
-      `unknown context subcommand: ${sub}`,
-      `expected one of: ${Object.keys(SUBS).join(", ")}`,
-    );
+    error(`unknown context subcommand: ${sub}`, `expected one of: ${Object.keys(SUBS).join(", ")}`);
     process.exit(2);
   }
 

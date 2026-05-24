@@ -110,10 +110,7 @@ async function phaseFix(ctx: { bug: string; slug: string }): Promise<void> {
     agentAction,
     {
       type: "report",
-      message: [
-        `fix dispatched · run trace phase when done:`,
-        `  ${reRunCmd}`,
-      ].join("\n"),
+      message: [`fix dispatched · run trace phase when done:`, `  ${reRunCmd}`].join("\n"),
     },
   ];
 

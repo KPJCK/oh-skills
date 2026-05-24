@@ -33,11 +33,7 @@ export async function listFolders(): Promise<FolderInfo[]> {
   return out;
 }
 
-async function walk(
-  absDir: string,
-  rel: string,
-  out: FolderInfo[],
-): Promise<void> {
+async function walk(absDir: string, rel: string, out: FolderInfo[]): Promise<void> {
   let entries;
   try {
     entries = await readdir(absDir, { withFileTypes: true });
@@ -85,10 +81,7 @@ export async function loadRules(folders: readonly string[]): Promise<Rule[]> {
         const msg = err instanceof Error ? err.message : String(err);
         throw new Error(`${folder}/${e.name}: ${msg}`);
       }
-      const hash = createHash("sha1")
-        .update(content)
-        .digest("hex")
-        .slice(0, 8);
+      const hash = createHash("sha1").update(content).digest("hex").slice(0, 8);
       rules.push({
         ...parsed,
         folder,
@@ -141,11 +134,7 @@ export async function listAllRuleMeta(): Promise<RuleMetaInfo[]> {
   return out;
 }
 
-async function walkRuleMeta(
-  absDir: string,
-  rel: string,
-  out: RuleMetaInfo[],
-): Promise<void> {
+async function walkRuleMeta(absDir: string, rel: string, out: RuleMetaInfo[]): Promise<void> {
   let entries;
   try {
     entries = await readdir(absDir, { withFileTypes: true });
@@ -155,11 +144,7 @@ async function walkRuleMeta(
   for (const e of entries) {
     if (e.isDirectory()) {
       if (SKIP_DIRS.has(e.name)) continue;
-      await walkRuleMeta(
-        path.join(absDir, e.name),
-        rel ? `${rel}/${e.name}` : e.name,
-        out,
-      );
+      await walkRuleMeta(path.join(absDir, e.name), rel ? `${rel}/${e.name}` : e.name, out);
     } else if (e.isFile() && /^rule-.*\.md$/.test(e.name)) {
       const absPath = path.join(absDir, e.name);
       const content = await readFile(absPath, "utf-8");
@@ -201,11 +186,7 @@ export async function listDrafts(): Promise<DraftInfo[]> {
   return out;
 }
 
-async function walkDrafts(
-  absDir: string,
-  rel: string,
-  out: DraftInfo[],
-): Promise<void> {
+async function walkDrafts(absDir: string, rel: string, out: DraftInfo[]): Promise<void> {
   let entries;
   try {
     entries = await readdir(absDir, { withFileTypes: true });
@@ -215,16 +196,8 @@ async function walkDrafts(
   for (const e of entries) {
     if (e.isDirectory()) {
       if (SKIP_DIRS.has(e.name)) continue;
-      await walkDrafts(
-        path.join(absDir, e.name),
-        rel ? `${rel}/${e.name}` : e.name,
-        out,
-      );
-    } else if (
-      e.isFile() &&
-      e.name.endsWith(".md") &&
-      !/^rule-.*\.md$/.test(e.name)
-    ) {
+      await walkDrafts(path.join(absDir, e.name), rel ? `${rel}/${e.name}` : e.name, out);
+    } else if (e.isFile() && e.name.endsWith(".md") && !/^rule-.*\.md$/.test(e.name)) {
       const absPath = path.join(absDir, e.name);
       const st = await stat(absPath);
       out.push({
@@ -248,9 +221,7 @@ export async function resolveRulePath(folderAndName: string): Promise<{
 }> {
   const lastSlash = folderAndName.lastIndexOf("/");
   if (lastSlash < 1 || lastSlash === folderAndName.length - 1) {
-    throw new Error(
-      `expected <folder>/<name>, got ${JSON.stringify(folderAndName)}`,
-    );
+    throw new Error(`expected <folder>/<name>, got ${JSON.stringify(folderAndName)}`);
   }
   const folder = folderAndName.slice(0, lastSlash);
   const name = folderAndName.slice(lastSlash + 1);

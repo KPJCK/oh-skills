@@ -12,10 +12,7 @@ describe("huh", () => {
     const tmp = await realpath(await mkdtemp(path.join(os.tmpdir(), "huh-empty-")));
     try {
       await writeFile(path.join(tmp, ".oh-env"), `CONTEXT_DIR=${tmp}\n`);
-      const { exitCode, stdout } = await $`bun ${CLI} context huh`
-        .cwd(tmp)
-        .quiet()
-        .nothrow();
+      const { exitCode, stdout } = await $`bun ${CLI} context huh`.cwd(tmp).quiet().nothrow();
       expect(stdout.toString().trim()).toBe("false");
       expect(exitCode).toBe(1);
     } finally {
@@ -44,15 +41,9 @@ describe("huh", () => {
           lastLoadedAt: new Date().toISOString(),
         },
       };
-      await writeFile(
-        path.join(cacheDir, "picks.json"),
-        JSON.stringify(payload, null, 2),
-      );
+      await writeFile(path.join(cacheDir, "picks.json"), JSON.stringify(payload, null, 2));
 
-      const { exitCode, stdout } = await $`bun ${CLI} context huh`
-        .cwd(tmp)
-        .quiet()
-        .nothrow();
+      const { exitCode, stdout } = await $`bun ${CLI} context huh`.cwd(tmp).quiet().nothrow();
       expect(stdout.toString().trim()).toBe("true");
       expect(exitCode).toBe(0);
     } finally {

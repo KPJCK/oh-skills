@@ -1,11 +1,6 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import {
-  listDrafts,
-  listAllRuleMeta,
-  type DraftInfo,
-  type RuleMetaInfo,
-} from "../registry.ts";
+import { listDrafts, listAllRuleMeta, type DraftInfo, type RuleMetaInfo } from "../registry.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { info, error, success } from "../../../shared/ui.ts";
 
@@ -40,9 +35,7 @@ export async function run(args: string[]): Promise<void> {
     process.exit(2);
   }
 
-  const candidates = flags.target
-    ? [await resolveTarget(flags.target)]
-    : await listDrafts();
+  const candidates = flags.target ? [await resolveTarget(flags.target)] : await listDrafts();
 
   if (candidates.length === 0) {
     const contextRoot = loadOhEnv().CONTEXT_DIR;
@@ -52,9 +45,7 @@ export async function run(args: string[]): Promise<void> {
     return;
   }
 
-  info(
-    `${candidates.length} promotion candidate${candidates.length === 1 ? "" : "s"}`,
-  );
+  info(`${candidates.length} promotion candidate${candidates.length === 1 ? "" : "s"}`);
 
   // Read all candidate contents in advance so the manifest is self-contained.
   const candidatesWithContent: Array<DraftInfo & { content: string }> = [];
@@ -65,9 +56,7 @@ export async function run(args: string[]): Promise<void> {
 
   const existingRules = await listAllRuleMeta();
 
-  process.stdout.write(
-    renderManifest(candidatesWithContent, existingRules, flags.all),
-  );
+  process.stdout.write(renderManifest(candidatesWithContent, existingRules, flags.all));
   success("manifest emitted — Claude will now interview the user");
 }
 
@@ -88,9 +77,7 @@ async function resolveTarget(arg: string): Promise<DraftInfo> {
   }
   const basename = path.basename(abs);
   if (/^rule-.*\.md$/.test(basename)) {
-    throw new Error(
-      `${rel} is already an official rule file — use /oh-context update instead`,
-    );
+    throw new Error(`${rel} is already an official rule file — use /oh-context update instead`);
   }
   if (!basename.endsWith(".md")) {
     throw new Error(`${rel} is not a .md file`);
@@ -120,9 +107,7 @@ function renderManifest(
     lines.push("_(no existing rules yet)_");
   } else {
     for (const r of existing) {
-      lines.push(
-        `- \`${r.rel}\` — **${r.title}** (priority: ${r.priority}) — ${r.description}`,
-      );
+      lines.push(`- \`${r.rel}\` — **${r.title}** (priority: ${r.priority}) — ${r.description}`);
     }
   }
   lines.push("");
@@ -147,9 +132,7 @@ function renderManifest(
     "For **each** draft above, walk the user through these steps. Don't batch — finish one draft fully before starting the next.",
   );
   lines.push("");
-  lines.push(
-    "1. **Summarize the draft** in 2-3 sentences so the user sees you've read it.",
-  );
+  lines.push("1. **Summarize the draft** in 2-3 sentences so the user sees you've read it.");
   lines.push("");
   lines.push(
     "2. **Allocate the draft's content**: a single draft can be a mix of three things. Walk the content section-by-section (or topic-by-topic) and for each chunk propose one of:",
@@ -170,14 +153,10 @@ function renderManifest(
   );
   lines.push("");
   lines.push("3. **For each (A) — create new rule** — gather:");
-  lines.push(
-    "   - **Target folder** (existing or new — suggest based on content topic)",
-  );
+  lines.push("   - **Target folder** (existing or new — suggest based on content topic)");
   lines.push("   - **Title** (suggest one)");
   lines.push("   - **One-line description** (suggest one)");
-  lines.push(
-    "   - **Priority** (low / medium / high — based on how foundational)",
-  );
+  lines.push("   - **Priority** (low / medium / high — based on how foundational)");
   lines.push("   - **Body** — draft this canonical structure:");
   lines.push("     ```markdown");
   lines.push("     # <title>");
@@ -195,13 +174,9 @@ function renderManifest(
   lines.push("     <optional nuance — delete if not needed>");
   lines.push("     ```");
   lines.push("   - Show the user the drafted body, ask for adjustments.");
-  lines.push(
-    "   - When confirmed, **create the rule** by piping the body into `add`:",
-  );
+  lines.push("   - When confirmed, **create the rule** by piping the body into `add`:");
   lines.push("     ```bash");
-  lines.push(
-    "     cat <<'BODY' | bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts context add \\",
-  );
+  lines.push("     cat <<'BODY' | bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts context add \\");
   lines.push(
     "         --folder <folder> --title <title> --description <desc> --priority <p> --body-stdin",
   );
@@ -223,9 +198,7 @@ function renderManifest(
     "   - If the merge changes priority or description, also update frontmatter via Edit.",
   );
   lines.push("");
-  lines.push(
-    "5. **For each (C) — discard**: no action needed beyond noting it for the user.",
-  );
+  lines.push("5. **For each (C) — discard**: no action needed beyond noting it for the user.");
   lines.push("");
   lines.push(
     "6. **Trash the source draft** once the user confirms all (A) creates and (B) extends are good:",
@@ -247,9 +220,7 @@ function renderManifest(
   lines.push(
     "- For (B) extends, the Edit tool is appropriate — it preserves the file structure and only modifies what you specify.",
   );
-  lines.push(
-    "- Never trash a draft before its rules are successfully created/extended.",
-  );
+  lines.push("- Never trash a draft before its rules are successfully created/extended.");
   lines.push(
     "- If the user wants to skip a draft entirely, leave it where it is and move on (don't trash).",
   );

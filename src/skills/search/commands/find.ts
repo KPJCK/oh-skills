@@ -6,18 +6,13 @@ import { info, error } from "../../../shared/ui.ts";
 export async function run(args: string[]): Promise<void> {
   const query = args.join(" ").trim();
   if (!query) {
-    error(
-      "missing query",
-      "example: /oh-search find react server components",
-    );
+    error("missing query", "example: /oh-search find react server components");
     process.exit(2);
   }
 
   const all = await listAll();
   if (all.length === 0) {
-    process.stdout.write(
-      `_(knowledge base is empty — nothing to search at ${knowledgeRoot()})_\n`,
-    );
+    process.stdout.write(`_(knowledge base is empty — nothing to search at ${knowledgeRoot()})_\n`);
     return;
   }
 

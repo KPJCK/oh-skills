@@ -231,18 +231,12 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
   }
 
   if (!sourceMode) {
-    error(
-      "research-go needs --source=<mode>",
-      `valid values: ${VALID_SOURCES.join(", ")}`,
-    );
+    error("research-go needs --source=<mode>", `valid values: ${VALID_SOURCES.join(", ")}`);
     process.exit(2);
   }
 
   if (!isSourceMode(sourceMode)) {
-    error(
-      `unknown source mode: ${sourceMode}`,
-      `valid values: ${VALID_SOURCES.join(", ")}`,
-    );
+    error(`unknown source mode: ${sourceMode}`, `valid values: ${VALID_SOURCES.join(", ")}`);
     process.exit(2);
   }
 
@@ -262,8 +256,18 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
 
   const env = loadOhEnv();
 
-  const dispatchedPrompt = buildResearchPrompt({ specPath: paths.specMd, source, isUpdatePlan: true, dispatched: true });
-  const selfActPrompt = buildResearchPrompt({ specPath: paths.specMd, source, isUpdatePlan: true, dispatched: false });
+  const dispatchedPrompt = buildResearchPrompt({
+    specPath: paths.specMd,
+    source,
+    isUpdatePlan: true,
+    dispatched: true,
+  });
+  const selfActPrompt = buildResearchPrompt({
+    specPath: paths.specMd,
+    source,
+    isUpdatePlan: true,
+    dispatched: false,
+  });
 
   const agentAction = buildAgentAction({
     role: "research",
@@ -422,8 +426,7 @@ export async function appendDatedSection(
   const heading = max === -1 ? baseHeading : `${baseHeading} (${max + 1})`;
   const sep = existing.length > 0 && !existing.endsWith("\n") ? "\n" : "";
   const sectionGap = existing.length > 0 ? "\n" : "";
-  const next =
-    existing + sep + sectionGap + heading + "\n\n" + body.replace(/\s+$/, "") + "\n";
+  const next = existing + sep + sectionGap + heading + "\n\n" + body.replace(/\s+$/, "") + "\n";
   await writeFile(filePath, next, "utf-8");
 }
 
@@ -454,4 +457,3 @@ function shellQuote(s: string): string {
   if (/^[A-Za-z0-9_./-]+$/.test(s)) return s;
   return `'${s.replace(/'/g, "'\\''")}'`;
 }
-

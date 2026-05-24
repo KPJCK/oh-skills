@@ -94,7 +94,12 @@ describe("scoring.score", () => {
 
 describe("scoring.rankAndFilter", () => {
   const all = [
-    fakeKnowledge({ name: "react", title: "React Server Components", topic: "react", tags: ["react", "rsc"] }),
+    fakeKnowledge({
+      name: "react",
+      title: "React Server Components",
+      topic: "react",
+      tags: ["react", "rsc"],
+    }),
     fakeKnowledge({ name: "bun", title: "Bun SQLite API", topic: "bun", tags: ["sqlite"] }),
     fakeKnowledge({ name: "rust", title: "Rust async patterns", topic: "rust" }),
   ];

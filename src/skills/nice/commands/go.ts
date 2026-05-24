@@ -7,11 +7,7 @@ import { buildPlanPickerAskPayload } from "../ask-ui.ts";
 import { step, success, info, hint, error, box } from "../ui.ts";
 import { banner as sharedBanner } from "../../../shared/banner.ts";
 import { GRADIENTS } from "../../../shared/banner-presets.ts";
-import {
-  emit,
-  type NextAction,
-  buildAgentAction,
-} from "../../../shared/next-action.ts";
+import { emit, type NextAction, buildAgentAction } from "../../../shared/next-action.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { goPrompts, goParallelPrompts } from "../prompts.ts";
 import {
@@ -57,9 +53,16 @@ function parseArgs(args: string[]): Args {
       }
       phase = v;
     } else if (a === "--done") {
-      done = (args[++i] ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+      done = (args[++i] ?? "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
     } else if (a.startsWith("--done=")) {
-      done = a.slice("--done=".length).split(",").map((s) => s.trim()).filter(Boolean);
+      done = a
+        .slice("--done=".length)
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
     }
   }
   return { slug, emitAskJson, phase, done };
@@ -166,10 +169,7 @@ async function resolveSlug(repo: string, slugArg: string | undefined): Promise<s
   const plans = await listPlans(repo);
   const executable = plans.filter((p) => p.hasPlan);
   if (executable.length === 0) {
-    error(
-      "no plans with plan.md found for this repo",
-      "run /oh-nice plan first to create one",
-    );
+    error("no plans with plan.md found for this repo", "run /oh-nice plan first to create one");
     emit("nice", [{ type: "report", message: "no executable plans — exiting" }]);
     return null;
   }
@@ -310,9 +310,7 @@ async function runWaveDone(
       { title: "Run complete", color: "green" },
     );
     await clearState(paths.dir);
-    emit("nice", [
-      { type: "report", message: `all tasks complete · next: /oh-nice review` },
-    ]);
+    emit("nice", [{ type: "report", message: `all tasks complete · next: /oh-nice review` }]);
     return;
   }
 

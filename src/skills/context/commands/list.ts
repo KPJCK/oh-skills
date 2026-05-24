@@ -9,9 +9,7 @@ export async function run(_args: string[]): Promise<void> {
   const contextRoot = loadOhEnv().CONTEXT_DIR;
 
   if (folders.length === 0) {
-    process.stdout.write(
-      `_(no rule folders found under ${contextRoot})_\n`,
-    );
+    process.stdout.write(`_(no rule folders found under ${contextRoot})_\n`);
     return;
   }
 
@@ -21,9 +19,7 @@ export async function run(_args: string[]): Promise<void> {
   const lines: string[] = [];
   lines.push("## Context library");
   lines.push("");
-  lines.push(
-    `Root: \`${contextRoot}\` • cwd: \`${shortHome(cwd)}\``,
-  );
+  lines.push(`Root: \`${contextRoot}\` • cwd: \`${shortHome(cwd)}\``);
   lines.push("");
 
   // Folder table — primary view
@@ -51,9 +47,7 @@ export async function run(_args: string[]): Promise<void> {
     lines.push("| Rule | File | Priority |");
     lines.push("|:---|:---|:---:|");
     for (const r of prev.lastLoaded) {
-      lines.push(
-        `| **${escapeMd(r.title)}** | \`${r.file}\` | ${priorityBadge(r.priority)} |`,
-      );
+      lines.push(`| **${escapeMd(r.title)}** | \`${r.file}\` | ${priorityBadge(r.priority)} |`);
     }
     lines.push("");
     lines.push(`_Loaded at: \`${prev.lastLoadedAt}\`_`);

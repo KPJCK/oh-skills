@@ -18,22 +18,16 @@ function parseFlags(args: string[]): Flags {
 export async function run(args: string[]): Promise<void> {
   const flags = parseFlags(args);
   const all = await listAll();
-  const filtered = flags.topic
-    ? all.filter((k) => k.meta.topic === flags.topic)
-    : all;
+  const filtered = flags.topic ? all.filter((k) => k.meta.topic === flags.topic) : all;
 
   const KNOWLEDGES_ROOT = knowledgeRoot();
 
   if (all.length === 0) {
-    process.stdout.write(
-      `_(knowledge base is empty at ${KNOWLEDGES_ROOT})_\n`,
-    );
+    process.stdout.write(`_(knowledge base is empty at ${KNOWLEDGES_ROOT})_\n`);
     return;
   }
   if (flags.topic && filtered.length === 0) {
-    process.stdout.write(
-      `_(no knowledge under topic \`${flags.topic}\`)_\n`,
-    );
+    process.stdout.write(`_(no knowledge under topic \`${flags.topic}\`)_\n`);
     return;
   }
 

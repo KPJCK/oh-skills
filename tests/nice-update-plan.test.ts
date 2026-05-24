@@ -20,7 +20,10 @@ function parseNextActions(stderr: string): unknown[] {
   return JSON.parse(json) as unknown[];
 }
 
-function makeMinimalEnv(planDir: string, extra: Record<string, string> = {}): Record<string, string> {
+function makeMinimalEnv(
+  planDir: string,
+  extra: Record<string, string> = {},
+): Record<string, string> {
   return {
     HOME: os.tmpdir(),
     PLAN_DIR: planDir,
@@ -31,7 +34,11 @@ function makeMinimalEnv(planDir: string, extra: Record<string, string> = {}): Re
   };
 }
 
-function spawnCli(args: string[], extraEnv: Record<string, string> = {}, cwd?: string): {
+function spawnCli(
+  args: string[],
+  extraEnv: Record<string, string> = {},
+  cwd?: string,
+): {
   exitCode: number;
   stdout: string;
   stderr: string;
@@ -143,7 +150,14 @@ describe("update-plan research-go source validation", () => {
   test("accepts all valid source modes", () => {
     for (const mode of ["knowledge", "online", "auto"]) {
       const r = spawnCli(
-        ["nice", "update-plan", "--phase=research-go", "test-repo", "test-slug", `--source=${mode}`],
+        [
+          "nice",
+          "update-plan",
+          "--phase=research-go",
+          "test-repo",
+          "test-slug",
+          `--source=${mode}`,
+        ],
         makeMinimalEnv(path.join(tmp2, "plan")),
       );
       expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
@@ -179,7 +193,9 @@ describe("update-plan research-go action shape", () => {
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string; role: string; agent?: string; prompt?: string } | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.type).toBe("dispatch_agent");
@@ -192,7 +208,16 @@ describe("update-plan research-go action shape", () => {
   test("emits self_act with role=research when RESEARCH_AGENT is not set", () => {
     const minEnv = makeMinimalEnv(path.join(tmp3, "plan"));
     const r = Bun.spawnSync(
-      ["bun", CLI, "nice", "update-plan", "--phase=research-go", "test-repo", "test-slug", "--source=online"],
+      [
+        "bun",
+        CLI,
+        "nice",
+        "update-plan",
+        "--phase=research-go",
+        "test-repo",
+        "test-slug",
+        "--source=online",
+      ],
       {
         cwd: REPO_ROOT,
         env: {
@@ -208,9 +233,9 @@ describe("update-plan research-go action shape", () => {
     const stderr = r.stderr?.toString() ?? "";
     expect(stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(stderr);
-    const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "self_act",
-    ) as { type: string; role: string; prompt?: string } | undefined;
+    const agentAction = actions.find((a) => (a as { type: string }).type === "self_act") as
+      | { type: string; role: string; prompt?: string }
+      | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.role).toBe("research");
     // Self-act prompt should also mention Update section
@@ -245,9 +270,9 @@ describe("update-plan write-plan phase", () => {
     );
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
-    const skillAction = actions.find(
-      (a) => (a as { type: string }).type === "invoke_skill",
-    ) as { type: string; skill: string } | undefined;
+    const skillAction = actions.find((a) => (a as { type: string }).type === "invoke_skill") as
+      | { type: string; skill: string }
+      | undefined;
     expect(skillAction).toBeDefined();
     expect(skillAction!.skill).toBe("superpowers:writing-plans");
   });
@@ -258,9 +283,9 @@ describe("update-plan write-plan phase", () => {
       makeMinimalEnv(path.join(tmp4, "plan")),
     );
     const actions = parseNextActions(r.stderr);
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toContain("--phase=post-plan");
     expect(report!.message).toContain("test-repo");
@@ -276,9 +301,9 @@ describe("update-plan write-plan phase", () => {
       makeMinimalEnv(path.join(tmp4, "plan")),
     );
     const actions = parseNextActions(r.stderr);
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     // tmpSpec path should appear in the post-plan re-run command
     expect(report!.message).toContain(tmpSpec);

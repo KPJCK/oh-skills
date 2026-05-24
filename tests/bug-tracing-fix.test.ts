@@ -27,7 +27,10 @@ type SpawnResult = {
   stderr: string;
 };
 
-function makeMinimalEnv(planDir: string, extra: Record<string, string> = {}): Record<string, string> {
+function makeMinimalEnv(
+  planDir: string,
+  extra: Record<string, string> = {},
+): Record<string, string> {
   return {
     HOME: os.tmpdir(),
     PLAN_DIR: planDir,
@@ -79,10 +82,7 @@ afterEach(async () => {
 
 describe("bug-tracing fix phase=fix", () => {
   test("emits sentinel on stderr", () => {
-    const r = spawnCli(
-      ["bug-tracing", "fix", "off-by-one in array loop"],
-      makeMinimalEnv(planDir),
-    );
+    const r = spawnCli(["bug-tracing", "fix", "off-by-one in array loop"], makeMinimalEnv(planDir));
     expect(r.stderr).toContain(SENTINEL);
   });
 
@@ -94,7 +94,9 @@ describe("bug-tracing fix phase=fix", () => {
     expect(r.stderr).toContain(SENTINEL);
     const actions = parseNextActions(r.stderr);
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string; role: string; agent?: string } | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.type).toBe("dispatch_agent");
@@ -103,25 +105,24 @@ describe("bug-tracing fix phase=fix", () => {
   });
 
   test("emits self_act when CODING_AGENT is not set", () => {
-    const r = Bun.spawnSync(
-      ["bun", CLI, "bug-tracing", "fix", "off-by-one in array loop"],
-      {
-        cwd: REPO_ROOT,
-        env: {
-          PATH: process.env.PATH ?? "",
-          BUN_INSTALL: process.env.BUN_INSTALL ?? "",
-          ...makeMinimalEnv(planDir),
-          // CODING_AGENT intentionally absent
-        },
-        stderr: "pipe",
-        stdout: "pipe",
+    const r = Bun.spawnSync(["bun", CLI, "bug-tracing", "fix", "off-by-one in array loop"], {
+      cwd: REPO_ROOT,
+      env: {
+        PATH: process.env.PATH ?? "",
+        BUN_INSTALL: process.env.BUN_INSTALL ?? "",
+        ...makeMinimalEnv(planDir),
+        // CODING_AGENT intentionally absent
       },
-    );
+      stderr: "pipe",
+      stdout: "pipe",
+    });
     const stderr = r.stderr?.toString() ?? "";
     expect(stderr).toContain(SENTINEL);
     const actions = parseNextActions(stderr);
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string; role: string } | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.type).toBe("self_act");
@@ -129,28 +130,22 @@ describe("bug-tracing fix phase=fix", () => {
   });
 
   test("emits a report action containing the phase=trace re-run command", () => {
-    const r = spawnCli(
-      ["bug-tracing", "fix", "off-by-one in array loop"],
-      makeMinimalEnv(planDir),
-    );
+    const r = spawnCli(["bug-tracing", "fix", "off-by-one in array loop"], makeMinimalEnv(planDir));
     const actions = parseNextActions(r.stderr);
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toContain("--phase=trace");
     expect(report!.message).toContain("bug-tracing");
   });
 
   test("report contains the derived slug", () => {
-    const r = spawnCli(
-      ["bug-tracing", "fix", "off-by-one in array loop"],
-      makeMinimalEnv(planDir),
-    );
+    const r = spawnCli(["bug-tracing", "fix", "off-by-one in array loop"], makeMinimalEnv(planDir));
     const actions = parseNextActions(r.stderr);
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     // slug derived from "off-by-one in array loop" → "off-by-one-in-array-loop"
     expect(report!.message).toContain("off-by-one-in-array-loop");
@@ -162,9 +157,9 @@ describe("bug-tracing fix phase=fix", () => {
       makeMinimalEnv(planDir),
     );
     const actions = parseNextActions(r.stderr);
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toContain("my-custom-slug");
   });
@@ -196,9 +191,9 @@ describe("bug-tracing fix phase=trace", () => {
       makeMinimalEnv(planDir),
     );
     const actions = parseNextActions(r.stderr);
-    const selfAct = actions.find(
-      (a) => (a as { type: string }).type === "self_act",
-    ) as { type: string; role: string; prompt: string } | undefined;
+    const selfAct = actions.find((a) => (a as { type: string }).type === "self_act") as
+      | { type: string; role: string; prompt: string }
+      | undefined;
     expect(selfAct).toBeDefined();
     expect(selfAct!.type).toBe("self_act");
   });
@@ -209,9 +204,9 @@ describe("bug-tracing fix phase=trace", () => {
       makeMinimalEnv(planDir),
     );
     const actions = parseNextActions(r.stderr);
-    const selfAct = actions.find(
-      (a) => (a as { type: string }).type === "self_act",
-    ) as { type: string; prompt: string } | undefined;
+    const selfAct = actions.find((a) => (a as { type: string }).type === "self_act") as
+      | { type: string; prompt: string }
+      | undefined;
     expect(selfAct).toBeDefined();
     expect(selfAct!.prompt).toContain("trace.md");
   });
@@ -222,9 +217,9 @@ describe("bug-tracing fix phase=trace", () => {
       makeMinimalEnv(planDir),
     );
     const actions = parseNextActions(r.stderr);
-    const selfAct = actions.find(
-      (a) => (a as { type: string }).type === "self_act",
-    ) as { type: string; prompt: string } | undefined;
+    const selfAct = actions.find((a) => (a as { type: string }).type === "self_act") as
+      | { type: string; prompt: string }
+      | undefined;
     expect(selfAct).toBeDefined();
     expect(selfAct!.prompt).toContain("test-bug-slug");
   });
@@ -235,9 +230,9 @@ describe("bug-tracing fix phase=trace", () => {
       makeMinimalEnv(planDir),
     );
     const actions = parseNextActions(r.stderr);
-    const selfAct = actions.find(
-      (a) => (a as { type: string }).type === "self_act",
-    ) as { type: string; prompt: string } | undefined;
+    const selfAct = actions.find((a) => (a as { type: string }).type === "self_act") as
+      | { type: string; prompt: string }
+      | undefined;
     expect(selfAct).toBeDefined();
     // All required section headers must appear in the prompt
     expect(selfAct!.prompt).toContain("## Symptom");
@@ -256,9 +251,9 @@ describe("bug-tracing fix phase=trace", () => {
       makeMinimalEnv(planDir),
     );
     const actions = parseNextActions(r.stderr);
-    const selfAct = actions.find(
-      (a) => (a as { type: string }).type === "self_act",
-    ) as { type: string; prompt: string } | undefined;
+    const selfAct = actions.find((a) => (a as { type: string }).type === "self_act") as
+      | { type: string; prompt: string }
+      | undefined;
     expect(selfAct).toBeDefined();
     expect(selfAct!.prompt).toContain("off-by-one");
     expect(selfAct!.prompt).toContain("API-misuse");
@@ -271,9 +266,9 @@ describe("bug-tracing fix phase=trace", () => {
       makeMinimalEnv(planDir),
     );
     const actions = parseNextActions(r.stderr);
-    const selfAct = actions.find(
-      (a) => (a as { type: string }).type === "self_act",
-    ) as { type: string; prompt: string } | undefined;
+    const selfAct = actions.find((a) => (a as { type: string }).type === "self_act") as
+      | { type: string; prompt: string }
+      | undefined;
     expect(selfAct).toBeDefined();
     // Extract the "Write to: <path>" line from the prompt and assert it starts with planDir
     const match = selfAct!.prompt.match(/Write to: (.+)/);
@@ -348,10 +343,7 @@ describe("bug-tracing fix error handling", () => {
   });
 
   test("exits non-zero for unknown bug-tracing subcommand", () => {
-    const r = spawnCli(
-      ["bug-tracing", "bogus-subcommand"],
-      makeMinimalEnv(planDir),
-    );
+    const r = spawnCli(["bug-tracing", "bogus-subcommand"], makeMinimalEnv(planDir));
     expect(r.exitCode).not.toBe(0);
     const combined = r.stdout + r.stderr;
     expect(combined).toMatch(/unknown bug-tracing subcommand|fix/i);

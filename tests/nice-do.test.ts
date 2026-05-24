@@ -91,7 +91,13 @@ describe("parseDoArgs", () => {
 
   test("--phase=post-review with --review-tmp parses correctly", async () => {
     const { parseDoArgs } = await import("../src/skills/nice/commands/do.ts");
-    const args = parseDoArgs(["--phase=post-review", "--request", "x", "--review-tmp", "/tmp/test.md"]);
+    const args = parseDoArgs([
+      "--phase=post-review",
+      "--request",
+      "x",
+      "--review-tmp",
+      "/tmp/test.md",
+    ]);
     expect(args.phase).toBe("post-review");
     expect(args.reviewTmp).toBe("/tmp/test.md");
   });
@@ -146,26 +152,25 @@ describe("nice do — init phase", () => {
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string; role: string; agent?: string } | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.role).toBe("coding");
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toContain("--phase=post-implement");
   });
 
   test("dispatch_agent when CODING_AGENT is set", () => {
-    const r = spawnCli(
-      ["nice", "do", "add a comment"],
-      makeMinimalEnv({ CODING_AGENT: "mirai" }),
-    );
+    const r = spawnCli(["nice", "do", "add a comment"], makeMinimalEnv({ CODING_AGENT: "mirai" }));
     const actions = parseNextActions(r.stderr);
-    const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent",
-    ) as { type: string; role: string; agent?: string } | undefined;
+    const agentAction = actions.find((a) => (a as { type: string }).type === "dispatch_agent") as
+      | { type: string; role: string; agent?: string }
+      | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.agent).toBe("mirai");
   });
@@ -189,9 +194,9 @@ describe("nice do — init phase", () => {
     const stderr = r.stderr?.toString() ?? "";
     expect(stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(stderr);
-    const selfAct = actions.find(
-      (a) => (a as { type: string }).type === "self_act",
-    ) as { type: string; role: string } | undefined;
+    const selfAct = actions.find((a) => (a as { type: string }).type === "self_act") as
+      | { type: string; role: string }
+      | undefined;
     expect(selfAct).toBeDefined();
     expect(selfAct!.role).toBe("coding");
   });
@@ -203,24 +208,21 @@ describe("nice do — init phase", () => {
     );
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toContain("--phase=post-implement");
     expect(report!.message).toContain("--no-fix");
   });
 
   test("no --no-fix: init phase report does NOT include --no-fix", () => {
-    const r = spawnCli(
-      ["nice", "do", "add a comment"],
-      makeMinimalEnv({ CODING_AGENT: "mirai" }),
-    );
+    const r = spawnCli(["nice", "do", "add a comment"], makeMinimalEnv({ CODING_AGENT: "mirai" }));
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toContain("--phase=post-implement");
     expect(report!.message).not.toContain("--no-fix");
@@ -234,12 +236,14 @@ describe("nice do — init phase", () => {
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string } | undefined;
     expect(agentAction).toBeDefined();
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toMatch(/review skipped|done/i);
     // Must NOT contain post-implement phase
@@ -260,13 +264,15 @@ describe("nice do — post-implement phase", () => {
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string; role: string } | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.role).toBe("review");
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toContain("--phase=post-review");
     expect(report!.message).toContain("--review-tmp");
@@ -281,7 +287,9 @@ describe("nice do — post-implement phase", () => {
     );
     const actions = parseNextActions(r.stderr);
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string; prompt: string } | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.prompt).toContain("rename foo to bar");
@@ -295,12 +303,14 @@ describe("nice do — post-implement phase", () => {
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string } | undefined;
     expect(agentAction).toBeDefined();
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toMatch(/review.only|findings/i);
     expect(report!.message).not.toContain("--phase=post-review");
@@ -322,14 +332,16 @@ describe("nice do — post-review phase", () => {
     );
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toMatch(/no issues|clean/i);
 
     // tmp file should be deleted
-    const exists = await stat(reviewTmp).then(() => true).catch(() => false);
+    const exists = await stat(reviewTmp)
+      .then(() => true)
+      .catch(() => false);
     expect(exists).toBe(false);
   });
 
@@ -342,28 +354,43 @@ describe("nice do — post-review phase", () => {
       makeMinimalEnv(),
     );
     const actions = parseNextActions(r.stderr);
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toMatch(/no issues|clean/i);
 
-    const exists = await stat(reviewTmp).then(() => true).catch(() => false);
+    const exists = await stat(reviewTmp)
+      .then(() => true)
+      .catch(() => false);
     expect(exists).toBe(false);
   });
 
   test("with unchecked findings: emits dispatch_agent(coding) with findings + final report, deletes tmp", async () => {
     const reviewTmp = path.join(tmp, "oh-do-test-findings.md");
-    await writeFile(reviewTmp, "- [ ] **foo** — Suggested fix: bar\n- [ ] **baz** — Suggested fix: qux\n");
+    await writeFile(
+      reviewTmp,
+      "- [ ] **foo** — Suggested fix: bar\n- [ ] **baz** — Suggested fix: qux\n",
+    );
 
     const r = spawnCli(
-      ["nice", "do", "--phase=post-review", "--request", "rename foo to bar", "--review-tmp", reviewTmp],
+      [
+        "nice",
+        "do",
+        "--phase=post-review",
+        "--request",
+        "rename foo to bar",
+        "--review-tmp",
+        reviewTmp,
+      ],
       makeMinimalEnv({ CODING_AGENT: "mirai" }),
     );
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string; role: string; prompt: string } | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.role).toBe("coding");
@@ -373,14 +400,16 @@ describe("nice do — post-review phase", () => {
     // prompt must contain the original request
     expect(agentAction!.prompt).toContain("rename foo to bar");
 
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toMatch(/complete|done/i);
 
     // tmp file should be deleted
-    const exists = await stat(reviewTmp).then(() => true).catch(() => false);
+    const exists = await stat(reviewTmp)
+      .then(() => true)
+      .catch(() => false);
     expect(exists).toBe(false);
   });
 
@@ -397,20 +426,24 @@ describe("nice do — post-review phase", () => {
     const actions = parseNextActions(r.stderr);
     // Must dispatch a coding agent (not emit "no issues")
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string; role: string } | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.role).toBe("coding");
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     // Should say complete/done, NOT "no issues"
     expect(report!.message).not.toMatch(/no issues|clean/i);
   });
 
   test("missing --review-tmp exits non-zero", () => {
-    expect(() => spawnCli(["nice", "do", "--phase=post-review", "--request", "x"], makeMinimalEnv())).not.toThrow();
+    expect(() =>
+      spawnCli(["nice", "do", "--phase=post-review", "--request", "x"], makeMinimalEnv()),
+    ).not.toThrow();
     // The spawnSync doesn't throw but the process itself should exit non-zero due to parseDoArgs throwing
     const r = spawnCli(["nice", "do", "--phase=post-review", "--request", "x"], makeMinimalEnv());
     expect(r.exitCode).not.toBe(0);
@@ -431,7 +464,9 @@ describe("nice do — no plan artifacts", () => {
     // Should emit sentinel
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     // planDir should not exist at all
-    const exists = await stat(planDir).then(() => true).catch(() => false);
+    const exists = await stat(planDir)
+      .then(() => true)
+      .catch(() => false);
     expect(exists).toBe(false);
   });
 });
@@ -442,10 +477,7 @@ describe("nice do — no plan artifacts", () => {
 
 describe("nice do — CLI registration", () => {
   test("'nice do' is a recognized subcommand (no 'unknown subcommand' error)", () => {
-    const r = spawnCli(
-      ["nice", "do", "test"],
-      makeMinimalEnv(),
-    );
+    const r = spawnCli(["nice", "do", "test"], makeMinimalEnv());
     // Should NOT print "unknown nice subcommand"
     expect(r.stderr).not.toContain("unknown nice subcommand");
     expect(r.stderr).not.toContain("unknown flag");

@@ -9,11 +9,7 @@ export type BannerOptions = {
 
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.startsWith("#") ? hex.slice(1) : hex;
-  return [
-    parseInt(h.slice(0, 2), 16),
-    parseInt(h.slice(2, 4), 16),
-    parseInt(h.slice(4, 6), 16),
-  ];
+  return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
 }
 
 function lerp(a: number, b: number, t: number): number {
@@ -64,9 +60,7 @@ function renderSubtitleLine(
       const idx = line.indexOf(needle, from);
       if (idx < 0) break;
       // skip if overlaps an already-matched range
-      const overlaps = matches.some(
-        (m) => idx < m.end && idx + needle.length > m.start,
-      );
+      const overlaps = matches.some((m) => idx < m.end && idx + needle.length > m.start);
       if (!overlaps) {
         matches.push({ start: idx, end: idx + needle.length, text: needle });
       }

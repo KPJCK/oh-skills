@@ -26,7 +26,10 @@ type SpawnResult = {
   stderr: string;
 };
 
-function makeMinimalEnv(planDir: string, extra: Record<string, string> = {}): Record<string, string> {
+function makeMinimalEnv(
+  planDir: string,
+  extra: Record<string, string> = {},
+): Record<string, string> {
   return {
     HOME: os.tmpdir(),
     PLAN_DIR: planDir,
@@ -142,7 +145,9 @@ describe("plan research-go action shape", () => {
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string; role: string; agent?: string } | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.type).toBe("dispatch_agent");
@@ -155,7 +160,16 @@ describe("plan research-go action shape", () => {
     const minEnv = makeMinimalEnv(path.join(tmp, "plan"));
     // Spawn with a clean env that only has what's needed, no RESEARCH_AGENT
     const r = Bun.spawnSync(
-      ["bun", CLI, "nice", "plan", "--phase=research-go", "test-repo", "test-slug", "--source=auto"],
+      [
+        "bun",
+        CLI,
+        "nice",
+        "plan",
+        "--phase=research-go",
+        "test-repo",
+        "test-slug",
+        "--source=auto",
+      ],
       {
         cwd: REPO_ROOT,
         env: {
@@ -172,7 +186,9 @@ describe("plan research-go action shape", () => {
     expect(stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(stderr);
     const agentAction = actions.find(
-      (a) => (a as { type: string }).type === "dispatch_agent" || (a as { type: string }).type === "self_act",
+      (a) =>
+        (a as { type: string }).type === "dispatch_agent" ||
+        (a as { type: string }).type === "self_act",
     ) as { type: string; role: string } | undefined;
     expect(agentAction).toBeDefined();
     expect(agentAction!.type).toBe("self_act");
@@ -192,9 +208,9 @@ describe("plan write-plan phase", () => {
     );
     expect(r.stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(r.stderr);
-    const skillAction = actions.find(
-      (a) => (a as { type: string }).type === "invoke_skill",
-    ) as { type: string; skill: string; instructions: string } | undefined;
+    const skillAction = actions.find((a) => (a as { type: string }).type === "invoke_skill") as
+      | { type: string; skill: string; instructions: string }
+      | undefined;
     expect(skillAction).toBeDefined();
     expect(skillAction!.skill).toBe("superpowers:writing-plans");
   });
@@ -205,9 +221,9 @@ describe("plan write-plan phase", () => {
       makeMinimalEnv(path.join(tmp, "plan")),
     );
     const actions = parseNextActions(r.stderr);
-    const report = actions.find(
-      (a) => (a as { type: string }).type === "report",
-    ) as { type: string; message: string } | undefined;
+    const report = actions.find((a) => (a as { type: string }).type === "report") as
+      | { type: string; message: string }
+      | undefined;
     expect(report).toBeDefined();
     expect(report!.message).toContain("--phase=post-plan");
     expect(report!.message).toContain("test-repo");
@@ -256,9 +272,9 @@ describe("plan post-brainstorm research opt-in", () => {
     const stderr = r.stderr?.toString() ?? "";
     expect(stderr).toContain("__OH_NICE_NEXT_ACTIONS__");
     const actions = parseNextActions(stderr);
-    const askAction = actions.find(
-      (a) => (a as { type: string }).type === "ask_user",
-    ) as { type: string; question: string; options?: string[] } | undefined;
+    const askAction = actions.find((a) => (a as { type: string }).type === "ask_user") as
+      | { type: string; question: string; options?: string[] }
+      | undefined;
     expect(askAction).toBeDefined();
     expect(askAction!.options).toContain("Run research");
     expect(askAction!.options).toContain("Skip research");

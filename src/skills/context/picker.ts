@@ -24,9 +24,7 @@ export async function pickFolders(
 
 const NEW_FOLDER_SENTINEL = "__new__";
 
-export async function pickFolderForAdd(
-  folders: readonly FolderInfo[],
-): Promise<string | null> {
+export async function pickFolderForAdd(folders: readonly FolderInfo[]): Promise<string | null> {
   try {
     const choices = [
       ...folders.map((f) => ({
@@ -42,8 +40,7 @@ export async function pickFolderForAdd(
     });
     if (picked === NEW_FOLDER_SENTINEL) {
       const name = await input({
-        message:
-          "New folder path (e.g. `python` or `typescript/testing`)",
+        message: "New folder path (e.g. `python` or `typescript/testing`)",
         validate: (v) =>
           /^[a-z0-9]+(?:[/-][a-z0-9]+)*$/.test(v.trim()) ||
           "lowercase letters, digits, hyphens, slashes only",

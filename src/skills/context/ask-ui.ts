@@ -81,9 +81,7 @@ function describeFolder(
   folderTokens: ReadonlyMap<string, number>,
 ): string {
   const ruleBit = `${f.ruleCount} rule${f.ruleCount === 1 ? "" : "s"}`;
-  const tokBit = folderTokens.has(f.rel)
-    ? ` · ${formatTokens(folderTokens.get(f.rel)!)}`
-    : "";
+  const tokBit = folderTokens.has(f.rel) ? ` · ${formatTokens(folderTokens.get(f.rel)!)}` : "";
   const lastBit = lastPicks.includes(f.rel) ? " · last loaded" : "";
   return `${ruleBit}${tokBit}${lastBit}`;
 }
@@ -92,9 +90,7 @@ function describeFolder(
  * Folder picker for `add` — single-select with "(+ new folder)" sentinel.
  * Reserves 1 slot in the last chunk for the sentinel.
  */
-export function buildAddFolderAskPayload(
-  folders: readonly FolderInfo[],
-): AskPayload {
+export function buildAddFolderAskPayload(folders: readonly FolderInfo[]): AskPayload {
   const next = `bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts context add --folder "<folder>" --title <t> --description <d> --priority <low|medium|high> --body-stdin --confirmed`;
 
   if (folders.length === 0) {
@@ -187,10 +183,7 @@ export function buildAddTemplateAskPayload(
   }
   if (rules.length > MAX_TOTAL_OPTIONS) {
     const numbered = rules
-      .map(
-        (r, i) =>
-          `${i + 1}. ${r.rel}  (${r.title}, ${formatTokens(tokens.get(r.rel) ?? 0)})`,
-      )
+      .map((r, i) => `${i + 1}. ${r.rel}  (${r.title}, ${formatTokens(tokens.get(r.rel) ?? 0)})`)
       .join("\n");
     return { questions: [], next, tooManyForUI: true, plainText: numbered };
   }
@@ -201,8 +194,7 @@ export function buildAddTemplateAskPayload(
       chunks.length === 1
         ? `Which rules go into template "${templateName}"?`
         : `Pick rules for "${templateName}" (group ${idx + 1} of ${chunks.length})`,
-    header:
-      chunks.length === 1 ? "Rules" : `Rules ${idx + 1}/${chunks.length}`,
+    header: chunks.length === 1 ? "Rules" : `Rules ${idx + 1}/${chunks.length}`,
     multiSelect: true,
     options: chunk.map((r) => ({
       label: r.rel,

@@ -1,10 +1,5 @@
 import { test, expect, describe } from "bun:test";
-import {
-  parseRule,
-  parseKnowledge,
-  priorityRank,
-  todayISO,
-} from "../src/shared/frontmatter.ts";
+import { parseRule, parseKnowledge, priorityRank, todayISO } from "../src/shared/frontmatter.ts";
 
 // ---------------------------------------------------------------------------
 // parseRule (ported from oh-context/tests/frontmatter.test.ts)
@@ -176,10 +171,7 @@ updated: 2026-05-16
 body
 `;
     const { meta } = parseKnowledge(md);
-    expect(meta.sources).toEqual([
-      "https://example.com/one",
-      "https://example.com/two",
-    ]);
+    expect(meta.sources).toEqual(["https://example.com/one", "https://example.com/two"]);
   });
 
   test("throws on missing required fields", () => {

@@ -1,22 +1,10 @@
 // src/skills/search/commands/add.ts
 import path from "node:path";
 import { writeFile, mkdir } from "node:fs/promises";
-import {
-  ensureTopicDir,
-  fileExists,
-  knowledgeRoot,
-  listTopics,
-} from "../registry.ts";
+import { ensureTopicDir, fileExists, knowledgeRoot, listTopics } from "../registry.ts";
 import { pickTopic } from "../picker.ts";
 import { buildAddTopicAskPayload } from "../ask-ui.ts";
-import {
-  input,
-  select,
-  confirm,
-  promptSlug,
-  isValidSlug,
-  isValidTopic,
-} from "../prompts.ts";
+import { input, select, confirm, promptSlug, isValidSlug, isValidTopic } from "../prompts.ts";
 import { scaffoldKnowledge, slugify } from "../template.ts";
 import { step, success, info, hint, error } from "../../../shared/ui.ts";
 
@@ -126,9 +114,7 @@ export async function run(args: string[]): Promise<void> {
     process.stdout.write(JSON.stringify(payload, null, 2) + "\n");
     return;
   }
-  return isProgrammatic(flags)
-    ? runProgrammatic(flags)
-    : runInteractive(flags);
+  return isProgrammatic(flags) ? runProgrammatic(flags) : runInteractive(flags);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -153,8 +139,7 @@ async function runProgrammatic(flags: Flags): Promise<void> {
   if (!isValidSlug(name)) throw new Error(`invalid name: ${name}`);
   if (!isValidTopic(topic)) throw new Error(`invalid topic: ${topic}`);
   if (title.length < 3) throw new Error("--title must be at least 3 chars");
-  if (summary.length < 5)
-    throw new Error("--summary must be at least 5 chars");
+  if (summary.length < 5) throw new Error("--summary must be at least 5 chars");
 
   await ensureTopicDir(topic);
 
@@ -279,9 +264,7 @@ async function runInteractive(flags: Flags): Promise<void> {
     .filter(Boolean);
 
   step("Body");
-  hint(
-    "for non-trivial bodies, pre-write the markdown to a file and use --body-file in flag mode",
-  );
+  hint("for non-trivial bodies, pre-write the markdown to a file and use --body-file in flag mode");
   const body = await input({
     message: "Body (one-line OK, or '@/path/to/file.md' to load from file)",
   });

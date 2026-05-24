@@ -27,20 +27,26 @@ that doesn't happen in practice before merging.
    ```
    pick `smoke-parallel`. Watch:
    - Wave 1 dispatches ONE Mirai (for `types-define`).
-   - When it returns, manually invoke `/oh-nice go --phase=wave-done --slug smoke-parallel --done types-define`.
-   - Wave 2 dispatches TWO Mirais in parallel (for `parser-tokenize` and `renderer-init`).
+   - When it returns, manually invoke
+     `/oh-nice go --phase=wave-done --slug smoke-parallel --done types-define`.
+   - Wave 2 dispatches TWO Mirais in parallel (for `parser-tokenize` and
+     `renderer-init`).
    - Verify both Mirais return DONE.
    - Final wave dispatches ONE Mirai (`index-wire`).
 
 ## Verify
 
-4. Check that each commit touches ONLY the files declared in its task's `**Files:**` block:
+4. Check that each commit touches ONLY the files declared in its task's
+   `**Files:**` block:
+
    ```bash
    git log --stat --reverse main..HEAD
    ```
+
    For each commit:
    - `types-define` commit should only touch `src/types.ts`.
-   - `parser-tokenize` commit should only touch `src/parser/tokenize.ts` and `tests/parser/tokenize.test.ts`.
+   - `parser-tokenize` commit should only touch `src/parser/tokenize.ts` and
+     `tests/parser/tokenize.test.ts`.
    - `renderer-init` commit should only touch `src/renderer.ts`.
    - `index-wire` commit should only touch `src/index.ts`.
 

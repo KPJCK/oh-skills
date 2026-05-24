@@ -160,12 +160,8 @@ export async function resolveTemplate(name: string): Promise<Rule[]> {
   // Sanity: every requested path must resolve.
   if (filtered.length !== tpl.context.length) {
     const got = new Set(filtered.map((r) => `${r.folder}/${r.file}`));
-    const missing = tpl.context
-      .map((c) => c.path)
-      .filter((p) => !got.has(p));
-    throw new Error(
-      `template "${name}" references missing rule(s): ${missing.join(", ")}`,
-    );
+    const missing = tpl.context.map((c) => c.path).filter((p) => !got.has(p));
+    throw new Error(`template "${name}" references missing rule(s): ${missing.join(", ")}`);
   }
   return filtered;
 }

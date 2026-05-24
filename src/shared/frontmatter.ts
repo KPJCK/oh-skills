@@ -60,8 +60,7 @@ export function parseFrontmatter(content: string): ParsedFile {
     // Strip quotes
     if (
       typeof val === "string" &&
-      ((val.startsWith('"') && val.endsWith('"')) ||
-        (val.startsWith("'") && val.endsWith("'")))
+      ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'")))
     ) {
       val = val.slice(1, -1);
     }
@@ -79,8 +78,7 @@ export function parseFrontmatter(content: string): ParsedFile {
     if (val === "true") val = true;
     else if (val === "false") val = false;
     // Number
-    else if (typeof val === "string" && /^-?\d+(\.\d+)?$/.test(val))
-      val = Number(val);
+    else if (typeof val === "string" && /^-?\d+(\.\d+)?$/.test(val)) val = Number(val);
 
     meta[key] = val;
   }
@@ -90,10 +88,7 @@ export function parseFrontmatter(content: string): ParsedFile {
 }
 
 function unquote(s: string): string {
-  if (
-    (s.startsWith('"') && s.endsWith('"')) ||
-    (s.startsWith("'") && s.endsWith("'"))
-  ) {
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
     return s.slice(1, -1);
   }
   return s;
@@ -124,8 +119,7 @@ export function parseRule(content: string): ParsedRule {
   const description = parsed.meta["description"];
   let priority = parsed.meta["priority"];
 
-  if (typeof title !== "string" || !title)
-    throw new Error("missing required field: title");
+  if (typeof title !== "string" || !title) throw new Error("missing required field: title");
   if (typeof description !== "string" || !description)
     throw new Error("missing required field: description");
 
@@ -135,14 +129,11 @@ export function parseRule(content: string): ParsedRule {
   }
 
   if (priority !== "low" && priority !== "medium" && priority !== "high") {
-    throw new Error(
-      `invalid priority: ${String(priority)} (expected low | medium | high)`,
-    );
+    throw new Error(`invalid priority: ${String(priority)} (expected low | medium | high)`);
   }
 
   return {
-    meta: { ...parsed.meta, title, description, priority } as FrontmatterRaw &
-      RuleMeta,
+    meta: { ...parsed.meta, title, description, priority } as FrontmatterRaw & RuleMeta,
     body: parsed.body,
   };
 }

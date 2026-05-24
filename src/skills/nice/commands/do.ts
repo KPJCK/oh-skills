@@ -216,7 +216,10 @@ async function runPostReview(args: DoArgs): Promise<void> {
 
   // Read the review tmp file
   if (!existsSync(reviewTmp)) {
-    error(`review tmp file not found: ${reviewTmp}`, "the reviewer may not have written findings yet");
+    error(
+      `review tmp file not found: ${reviewTmp}`,
+      "the reviewer may not have written findings yet",
+    );
     process.exit(1);
   }
 
@@ -286,7 +289,10 @@ export async function run(args: string[]): Promise<void> {
       await runPostReview(parsed);
       break;
     default: {
-      error(`unknown phase: ${(parsed as { phase: string }).phase}`, `expected: init | post-implement | post-review`);
+      error(
+        `unknown phase: ${(parsed as { phase: string }).phase}`,
+        `expected: init | post-implement | post-review`,
+      );
       process.exit(2);
     }
   }

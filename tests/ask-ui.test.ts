@@ -53,9 +53,7 @@ function buildLoadAsk(
 
   const options: AskOption[] = folders.map((f) => {
     const ruleBit = `${f.ruleCount} rule${f.ruleCount === 1 ? "" : "s"}`;
-    const tokBit = folderTokens.has(f.rel)
-      ? ` · ${formatTokens(folderTokens.get(f.rel)!)}`
-      : "";
+    const tokBit = folderTokens.has(f.rel) ? ` · ${formatTokens(folderTokens.get(f.rel)!)}` : "";
     const lastBit = lastPicks.includes(f.rel) ? " · last loaded" : "";
     return { label: f.rel, description: `${ruleBit}${tokBit}${lastBit}` };
   });
@@ -93,7 +91,10 @@ describe("bucketOptions", () => {
   });
 
   test("5 items → [3, 2] (rebalanced from [4, 1])", () => {
-    expect(bucketOptions([1, 2, 3, 4, 5])).toEqual([[1, 2, 3], [4, 5]]);
+    expect(bucketOptions([1, 2, 3, 4, 5])).toEqual([
+      [1, 2, 3],
+      [4, 5],
+    ]);
   });
 
   test("6 items → [4, 2]", () => {
@@ -159,9 +160,7 @@ describe("buildLoadAskPayload", () => {
   });
 
   test("4 folders → single question with all 4", () => {
-    const p = buildLoadAsk(
-      fakeFolders(["git", "rust", "typescript", "typescript/frontend"]),
-    );
+    const p = buildLoadAsk(fakeFolders(["git", "rust", "typescript", "typescript/frontend"]));
     expect(p.questions).toHaveLength(1);
     expect(p.questions[0]!.options).toHaveLength(4);
     expect(p.questions[0]!.multiSelect).toBe(true);
@@ -175,13 +174,7 @@ describe("buildLoadAskPayload", () => {
 
   test("5 folders → 2 questions, balanced as 3+2 (the bug scenario)", () => {
     const p = buildLoadAsk(
-      fakeFolders([
-        "git",
-        "rust",
-        "typescript",
-        "typescript/backend",
-        "typescript/frontend",
-      ]),
+      fakeFolders(["git", "rust", "typescript", "typescript/backend", "typescript/frontend"]),
     );
     expect(p.questions).toHaveLength(2);
     expect(p.questions[0]!.options).toHaveLength(3);
@@ -198,9 +191,7 @@ describe("buildLoadAskPayload", () => {
   });
 
   test("16 folders → 4 questions × 4 options each, no overflow", () => {
-    const folders = fakeFolders(
-      Array.from({ length: 16 }, (_, i) => `topic-${i}`),
-    );
+    const folders = fakeFolders(Array.from({ length: 16 }, (_, i) => `topic-${i}`));
     const p = buildLoadAsk(folders);
     expect(p.questions).toHaveLength(4);
     expect(p.questions.every((q) => q.options.length === 4)).toBe(true);
@@ -208,9 +199,7 @@ describe("buildLoadAskPayload", () => {
   });
 
   test("17 folders → tooManyForUI + plainText fallback", () => {
-    const folders = fakeFolders(
-      Array.from({ length: 17 }, (_, i) => `topic-${i}`),
-    );
+    const folders = fakeFolders(Array.from({ length: 17 }, (_, i) => `topic-${i}`));
     const p = buildLoadAsk(folders);
     expect(p.questions).toEqual([]);
     expect(p.tooManyForUI).toBe(true);
@@ -241,9 +230,7 @@ describe("buildLoadAskPayload", () => {
 
   test("multiSelect is always true for load picker", () => {
     for (const n of [2, 4, 5, 8, 16]) {
-      const p = buildLoadAsk(
-        fakeFolders(Array.from({ length: n }, (_, i) => `f${i}`)),
-      );
+      const p = buildLoadAsk(fakeFolders(Array.from({ length: n }, (_, i) => `f${i}`)));
       for (const q of p.questions) {
         expect(q.multiSelect).toBe(true);
       }
@@ -256,9 +243,7 @@ describe("buildLoadAskPayload", () => {
   });
 
   test("header carries pagination info for multi-question", () => {
-    const p = buildLoadAsk(
-      fakeFolders(["a", "b", "c", "d", "e", "f"]),
-    );
+    const p = buildLoadAsk(fakeFolders(["a", "b", "c", "d", "e", "f"]));
     expect(p.questions[0]!.header).toContain("1/2");
     expect(p.questions[1]!.header).toContain("2/2");
   });

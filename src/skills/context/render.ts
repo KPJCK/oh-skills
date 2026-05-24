@@ -51,9 +51,7 @@ export function renderCheckPayload(loaded: readonly LoadedRuleRef[]): string {
   );
   lines.push("");
   loaded.forEach((r, i) => {
-    lines.push(
-      `${i + 1}. **${r.title}** (\`${r.file}\`, priority: ${r.priority})`,
-    );
+    lines.push(`${i + 1}. **${r.title}** (\`${r.file}\`, priority: ${r.priority})`);
   });
   lines.push("");
   lines.push(

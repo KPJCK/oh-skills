@@ -129,7 +129,13 @@ describe("go --phase=wave-done", () => {
     expect(init.code).toBe(0);
     // Now wave-done with the root task complete
     const wd = await runCli([
-      "nice", "go", "--phase=wave-done", "--slug", "wd1", "--done", "types-define",
+      "nice",
+      "go",
+      "--phase=wave-done",
+      "--slug",
+      "wd1",
+      "--done",
+      "types-define",
     ]);
     expect(wd.code).toBe(0);
     const actions = parseSentinel(wd.stderr);
@@ -158,13 +164,23 @@ describe("go --phase=wave-done", () => {
     const init = await runCli(["nice", "go", "--phase=init", "--slug", "wd2"]);
     expect(init.code).toBe(0);
     const wd1 = await runCli([
-      "nice", "go", "--phase=wave-done", "--slug", "wd2",
-      "--done", "types-define",
+      "nice",
+      "go",
+      "--phase=wave-done",
+      "--slug",
+      "wd2",
+      "--done",
+      "types-define",
     ]);
     expect(wd1.code).toBe(0);
     const wd2 = await runCli([
-      "nice", "go", "--phase=wave-done", "--slug", "wd2",
-      "--done", "parser-tokenize,renderer-init",
+      "nice",
+      "go",
+      "--phase=wave-done",
+      "--slug",
+      "wd2",
+      "--done",
+      "parser-tokenize,renderer-init",
     ]);
     expect(wd2.code).toBe(0);
     const actions = parseSentinel(wd2.stderr);
@@ -184,12 +200,22 @@ describe("go --phase=wave-done", () => {
     await runCli(["nice", "go", "--phase=init", "--slug", "wd3"]);
     await runCli(["nice", "go", "--phase=wave-done", "--slug", "wd3", "--done", "types-define"]);
     await runCli([
-      "nice", "go", "--phase=wave-done", "--slug", "wd3",
-      "--done", "parser-tokenize,renderer-init",
+      "nice",
+      "go",
+      "--phase=wave-done",
+      "--slug",
+      "wd3",
+      "--done",
+      "parser-tokenize,renderer-init",
     ]);
     const wdFinal = await runCli([
-      "nice", "go", "--phase=wave-done", "--slug", "wd3",
-      "--done", "index-wire",
+      "nice",
+      "go",
+      "--phase=wave-done",
+      "--slug",
+      "wd3",
+      "--done",
+      "index-wire",
     ]);
     expect(wdFinal.code).toBe(0);
     const actions = parseSentinel(wdFinal.stderr);
@@ -212,8 +238,13 @@ describe("go --phase=wave-done", () => {
     await placePlan("oh-skills", "wd4", "valid-parallel.md");
     await runCli(["nice", "go", "--phase=init", "--slug", "wd4"]);
     const wd = await runCli([
-      "nice", "go", "--phase=wave-done", "--slug", "wd4",
-      "--done", "ghost-task",
+      "nice",
+      "go",
+      "--phase=wave-done",
+      "--slug",
+      "wd4",
+      "--done",
+      "ghost-task",
     ]);
     expect(wd.code).toBe(2);
   });
@@ -240,10 +271,9 @@ describe("go MAX_PARALLEL cap", () => {
 
   test("OH_NICE_MAX_PARALLEL=2 with 5 ready tasks → 2 dispatches", async () => {
     await placePlan("oh-skills", "cap2", "many-roots.md");
-    const run = await runCli(
-      ["nice", "go", "--phase=init", "--slug", "cap2"],
-      { OH_NICE_MAX_PARALLEL: "2" },
-    );
+    const run = await runCli(["nice", "go", "--phase=init", "--slug", "cap2"], {
+      OH_NICE_MAX_PARALLEL: "2",
+    });
     expect(run.code).toBe(0);
     const actions = parseSentinel(run.stderr);
     const agentActions = actions.filter(
@@ -258,10 +288,9 @@ describe("go MAX_PARALLEL cap", () => {
 
   test("OH_NICE_MAX_PARALLEL=10 with 5 ready tasks → 5 dispatches", async () => {
     await placePlan("oh-skills", "cap3", "many-roots.md");
-    const run = await runCli(
-      ["nice", "go", "--phase=init", "--slug", "cap3"],
-      { OH_NICE_MAX_PARALLEL: "10" },
-    );
+    const run = await runCli(["nice", "go", "--phase=init", "--slug", "cap3"], {
+      OH_NICE_MAX_PARALLEL: "10",
+    });
     expect(run.code).toBe(0);
     const actions = parseSentinel(run.stderr);
     const agentActions = actions.filter(

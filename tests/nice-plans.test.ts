@@ -30,23 +30,15 @@ describe("nextReviewRound logic", () => {
   });
 
   test("returns max + 1 across multiple rounds", () => {
-    expect(
-      countNextRound(
-        "## Round 1 — 2026-05-16\nfoo\n## Round 2 — 2026-05-17\nbar",
-      ),
-    ).toBe(3);
+    expect(countNextRound("## Round 1 — 2026-05-16\nfoo\n## Round 2 — 2026-05-17\nbar")).toBe(3);
   });
 
   test("handles non-sequential rounds (max wins)", () => {
-    expect(
-      countNextRound("## Round 5 — 2026-05-16\n## Round 2 — 2026-05-15"),
-    ).toBe(6);
+    expect(countNextRound("## Round 5 — 2026-05-16\n## Round 2 — 2026-05-15")).toBe(6);
   });
 
   test("ignores non-round H2 headings", () => {
-    expect(
-      countNextRound("## Summary\n## Round 1 — 2026-05-16\n## Notes"),
-    ).toBe(2);
+    expect(countNextRound("## Summary\n## Round 1 — 2026-05-16\n## Notes")).toBe(2);
   });
 });
 

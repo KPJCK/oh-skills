@@ -5,9 +5,7 @@ import { promptTopic } from "./prompts.ts";
 
 const NEW_TOPIC_SENTINEL = "__new__";
 
-export async function pickTopic(opts?: {
-  message?: string;
-}): Promise<string | null> {
+export async function pickTopic(opts?: { message?: string }): Promise<string | null> {
   const topics = await listTopics();
   if (topics.length === 0) {
     // No existing topics — directly prompt for new one

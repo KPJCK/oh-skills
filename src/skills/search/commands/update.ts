@@ -46,13 +46,9 @@ export async function run(args: string[]): Promise<void> {
   lines.push(
     `1. Ask the user what they want to change in natural language (e.g. "add a section about migrations", "refresh the bun sqlite API examples", "fix the source URL").`,
   );
-  lines.push(
-    `2. Use your **Edit tool** to apply the change directly at:`,
-  );
+  lines.push(`2. Use your **Edit tool** to apply the change directly at:`);
   lines.push(`   \`${k.absPath}\``);
-  lines.push(
-    `3. **Update the \`updated:\` field** in frontmatter to today's date: \`${today_}\``,
-  );
+  lines.push(`3. **Update the \`updated:\` field** in frontmatter to today's date: \`${today_}\``);
   lines.push(
     `4. Preserve the rest of the frontmatter shape (\`title\`, \`summary\`, \`topic\`, \`tags\`, \`query\`, \`sources\`, \`created\`).`,
   );

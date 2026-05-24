@@ -8,10 +8,7 @@ export type PickerOptions = {
   prompt?: string;
 };
 
-export async function pickPlan(
-  repo: string,
-  opts: PickerOptions = {},
-): Promise<string | null> {
+export async function pickPlan(repo: string, opts: PickerOptions = {}): Promise<string | null> {
   const all = await listPlans(repo);
   const plans = opts.filter ? all.filter(opts.filter) : all;
 
@@ -33,13 +30,11 @@ async function hasFzf(): Promise<boolean> {
   }
 }
 
-async function fzfPick(
-  plans: PlanInfo[],
-  prompt: string,
-): Promise<string | null> {
+async function fzfPick(plans: PlanInfo[], prompt: string): Promise<string | null> {
   const lines = plans.map((p) => formatPlanLine(p)).join("\n");
   try {
-    const result = await $`echo ${lines} | fzf --ansi --prompt=${prompt} --height=40% --reverse --no-mouse`.text();
+    const result =
+      await $`echo ${lines} | fzf --ansi --prompt=${prompt} --height=40% --reverse --no-mouse`.text();
     const picked = result.trim();
     if (!picked) return null;
     // first column up to first whitespace = plan name (we render name then padding)
@@ -51,10 +46,7 @@ async function fzfPick(
   }
 }
 
-async function inquirerPick(
-  plans: PlanInfo[],
-  message: string,
-): Promise<string | null> {
+async function inquirerPick(plans: PlanInfo[], message: string): Promise<string | null> {
   const choices = plans.map((p) => ({
     name: formatPlanLine(p, { plain: true }),
     value: p.name,
@@ -67,18 +59,12 @@ async function inquirerPick(
 }
 
 function formatPlanLine(p: PlanInfo, opts: { plain?: boolean } = {}): string {
-  const flags = [
-    p.hasPlan ? "plan" : "",
-    p.hasReview ? "review" : "",
-    p.hasSpec ? "spec" : "",
-  ]
+  const flags = [p.hasPlan ? "plan" : "", p.hasReview ? "review" : "", p.hasSpec ? "spec" : ""]
     .filter(Boolean)
     .join("+");
   const date = p.mtime.toISOString().slice(0, 10);
   const namePart = opts.plain ? p.name : c.bold(p.name);
-  const metaPart = opts.plain
-    ? `${date}  [${flags}]`
-    : `${c.dim(date)}  ${c.hint(`[${flags}]`)}`;
+  const metaPart = opts.plain ? `${date}  [${flags}]` : `${c.dim(date)}  ${c.hint(`[${flags}]`)}`;
   return `${namePart.padEnd(40)}  ${metaPart}`;
 }
 

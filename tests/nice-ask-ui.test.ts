@@ -21,7 +21,10 @@ describe("chunkBalanced (oh-nice)", () => {
     expect(chunkBalanced([1, 2, 3, 4])).toEqual([[1, 2, 3, 4]]);
   });
   test("5 → [3, 2]", () => {
-    expect(chunkBalanced([1, 2, 3, 4, 5])).toEqual([[1, 2, 3], [4, 5]]);
+    expect(chunkBalanced([1, 2, 3, 4, 5])).toEqual([
+      [1, 2, 3],
+      [4, 5],
+    ]);
   });
   test("never produces chunk with <2 items", () => {
     for (let n = 2; n <= 20; n++) {
@@ -62,10 +65,7 @@ describe("buildPlanPickerAskPayload", () => {
   });
 
   test("5 plans → 2 questions balanced 3+2", () => {
-    const p = buildPlanPickerAskPayload(
-      fakePlans(["a", "b", "c", "d", "e"]),
-      "review",
-    );
+    const p = buildPlanPickerAskPayload(fakePlans(["a", "b", "c", "d", "e"]), "review");
     expect(p.questions).toHaveLength(2);
     expect(p.questions[0]!.options).toHaveLength(3);
     expect(p.questions[1]!.options).toHaveLength(2);

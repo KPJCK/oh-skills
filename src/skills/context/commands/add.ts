@@ -1,10 +1,6 @@
 import path from "node:path";
 import { writeFile } from "node:fs/promises";
-import {
-  listFolders,
-  ensureFolderExists,
-  fileExists,
-} from "../registry.ts";
+import { listFolders, ensureFolderExists, fileExists } from "../registry.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { pickFolderForAdd } from "../picker.ts";
 import { input, select, confirm } from "@inquirer/prompts";
@@ -55,9 +51,7 @@ function parseFlags(args: string[]): Flags {
       case "--priority": {
         const v = args[++i];
         if (v !== "low" && v !== "medium" && v !== "high") {
-          throw new Error(
-            `--priority must be low|medium|high (got ${JSON.stringify(v)})`,
-          );
+          throw new Error(`--priority must be low|medium|high (got ${JSON.stringify(v)})`);
         }
         flags.priority = v;
         break;
@@ -109,7 +103,7 @@ export async function run(args: string[]): Promise<void> {
     if (flags.emitAskJson) return runAddTemplateAskJson(flags.templateName);
     if (flags.pick === null) {
       error(
-        "add --template needs --pick \"path1,path2,…\" in non-TTY mode (or --emit-ask-json first)",
+        'add --template needs --pick "path1,path2,…" in non-TTY mode (or --emit-ask-json first)',
       );
       process.exit(2);
     }
@@ -122,9 +116,7 @@ export async function run(args: string[]): Promise<void> {
     process.stdout.write(JSON.stringify(payload, null, 2) + "\n");
     return;
   }
-  return isProgrammatic(flags)
-    ? runProgrammatic(flags)
-    : runInteractive(flags);
+  return isProgrammatic(flags) ? runProgrammatic(flags) : runInteractive(flags);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -138,8 +130,7 @@ async function runProgrammatic(flags: Flags): Promise<void> {
   const priority = flags.priority!;
 
   if (title.length < 3) throw new Error("--title must be at least 3 characters");
-  if (description.length < 5)
-    throw new Error("--description must be at least 5 characters");
+  if (description.length < 5) throw new Error("--description must be at least 5 characters");
 
   await ensureFolderExists(folder);
   const slug = slugify(title);
@@ -149,9 +140,7 @@ async function runProgrammatic(flags: Flags): Promise<void> {
   const absPath = path.join(contextRoot, folder, filename);
 
   if ((await fileExists(absPath)) && !flags.overwrite) {
-    throw new Error(
-      `${path.relative(contextRoot, absPath)} exists — pass --overwrite to replace`,
-    );
+    throw new Error(`${path.relative(contextRoot, absPath)} exists — pass --overwrite to replace`);
   }
 
   let body: string;
@@ -165,10 +154,10 @@ async function runProgrammatic(flags: Flags): Promise<void> {
   // Build full file content. If body starts with `# `, use it as-is after frontmatter.
   // Otherwise, prepend the title heading.
   const trimmedBody = body.trim();
-  const hasTitleHeading = trimmedBody.startsWith(`# ${title}`) || /^# .+/m.test(trimmedBody.split("\n")[0] ?? "");
+  const hasTitleHeading =
+    trimmedBody.startsWith(`# ${title}`) || /^# .+/m.test(trimmedBody.split("\n")[0] ?? "");
   const bodyForFile = hasTitleHeading ? trimmedBody : `# ${title}\n\n${trimmedBody}`;
-  const content =
-    `---\ntitle: ${title}\ndescription: ${description}\npriority: ${priority}\n---\n\n${bodyForFile}\n`;
+  const content = `---\ntitle: ${title}\ndescription: ${description}\npriority: ${priority}\n---\n\n${bodyForFile}\n`;
 
   await writeFile(absPath, content, "utf-8");
   success(`created ${path.relative(contextRoot, absPath)}`);
@@ -217,13 +206,11 @@ async function runInteractive(_flags: Flags): Promise<void> {
   step("Rule metadata");
   const title = await input({
     message: "Title (e.g. 'React hooks conventions')",
-    validate: (v) =>
-      v.trim().length >= 3 || "title must be at least 3 characters",
+    validate: (v) => v.trim().length >= 3 || "title must be at least 3 characters",
   });
   const description = await input({
     message: "One-line description",
-    validate: (v) =>
-      v.trim().length >= 5 || "description must be at least 5 characters",
+    validate: (v) => v.trim().length >= 5 || "description must be at least 5 characters",
   });
   const priority = (await select({
     message: "Priority",
@@ -297,11 +284,7 @@ async function runAddTemplateAskJson(name: string): Promise<void> {
   process.stdout.write(JSON.stringify(payload, null, 2) + "\n");
 }
 
-async function runAddTemplate(
-  name: string,
-  pick: string[],
-  overwrite: boolean,
-): Promise<void> {
+async function runAddTemplate(name: string, pick: string[], overwrite: boolean): Promise<void> {
   const { writeTemplate, listTemplates } = await import("../templates.ts");
   const { estimateTokens } = await import("../tokens.ts");
   const { formatTokens } = await import("../tokens.ts");

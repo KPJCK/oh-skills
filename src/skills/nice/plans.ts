@@ -66,10 +66,7 @@ export async function listPlans(repo: string): Promise<PlanInfo[]> {
   return plans;
 }
 
-export async function createPlanDir(
-  repo: string,
-  slug: Slug,
-): Promise<PlanPaths> {
+export async function createPlanDir(repo: string, slug: Slug): Promise<PlanPaths> {
   const paths = planPaths(repo, slug);
   if (await fileExists(paths.planMd)) {
     throw new Error(
@@ -80,10 +77,7 @@ export async function createPlanDir(
   return paths;
 }
 
-export async function nextReviewRound(
-  repo: string,
-  slug: string,
-): Promise<number> {
+export async function nextReviewRound(repo: string, slug: string): Promise<number> {
   const { reviewMd } = planPaths(repo, slug);
   if (!(await fileExists(reviewMd))) return 1;
   const content = await readFile(reviewMd, "utf-8");

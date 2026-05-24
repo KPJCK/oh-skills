@@ -16,10 +16,7 @@ describe("tokens", () => {
     await mkdir(contextDir, { recursive: true });
 
     // Write .oh-env so loadOhEnv() can find CONTEXT_DIR without throwing
-    await writeFile(
-      path.join(tmpCwd, ".oh-env"),
-      `CONTEXT_DIR=${contextDir}\n`,
-    );
+    await writeFile(path.join(tmpCwd, ".oh-env"), `CONTEXT_DIR=${contextDir}\n`);
 
     savedCwd = process.cwd();
     process.chdir(tmpCwd);

@@ -4,10 +4,7 @@ import { detectRepo } from "../repo.ts";
 import { planPaths, nextReviewRound, listPlans } from "../plans.ts";
 import { pickPlan } from "../picker.ts";
 import { select, input } from "../prompts.ts";
-import {
-  buildPlanPickerAskPayload,
-  buildScopePickerAskPayload,
-} from "../ask-ui.ts";
+import { buildPlanPickerAskPayload, buildScopePickerAskPayload } from "../ask-ui.ts";
 import { step, success, info, hint, error, c } from "../ui.ts";
 import { banner as sharedBanner } from "../../../shared/banner.ts";
 import { GRADIENTS } from "../../../shared/banner-presets.ts";
@@ -40,9 +37,7 @@ function parseFlags(args: string[]): Flags {
       case "--scope": {
         const v = args[++i];
         if (v !== "branch" && v !== "uncommitted" && v !== "last-n") {
-          throw new Error(
-            `--scope must be branch|uncommitted|last-n (got ${JSON.stringify(v)})`,
-          );
+          throw new Error(`--scope must be branch|uncommitted|last-n (got ${JSON.stringify(v)})`);
         }
         flags.scope = v;
         break;
@@ -102,10 +97,7 @@ export async function run(args: string[]): Promise<void> {
   } else {
     const plans = await listPlans(repo);
     if (plans.length === 0) {
-      error(
-        "no plans found for this repo",
-        "run /oh-nice plan first to create one",
-      );
+      error("no plans found for this repo", "run /oh-nice plan first to create one");
       emit("nice", [{ type: "report", message: "no plans found — exiting" }]);
       return;
     }
@@ -215,17 +207,13 @@ async function chooseScope(flags: Flags): Promise<Scope> {
     info(`using --n ${n}`);
   } else {
     if (!process.stdin.isTTY) {
-      error(
-        "--scope last-n requires --n <count> in non-TTY mode",
-        "example: --scope last-n --n 3",
-      );
+      error("--scope last-n requires --n <count> in non-TTY mode", "example: --scope last-n --n 3");
       process.exit(2);
     }
     const nStr = await input({
       message: "How many commits back?",
       default: "1",
-      validate: (v) =>
-        /^[1-9]\d*$/.test(v.trim()) || "enter a positive integer",
+      validate: (v) => /^[1-9]\d*$/.test(v.trim()) || "enter a positive integer",
     });
     n = Number.parseInt(nStr.trim(), 10);
   }

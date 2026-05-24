@@ -7,9 +7,7 @@ export async function run(_args: string[]): Promise<void> {
   const prev = await loadCwd(cwd);
 
   if (!prev || prev.lastLoaded.length === 0) {
-    process.stdout.write(
-      renderEmpty(`no rules loaded this session for ${shortHome(cwd)}`) + "\n",
-    );
+    process.stdout.write(renderEmpty(`no rules loaded this session for ${shortHome(cwd)}`) + "\n");
     return;
   }
 

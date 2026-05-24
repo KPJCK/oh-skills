@@ -92,9 +92,7 @@ export function buildPlanPickerAskPayload(
 
   const questions: AskQuestion[] = chunks.map((chunk, idx) => ({
     question:
-      chunks.length === 1
-        ? `Plan to ${subcommand}?`
-        : `Plan? (${idx + 1}/${chunks.length})`,
+      chunks.length === 1 ? `Plan to ${subcommand}?` : `Plan? (${idx + 1}/${chunks.length})`,
     header: chunks.length === 1 ? "Plan" : `Plan ${idx + 1}/${chunks.length}`,
     multiSelect: false,
     options: chunk.map((p) => ({
@@ -108,11 +106,7 @@ export function buildPlanPickerAskPayload(
 
 function describePlan(p: PlanInfo): string {
   const parts: string[] = [];
-  const flags = [
-    p.hasPlan ? "plan" : "",
-    p.hasReview ? "review" : "",
-    p.hasSpec ? "spec" : "",
-  ]
+  const flags = [p.hasPlan ? "plan" : "", p.hasReview ? "review" : "", p.hasSpec ? "spec" : ""]
     .filter(Boolean)
     .join("+");
   if (flags) parts.push(flags);

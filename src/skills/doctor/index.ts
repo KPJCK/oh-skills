@@ -92,12 +92,7 @@ async function checkEnv(checks: Check[]): Promise<void> {
 // ──────────────────────────────────────────────────────────────────────────────
 
 async function checkDirs(checks: Check[]): Promise<void> {
-  const required = [
-    "agents",
-    "skills",
-    "context",
-    "knowledges",
-  ];
+  const required = ["agents", "skills", "context", "knowledges"];
   for (const rel of required) {
     const abs = path.join(CLAUDE, rel);
     try {
@@ -399,7 +394,10 @@ export function parseFrontmatter(md: string): Frontmatter | null {
     const sepIdx = stripped.indexOf(":");
     if (sepIdx === -1) continue;
     const key = stripped.slice(0, sepIdx).trim();
-    const val = stripped.slice(sepIdx + 1).trim().replace(/^["']|["']$/g, "");
+    const val = stripped
+      .slice(sepIdx + 1)
+      .trim()
+      .replace(/^["']|["']$/g, "");
     fm[key] = val;
   }
   return fm;
@@ -450,9 +448,7 @@ export async function run(_args: string[]): Promise<void> {
   const lines: string[] = [];
   lines.push(`## 🩺 oh-doctor report`);
   lines.push("");
-  lines.push(
-    `**Summary:** ${okN} ✅ · ${warnN} ⚠️ · ${failN} ❌  (total ${checks.length})`,
-  );
+  lines.push(`**Summary:** ${okN} ✅ · ${warnN} ⚠️ · ${failN} ❌  (total ${checks.length})`);
   lines.push("");
 
   const groups = [...new Set(checks.map((c) => c.group))];

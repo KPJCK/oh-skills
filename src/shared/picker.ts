@@ -79,10 +79,7 @@ export async function selectWithNew<T = string>(
 ): Promise<T | null> {
   const sentinel = NEW_SENTINEL as unknown as T;
   const choices: ChoiceItem<T>[] = opts.createNew
-    ? [
-        ...items,
-        { name: opts.createNew.label ?? c.dim("+ new…"), value: sentinel },
-      ]
+    ? [...items, { name: opts.createNew.label ?? c.dim("+ new…"), value: sentinel }]
     : [...items];
 
   const pageSize = opts.pageSize ?? Math.min(choices.length + 1, 15);
@@ -129,7 +126,8 @@ export async function selectWithNewInput(
               message: opts.createNew!.inputMessage ?? "Enter a name",
               validate: opts.createNew!.validate,
             });
-            const t = val.trim(); return t.length > 0 ? t : null;
+            const t = val.trim();
+            return t.length > 0 ? t : null;
           } catch {
             return null;
           }

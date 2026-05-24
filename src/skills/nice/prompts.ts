@@ -26,16 +26,12 @@ export function asSlug(value: string): Slug {
   return value;
 }
 
-export async function promptSlug(opts?: {
-  message?: string;
-  default?: string;
-}): Promise<Slug> {
+export async function promptSlug(opts?: { message?: string; default?: string }): Promise<Slug> {
   const raw = await input({
     message: opts?.message ?? "slug",
     ...(opts?.default !== undefined && { default: opts.default }),
     validate: (v) =>
-      isValidSlug(v.trim()) ||
-      "lowercase-kebab, 2-64 chars, [a-z0-9-] (e.g. add-auth-flow)",
+      isValidSlug(v.trim()) || "lowercase-kebab, 2-64 chars, [a-z0-9-] (e.g. add-auth-flow)",
   });
   return asSlug(raw.trim());
 }
@@ -43,9 +39,9 @@ export async function promptSlug(opts?: {
 export { input, select, confirm };
 
 export type PromptContext = {
-  planPath: string;       // absolute path to plan.md
-  specPath: string;       // absolute path to spec.md
-  reviewPath: string;     // absolute path to review.md (may not exist yet for `go`)
+  planPath: string; // absolute path to plan.md
+  specPath: string; // absolute path to spec.md
+  reviewPath: string; // absolute path to review.md (may not exist yet for `go`)
   repo: string;
   slug: string;
   scope?: "branch" | "uncommitted" | "last-n";

@@ -6,10 +6,7 @@ import { loadOhEnv } from "../../../env.ts";
 export async function run(args: string[]): Promise<void> {
   const query = args.join(" ").trim();
   if (!query) {
-    error(
-      "missing query",
-      "example: /oh-search research bun sqlite api",
-    );
+    error("missing query", "example: /oh-search research bun sqlite api");
     process.exit(2);
   }
 
@@ -49,4 +46,3 @@ export async function run(args: string[]): Promise<void> {
     }),
   ]);
 }
-

@@ -13,9 +13,7 @@ const MAX_TOTAL_OPTIONS = MAX_OPTIONS_PER_QUESTION * MAX_QUESTIONS_PER_CALL; // 
 
 const NEW_TOPIC_SENTINEL = "(+ new topic)";
 
-export function buildAddTopicAskPayload(
-  topics: readonly string[],
-): AskPayload {
+export function buildAddTopicAskPayload(topics: readonly string[]): AskPayload {
   const next = `bun \${CLAUDE_PLUGIN_ROOT}/src/cli.ts search add <name> --topic <topic> --title <t> --summary <s> --body-stdin --confirmed [--query Q] [--sources URLs] [--tags T1,T2] [--folder]`;
 
   if (topics.length === 0) {
@@ -76,9 +74,7 @@ export function buildAddTopicAskPayload(
     options: chunk.map((t) => ({
       label: t,
       description:
-        t === NEW_TOPIC_SENTINEL
-          ? "Type a new topic name (lowercase-kebab)"
-          : `existing topic`,
+        t === NEW_TOPIC_SENTINEL ? "Type a new topic name (lowercase-kebab)" : `existing topic`,
     })),
   }));
 

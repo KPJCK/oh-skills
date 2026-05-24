@@ -130,8 +130,7 @@ export function buildAskPayload(opts: {
       buckets.length === 1
         ? questionPrefix
         : `${questionPrefix} (group ${i + 1} of ${buckets.length})`,
-    header:
-      buckets.length === 1 ? header : `${header} ${i + 1}/${buckets.length}`,
+    header: buckets.length === 1 ? header : `${header} ${i + 1}/${buckets.length}`,
     multiSelect,
     options: bucket,
   }));

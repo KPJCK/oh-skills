@@ -1,10 +1,6 @@
 // tests/banner.test.ts
 import { describe, test, expect } from "bun:test";
-import {
-  renderBanner,
-  gradientText,
-  stripAnsi,
-} from "../src/shared/banner.ts";
+import { renderBanner, gradientText, stripAnsi } from "../src/shared/banner.ts";
 
 describe("gradientText", () => {
   test("returns plain string unchanged when length is 0", () => {

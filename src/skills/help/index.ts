@@ -79,7 +79,8 @@ export async function run(args: string[]): Promise<void> {
     }
 
     if (sectionStart >= 0) {
-      const slice = sectionEnd >= 0 ? lines.slice(sectionStart, sectionEnd) : lines.slice(sectionStart);
+      const slice =
+        sectionEnd >= 0 ? lines.slice(sectionStart, sectionEnd) : lines.slice(sectionStart);
       rendered = slice.join("\n");
     }
   }

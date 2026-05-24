@@ -28,7 +28,10 @@ export async function run(args: string[]): Promise<void> {
   }
   const loader = commands[sub];
   if (!loader) {
-    error(`unknown search subcommand: ${sub}`, `expected one of: ${Object.keys(commands).join(", ")}`);
+    error(
+      `unknown search subcommand: ${sub}`,
+      `expected one of: ${Object.keys(commands).join(", ")}`,
+    );
     process.exit(2);
   }
   const mod = await loader();

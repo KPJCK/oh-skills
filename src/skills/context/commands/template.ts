@@ -1,8 +1,4 @@
-import {
-  deleteTemplate,
-  listTemplates,
-  readTemplate,
-} from "../templates.ts";
+import { deleteTemplate, listTemplates, readTemplate } from "../templates.ts";
 import { estimateTokens, formatTokens } from "../tokens.ts";
 import { loadOhEnv } from "../../../env.ts";
 import { renderEmpty } from "../render.ts";
@@ -31,7 +27,9 @@ export async function run(args: string[]): Promise<void> {
 async function runList(): Promise<void> {
   const list = await listTemplates();
   if (list.length === 0) {
-    process.stdout.write(renderEmpty("no templates yet — create one with `oh-context add --template <name>`") + "\n");
+    process.stdout.write(
+      renderEmpty("no templates yet — create one with `oh-context add --template <name>`") + "\n",
+    );
     return;
   }
   const lines = [

@@ -1,14 +1,7 @@
 // tests/init.test.ts
 import { describe, test, expect, beforeEach, afterEach } from "bun:test";
 import { $ } from "bun";
-import {
-  mkdtemp,
-  mkdir,
-  writeFile,
-  readFile,
-  rm,
-  realpath,
-} from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, readFile, rm, realpath } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
