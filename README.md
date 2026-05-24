@@ -33,9 +33,10 @@ six personal dev-cycle skills:
 Then in any project:
 
 ```
-/oh init     # scaffold .oh-env
-/oh doctor   # verify install
-/oh help     # see the reference
+/oh init      # scaffold .oh-env
+/oh doctor    # verify install
+/oh help      # see the reference
+/oh version   # print release version + commit hash
 ```
 
 ## Install — manual (clone + ask Claude)
