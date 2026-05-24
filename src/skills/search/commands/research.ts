@@ -50,12 +50,3 @@ export async function run(args: string[]): Promise<void> {
   ]);
 }
 
-function escapeMd(s: string): string {
-  return s.replace(/\|/g, "\\|");
-}
-
-// Keep shellQuote for potential future use
-function _shellQuote(s: string): string {
-  if (/^[A-Za-z0-9_./-]+$/.test(s)) return s;
-  return `'${s.replace(/'/g, "'\\''")}'`;
-}

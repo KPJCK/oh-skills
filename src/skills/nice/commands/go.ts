@@ -88,6 +88,7 @@ export async function run(args: string[]): Promise<void> {
   }
 
   const env = loadOhEnv();
+  // intentional ||: blank/whitespace .oh-env value → fall back to main agent
   const agentName = env.CODING_AGENT?.trim() || "main Claude";
   const agentTag = `[${agentName}]`;
   sharedBanner({

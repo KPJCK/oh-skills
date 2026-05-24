@@ -42,7 +42,7 @@ export async function promptSlug(opts?: {
 
 export { input, select, confirm };
 
-export interface PromptContext {
+export type PromptContext = {
   planPath: string;       // absolute path to plan.md
   specPath: string;       // absolute path to spec.md
   reviewPath: string;     // absolute path to review.md (may not exist yet for `go`)
@@ -50,7 +50,7 @@ export interface PromptContext {
   slug: string;
   scope?: "branch" | "uncommitted" | "last-n";
   n?: number;
-}
+};
 
 export const goPrompts = {
   dispatched(ctx: PromptContext): string {

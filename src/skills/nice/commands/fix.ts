@@ -85,7 +85,7 @@ export async function run(args: string[]): Promise<void> {
   const latest = extractLatestRound(reviewContent);
 
   step(2, 2, "dispatch implementer");
-  hint(`latest round: ${latest.heading || "(none)"}`);
+  hint(`latest round: ${latest.heading.length > 0 ? latest.heading : "(none)"}`);
 
   const ctx = {
     planPath: paths.planMd,

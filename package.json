@@ -8,7 +8,9 @@
   "repository": "https://github.com/KPJCK/oh-skills",
   "scripts": {
     "cli": "bun src/cli.ts",
-    "test": "bun test"
+    "test": "bun test",
+    "lint": "oxlint",
+    "fmt": "oxfmt"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.10.1",
@@ -20,6 +22,8 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "oxfmt": "^0.51.0",
+    "oxlint": "^1.66.0",
     "typescript": "^6"
   }
 }

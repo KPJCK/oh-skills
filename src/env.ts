@@ -5,7 +5,7 @@ import os from "node:os";
 
 export type AgentRole = "coding" | "review" | "research";
 
-export interface OhEnv {
+export type OhEnv = {
   CONTEXT_DIR: string;
   CONTEXT_TEMPLATE_DIR: string;
   KNOWLEDGE_DIR: string;
@@ -13,7 +13,7 @@ export interface OhEnv {
   CODING_AGENT?: string;
   REVIEW_AGENT?: string;
   RESEARCH_AGENT?: string;
-}
+};
 
 const PATH_KEYS = ["CONTEXT_DIR", "CONTEXT_TEMPLATE_DIR", "KNOWLEDGE_DIR", "PLAN_DIR"] as const;
 const AGENT_KEYS = ["CODING_AGENT", "REVIEW_AGENT", "RESEARCH_AGENT"] as const;
