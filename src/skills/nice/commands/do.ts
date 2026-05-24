@@ -39,6 +39,10 @@ export type DoArgs = {
 // Arg parser — exported for unit tests
 // ──────────────────────────────────────────────────────────────────────────────
 
+function isDoPhase(v: string): v is DoPhase {
+  return v === "init" || v === "post-implement" || v === "post-review";
+}
+
 export function parseDoArgs(args: string[]): DoArgs {
   let phase: DoPhase = "init";
   let request: string | undefined;
@@ -50,9 +54,13 @@ export function parseDoArgs(args: string[]): DoArgs {
   for (let i = 0; i < args.length; i++) {
     const a = args[i]!;
     if (a.startsWith("--phase=")) {
-      phase = a.slice("--phase=".length) as DoPhase;
+      const v = a.slice("--phase=".length);
+      if (!isDoPhase(v)) throw new Error(`unknown phase: ${v}`);
+      phase = v;
     } else if (a === "--phase") {
-      phase = (args[++i] ?? "") as DoPhase;
+      const v = args[++i] ?? "";
+      if (!isDoPhase(v)) throw new Error(`unknown phase: ${v}`);
+      phase = v;
     } else if (a.startsWith("--request=")) {
       request = a.slice("--request=".length);
     } else if (a === "--request") {
@@ -91,6 +99,7 @@ export function parseDoArgs(args: string[]): DoArgs {
 async function runInit(args: DoArgs): Promise<void> {
   const { repo } = await detectRepo();
   const env = loadOhEnv();
+  // intentional ||: blank/whitespace .oh-env value → fall back to main agent
   const agentName = env.CODING_AGENT?.trim() || "main Claude";
   const agentTag = `[${agentName}]`;
 

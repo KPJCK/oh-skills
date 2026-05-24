@@ -1,5 +1,4 @@
 import { readFile, writeFile, stat } from "node:fs/promises";
-import { rename } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { $ } from "bun";
@@ -13,7 +12,7 @@ import { banner as sharedBanner } from "../../../shared/banner.ts";
 import { GRADIENTS } from "../../../shared/banner-presets.ts";
 import { emit, buildAgentAction, type NextAction } from "../../../shared/next-action.ts";
 import { loadOhEnv } from "../../../env.ts";
-import { type SourceMode, buildResearchPrompt } from "./plan.ts";
+import { type SourceMode, isSourceMode, buildResearchPrompt } from "./plan.ts";
 
 const CLI = "${CLAUDE_PLUGIN_ROOT}/src/cli.ts";
 const VALID_SOURCES: SourceMode[] = ["knowledge", "online", "auto"];
@@ -239,7 +238,7 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
     process.exit(2);
   }
 
-  if (!(VALID_SOURCES as string[]).includes(sourceMode)) {
+  if (!isSourceMode(sourceMode)) {
     error(
       `unknown source mode: ${sourceMode}`,
       `valid values: ${VALID_SOURCES.join(", ")}`,
@@ -247,7 +246,7 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
     process.exit(2);
   }
 
-  const source = sourceMode as SourceMode;
+  const source = sourceMode;
   const repo = repoArg;
   const slug = asSlug(slugArg);
   const tmpSpec = tmpSpecArg;
@@ -456,5 +455,3 @@ function shellQuote(s: string): string {
   return `'${s.replace(/'/g, "'\\''")}'`;
 }
 
-// silence unused
-void rename;

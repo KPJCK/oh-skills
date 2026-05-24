@@ -26,6 +26,10 @@ const CLI = "${CLAUDE_PLUGIN_ROOT}/src/cli.ts";
 export type SourceMode = "knowledge" | "online" | "auto";
 const VALID_SOURCES: SourceMode[] = ["knowledge", "online", "auto"];
 
+export function isSourceMode(v: string): v is SourceMode {
+  return v === "knowledge" || v === "online" || v === "auto";
+}
+
 type Phase = "init" | "post-brainstorm" | "research-go" | "write-plan" | "post-plan";
 
 type Args = {
@@ -240,7 +244,7 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
     process.exit(2);
   }
 
-  if (!(VALID_SOURCES as string[]).includes(sourceMode)) {
+  if (!isSourceMode(sourceMode)) {
     const { error } = await import("../ui.ts");
     error(
       `unknown source mode: ${sourceMode}`,
@@ -249,7 +253,7 @@ async function phaseResearchGo(rest: string[]): Promise<void> {
     process.exit(2);
   }
 
-  const source = sourceMode as SourceMode;
+  const source = sourceMode;
   const repo = repoArg;
   const slug = asSlug(slugArg);
   const paths = planPaths(repo, slug);
