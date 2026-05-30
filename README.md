@@ -2,8 +2,8 @@
 
 A multi-tool plugin that bundles six personal dev-cycle skills. Runs on
 [Claude Code](https://docs.claude.com/en/docs/claude-code),
-[Antigravity CLI (`agy`)](https://github.com/antigravityio/antigravity-cli), and
-[OpenAI Codex](https://platform.openai.com/docs/codex) from one source tree:
+[Antigravity CLI (`agy`)](https://antigravity.google), and
+[OpenAI Codex](https://developers.openai.com/codex) from one source tree:
 
 | Skill              | What it does                                                                                |
 | ------------------ | ------------------------------------------------------------------------------------------- |
@@ -83,8 +83,8 @@ and run `/oh doctor`. It should stop before deleting any pre-existing
 ## Running on Antigravity CLI (agy)
 
 oh-skills is a tri-target plugin: it runs on Claude Code,
-[Antigravity CLI](https://github.com/antigravityio/antigravity-cli) (`agy`), and
-OpenAI Codex from the same source tree.
+[Antigravity CLI](https://antigravity.google) (`agy`), and OpenAI Codex from the
+same source tree.
 
 ### Install
 

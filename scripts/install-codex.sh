@@ -88,7 +88,7 @@ if command -v codex > /dev/null 2>&1; then
 else
   echo ""
   echo "  codex CLI not found. Manual next steps:"
-  echo "    1. Install Codex CLI: https://platform.openai.com/docs/codex"
+  echo "    1. Install Codex CLI: https://developers.openai.com/codex"
   echo "    2. Re-run this script, or run manually:"
   echo "         codex plugin add oh-skills@personal"
   echo "    3. Start a NEW Codex thread — skills are loaded at thread init,"

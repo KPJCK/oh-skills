@@ -138,7 +138,7 @@ async function runProgrammatic(flags: Flags): Promise<void> {
   const name = flags.name;
   const topic = flags.topic;
   const title = flags.title;
-  const summary = flags.summary;;
+  const summary = flags.summary;
 
   if (!isValidSlug(name)) throw new Error(`invalid name: ${name}`);
   if (!isValidTopic(topic)) throw new Error(`invalid topic: ${topic}`);
