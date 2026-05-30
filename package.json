@@ -1,6 +1,6 @@
 {
   "name": "oh-skills",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": false,
   "description": "Personal dev-cycle skills for Claude Code: context, nice, search, doctor, help",
   "license": "MIT",

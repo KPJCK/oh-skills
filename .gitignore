@@ -4,3 +4,6 @@ dist/
 *.log
 .oh-env
 .oh-env.local
+
+# Antigravity CLI session directory (leaked at repo root during agy spike)
+.antigravitycli/

@@ -6,6 +6,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0]
+
+### Added
+
+- Native Antigravity CLI (`agy`) support — oh-skills is now a dual-target plugin
+  (Claude Code + agy). Root `plugin.json` manifest; all SKILL.md shims resolve
+  the plugin root host-portably.
+- `detectHost()` + host-aware agent dispatch: named subagents (Mirai/Yama/Rudy)
+  on Claude, agy dynamic subagents on agy.
+
+### Chore
+
+- Ignore leaked `.antigravitycli/` session directory.
+
 ## [0.2.0] — 2026-05-24
 
 ### Added

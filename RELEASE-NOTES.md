@@ -1,5 +1,30 @@
 # Release notes
 
+## 0.3.0
+
+**Dual-target support: Claude Code + Antigravity CLI (`agy`)**
+
+oh-skills now runs natively on both Claude Code and the `agy` CLI from one
+source tree.
+
+- Root `plugin.json` manifest — agy reads `skills/` path directly from the repo
+  root; no separate installation step required once the plugin is linked.
+- Host-portable SKILL.md shims — every `bun .../src/cli.ts` call now uses a
+  stateless bash probe expression
+  (`${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}`)
+  that works on both hosts without pre-assignment.
+- `detectHost()` function — detects `claude` vs `agy` vs `unknown` from
+  environment markers.
+- Host-aware agent dispatch — on Claude, `oh-nice` dispatches named subagents
+  (Mirai/Yama/Rudy) as before; on agy it falls back to `self_act` so agy's own
+  dynamic subagents take over.
+
+**Manual agy install:** See the
+[Running on Antigravity CLI](./README.md#running-on-antigravity-cli-agy) section
+in the README for symlink/copy instructions and verification steps.
+
+See [CHANGELOG.md](./CHANGELOG.md) for the full per-item list.
+
 ## 0.2.0 — 2026-05-24
 
 Major release. Highlights:
@@ -23,25 +48,25 @@ Major release. Highlights:
   writing the plan?" with three source modes: `knowledge` (local oh-search
   only), `online` (WebSearch + WebFetch), `auto` (local-first, web fallback).
 - **Parallel-aware planning** — plan.md tasks declare `**Files:**` +
-  `**Depends-on:**`, `oh-nice go` parses a DAG and dispatches concurrent
-  coding agents per ready set (cap=3, configurable via
-  `OH_NICE_MAX_PARALLEL`). Legacy plans without DAG fields fall back to
-  single-agent sequential mode automatically.
+  `**Depends-on:**`, `oh-nice go` parses a DAG and dispatches concurrent coding
+  agents per ready set (cap=3, configurable via `OH_NICE_MAX_PARALLEL`). Legacy
+  plans without DAG fields fall back to single-agent sequential mode
+  automatically.
 
 **Performance + UX**
 
 - Prompt cache optimization across nice subcommand prompts (role → workflow →
   paths order; ~46% reduction in `goPrompts.dispatched` size).
-- Banner rewrite: single-line gradient title + subtitle with highlights;
-  dropped bordered-ASCII rendering and cfonts dependency.
+- Banner rewrite: single-line gradient title + subtitle with highlights; dropped
+  bordered-ASCII rendering and cfonts dependency.
 - Compact `report` messages, terse banner subtitles, header-line context-load
   output (~100 tok/load saved).
 
 **Toolchain**
 
-- Adopted `oxlint` + `oxfmt` as standard dev-dependencies, with configs
-  adapted from the `new-ts-project` shared template. Lint baseline: 0
-  warnings. Repo-wide oxfmt pass applied (printWidth 100, trailing commas).
+- Adopted `oxlint` + `oxfmt` as standard dev-dependencies, with configs adapted
+  from the `new-ts-project` shared template. Lint baseline: 0 warnings.
+  Repo-wide oxfmt pass applied (printWidth 100, trailing commas).
 - Stripped `.ts` / `.tsx` extensions from 223 relative imports per
   `typescript/rule-shared-style`.
 
