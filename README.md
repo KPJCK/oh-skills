@@ -1,51 +1,86 @@
-# oh-skills
+<div align="center">
 
-A multi-tool plugin that bundles six personal dev-cycle skills. Runs on
-[Claude Code](https://docs.claude.com/en/docs/claude-code),
-[Antigravity CLI (`agy`)](https://antigravity.google), and
-[OpenAI Codex](https://developers.openai.com/codex) from one source tree:
+# 🌸 oh-skills
 
-| Skill              | What it does                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------------- |
-| **oh-nice**        | Plan / update-plan / go / review / fix / do orchestration                                   |
-| **oh-bug-tracing** | Fix a bug AND write a forensic `trace.md` — git archaeology + root-cause class + prevention |
-| **oh-context**     | Dynamic context-rule loader (DO/DO NOT/Details rules per domain)                            |
-| **oh-search**      | Local knowledge base — check before WebSearch on stable topics                              |
-| **oh-doctor**      | Sanity-check the plugin installation                                                        |
-| **oh-help**        | Reference card with your config substituted in                                              |
+**A personal dev-cycle toolkit — one source tree, three AI coding agents.**
 
-## Requirements
+Plan → implement → review → fix, backed by domain context rules, a local
+knowledge base, and forensic bug-tracing. Runs natively on Claude Code,
+Antigravity, and OpenAI Codex.
 
-- [Bun](https://bun.com) — required runtime. Install:
-  `curl -fsSL https://bun.sh/install | bash`.
-- [Claude Code](https://docs.claude.com/en/docs/claude-code) — the harness this
-  plugin loads into.
-- Git — for cloning and for `/oh-nice`'s repo detection.
-- `trash` CLI (recommended, optional) — used by `/oh-search delete` and the
-  migration helpers. Install on macOS: `brew install trash`. Without it, those
-  commands fall back to `rm` with a confirmation prompt.
+<br/>
 
-## Install — marketplace
+![version](https://img.shields.io/badge/version-0.3.0-7C3AED?style=flat-square)
+![license](https://img.shields.io/badge/license-MIT-3B82F6?style=flat-square)
+![runtime](https://img.shields.io/badge/runtime-Bun-000000?style=flat-square&logo=bun&logoColor=white)
+![tests](https://img.shields.io/badge/tests-326%20passing-22C55E?style=flat-square)
+![hosts](https://img.shields.io/badge/hosts-Claude%20·%20Antigravity%20·%20Codex-7C3AED?style=flat-square)
 
-```
+</div>
+
+---
+
+## Contents
+
+- [Skills](#skills)
+- [Quick start](#quick-start)
+- [Installation](#installation)
+- [Multi-host support](#multi-host-support)
+- [Skills in depth](#skills-in-depth)
+- [Configuration](#configuration--oh-env)
+- [Development](#development)
+- [Contributing rules](#contributing-rules)
+- [License](#license)
+
+---
+
+## Skills
+
+| Skill              | What it does                                                                       |
+| ------------------ | ---------------------------------------------------------------------------------- |
+| **oh-nice**        | Plan / update-plan / go / review / fix / do orchestration                          |
+| **oh-bug-tracing** | Fix a bug **and** write a forensic `trace.md` — git archaeology + root-cause class |
+| **oh-context**     | Dynamic context-rule loader (DO / DO NOT / Details rules per domain)               |
+| **oh-search**      | Local knowledge base — check before WebSearch on stable topics                     |
+| **oh-doctor**      | Sanity-check the plugin installation                                               |
+| **oh-help**        | Reference card with your config substituted in                                     |
+
+---
+
+## Quick start
+
+```bash
+# In Claude Code
 /plugin marketplace add KPJCK/oh-skills
 /plugin install oh-skills
-```
 
-Then in any project:
-
-```
+# Then, in any project
 /oh init      # scaffold .oh-env
 /oh doctor    # verify install
 /oh help      # see the reference
 /oh version   # print release version + commit hash
 ```
 
-## Install — manual (clone + ask Claude)
+> **Requirements:** [Bun](https://bun.com)
+> (`curl -fsSL https://bun.sh/install | bash`), Git, and a supported host.
+> `trash` (`brew install trash`) is optional — used by `/oh-search delete`;
+> without it those commands fall back to `rm` with a prompt.
 
-Useful when the marketplace mechanism is unavailable, or for forks. Run these
-steps yourself, or hand them to a Claude Code session and ask it to perform
-them.
+---
+
+## Installation
+
+### Claude Code — marketplace
+
+```
+/plugin marketplace add KPJCK/oh-skills
+/plugin install oh-skills
+```
+
+<details>
+<summary><b>Claude Code — manual (clone + ask Claude)</b></summary>
+
+Useful when the marketplace mechanism is unavailable, or for forks.
 
 ```bash
 # 1. Clone the repo to a stable path
@@ -67,29 +102,25 @@ Then **inside Claude Code**, with your repo as the cwd:
 /oh doctor
 ```
 
-If you'd rather have an agent install this for you, open Claude Code, point it
-at the cloned repo, and prompt:
+Prefer to hand it to an agent? Open Claude Code, point it at the cloned repo,
+and prompt:
 
-> Read `README.md` in this repo and follow the **Install — manual (clone + ask
-> Claude)** steps. Use the path I cloned to (`~/workspaces/oh-skills` unless
-> told otherwise). After install, run `/oh doctor` and report any non-green
-> rows.
+> Read `README.md` in this repo and follow the **Claude Code — manual** steps.
+> Use the path I cloned to (`~/workspaces/oh-skills` unless told otherwise).
+> After install, run `/oh doctor` and report any non-green rows.
 
-The agent will: clone (if not already done), run `bun install`, add the local
-path as a marketplace, install the plugin, scaffold `.oh-env` via `/oh init`,
-and run `/oh doctor`. It should stop before deleting any pre-existing
+The agent will clone (if needed), run `bun install`, add the local path as a
+marketplace, install the plugin, scaffold `.oh-env` via `/oh init`, and run
+`/oh doctor`. It should stop before deleting any pre-existing
 `~/.claude/skills/oh-*` directories — you confirm those manually.
 
-## Running on Antigravity CLI (agy)
+</details>
 
-oh-skills is a tri-target plugin: it runs on Claude Code,
-[Antigravity CLI](https://antigravity.google) (`agy`), and OpenAI Codex from the
-same source tree.
+<details>
+<summary><b>Antigravity CLI (<code>agy</code>)</b></summary>
 
-### Install
-
-Symlink (or copy) the repo into the path where agy looks for plugins, then
-verify:
+Symlink (or copy) the repo into the path where agy looks for plugins, plus the
+shared shim anchor, then verify:
 
 ```bash
 # Stage the plugin in agy's install location (discovery)
@@ -103,131 +134,31 @@ ln -sfn ~/workspaces/oh-skills ~/.oh-skills
 agy plugin list
 ```
 
-You should see `oh-skills` and all six `oh-*` skills in the output. If you
-prefer not to symlink, copy the directory instead:
+You should see `oh-skills` and all six `oh-*` skills. If you prefer not to
+symlink, `cp -r` the directory into the discovery path instead.
 
-```bash
-cp -r ~/workspaces/oh-skills ~/.gemini/antigravity-cli/plugins/oh-skills
-```
+</details>
 
-### How the plugin root is resolved
-
-Every `skills/*/SKILL.md` shim uses a stateless, host-portable bash expression
-to locate `src/cli.ts` at runtime:
-
-```bash
-${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}
-```
-
-Probe order (first match wins, defined in `src/shared/plugin-root.ts`):
-
-| Priority | Variable / path           | Set by                                                  |
-| -------- | ------------------------- | ------------------------------------------------------- |
-| 1        | `CLAUDE_PLUGIN_ROOT`      | Claude Code (always set when a plugin runs there)       |
-| 2        | `ANTIGRAVITY_PLUGIN_ROOT` | Reserved for a future agy release — not set today       |
-| 3        | `PLUGIN_ROOT`             | Reserved; no known host sets this in skill context      |
-| 4        | `$HOME/.oh-skills`        | Unified anchor symlink (shared by agy + Codex installs) |
-
-**Key finding from the agy spike:** agy v1.0.3 injects no plugin-root env var
-(confirmed via binary forensics — see `findings.md`). The shim therefore falls
-through to the `~/.oh-skills` anchor, which is why the install above creates it.
-The TypeScript resolver additionally probes known install paths (`~/.oh-skills`,
-`~/plugins/oh-skills`, `~/.gemini/antigravity-cli/plugins/oh-skills`) for its
-own internal path needs.
-
-### Behavior differences on agy
-
-| Aspect                  | Claude Code                                                   | agy                                                                                                           |
-| ----------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Agent dispatch          | Named subagents (Mirai / Yama / Rudy) when configured         | Dynamic subagents only — agy composes subagents itself                                                        |
-| `oh-nice go/review/fix` | Dispatches `CODING_AGENT` / `REVIEW_AGENT` / `RESEARCH_AGENT` | Falls back to `self_act`; main agy agent does the work and may spawn its own dynamic subagents via the prompt |
-| `.oh-env` agent vars    | Used                                                          | Ignored (no named-agent dispatch on agy)                                                                      |
-
-In short: `oh-nice` works on agy, but all roles are handled by the main agent
-rather than delegated to named subagents. The planning, review, and fix
-workflows are otherwise identical.
-
-### Reference
-
-- Spike findings (env vars, SKILL.md load, custom-agent support) were recorded
-  during development and are not shipped with the plugin; the probe-order table
-  above captures the key results.
-- Host detection logic: `src/env.ts` — `detectHost()`, signals on
-  `ANTIGRAVITY_AGENT` / `ANTIGRAVITY_CONVERSATION_ID`
-- Plugin-root resolver: `src/shared/plugin-root.ts` — `resolvePluginRoot()`,
-  `SHIM_ROOT_EXPR`, `AGY_ROOT_ENV`
-
----
-
-## Running on OpenAI Codex
-
-oh-skills is a tri-target plugin: it runs on Claude Code, Antigravity CLI (agy),
-and OpenAI Codex from the same source tree.
-
-### Install
+<details>
+<summary><b>OpenAI Codex</b></summary>
 
 ```bash
 bash scripts/install-codex.sh
 ```
 
-The script is idempotent — safe to run multiple times. It performs four steps:
+The script is idempotent. It (1) creates the `~/.oh-skills` shim anchor, (2)
+creates `~/plugins/oh-skills` (Codex marketplace lookup path), (3) installs a
+personal `marketplace.json` from the repo template, and (4) registers
+`oh-skills@personal` if the `codex` CLI is present (otherwise it prints manual
+steps).
 
-1. Creates `~/.oh-skills` → repo symlink (the shim anchor — see below).
-2. Creates `~/plugins/oh-skills` → repo symlink (Codex marketplace lookup path).
-3. Writes `~/.agents/plugins/marketplace.json` with a personal marketplace entry
-   (skipped if the file already exists).
-4. If `codex` CLI is present: runs the cache-buster and registers
-   `oh-skills@personal`. Otherwise it prints the manual steps.
+After install, start a **new Codex thread** — Codex loads plugins at thread
+initialization, not mid-session.
 
-After install, start a **new Codex thread** to pick up the skills — Codex loads
-plugins at thread initialization, not mid-session.
+</details>
 
-### How the plugin root is resolved on Codex
-
-Codex injects no plugin-root variable into running skills, and its validator
-rejects `hooks` entries, so a hook-based approach is not available. Instead, the
-SKILL.md shims use a stateless bash expression:
-
-```bash
-${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}
-```
-
-On Codex none of `CLAUDE_PLUGIN_ROOT`, `ANTIGRAVITY_PLUGIN_ROOT`, or
-`PLUGIN_ROOT` is set in skill context, so the expression resolves to
-`$HOME/.oh-skills` — the symlink created by `install-codex.sh`. This is why the
-anchor is the most important step.
-
-| Priority | Variable / path           | Set by                                               |
-| -------- | ------------------------- | ---------------------------------------------------- |
-| 1        | `CLAUDE_PLUGIN_ROOT`      | Claude Code                                          |
-| 2        | `ANTIGRAVITY_PLUGIN_ROOT` | Reserved for a future agy release                    |
-| 3        | `PLUGIN_ROOT`             | Reserved; Codex forbids hooks, where it would appear |
-| 4        | `$HOME/.oh-skills`        | Symlink created by `install-codex.sh` (Codex anchor) |
-
-### Behavior differences on Codex
-
-| Aspect                  | Claude Code                                                   | Codex                                                   |
-| ----------------------- | ------------------------------------------------------------- | ------------------------------------------------------- |
-| Agent dispatch          | Named subagents (Mirai / Yama / Rudy) when configured         | Falls back to `self_act` — Codex uses dynamic subagents |
-| `oh-nice go/review/fix` | Dispatches `CODING_AGENT` / `REVIEW_AGENT` / `RESEARCH_AGENT` | Main Codex agent does the work                          |
-| Host detection          | `CLAUDE_PLUGIN_ROOT` / `CLAUDECODE`                           | `CODEX_HOME` (best-effort; `unknown` if absent)         |
-
-In short: `oh-nice` works on Codex, but all roles are handled by the main agent
-rather than delegated to named subagents. The planning, review, and fix
-workflows are otherwise identical.
-
-### Skill compatibility on Codex
-
-Codex's plugin validator requires `disable-model-invocation` to be `false` or
-absent. The utility skills (`oh-context`, `oh-search`, `oh-doctor`, `oh-help`)
-satisfy this and load on Codex. The two action/orchestration skills (`oh-nice`,
-`oh-bug-tracing`) intentionally keep `disable-model-invocation: true` to stay
-user-only on Claude Code, so Codex's strict validator does not ingest them.
-Drive those flows directly on Codex if you need them there.
-
----
-
-## Uninstall
+<details>
+<summary><b>Uninstall</b></summary>
 
 ```
 /plugin uninstall oh-skills
@@ -237,44 +168,74 @@ Drive those flows directly on Codex if you need them there.
 To also remove configuration and data:
 
 ```bash
-# user-global config (skip if you only used per-project .oh-env)
-rm ~/.claude/.oh-env
-
-# per-project config (in each project you used /oh init on)
-rm <project>/.oh-env
-
-# generated data — ONLY if you don't want to keep your rules/knowledge/plans
-trash ./.oh                                   # or your custom CONTEXT_DIR / KNOWLEDGE_DIR / PLAN_DIR
+rm ~/.claude/.oh-env                          # user-global config
+rm <project>/.oh-env                          # per-project config
+trash ./.oh                                   # generated rules/knowledge/plans (keep if wanted)
+trash ~/workspaces/oh-skills                  # if you cloned manually
 ```
 
-If you cloned the repo manually:
+</details>
+
+---
+
+## Multi-host support
+
+oh-skills runs from **one source tree** on three hosts. Each `skills/*/SKILL.md`
+shim locates `src/cli.ts` at runtime via a single stateless, host-portable
+expression:
 
 ```bash
-trash ~/workspaces/oh-skills
+${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}
 ```
 
-## Configuration — `.oh-env`
+| Host             | Plugin root resolves via | Agent dispatch                        |
+| ---------------- | ------------------------ | ------------------------------------- |
+| **Claude Code**  | `$CLAUDE_PLUGIN_ROOT`    | Named subagents (Mirai / Yama / Rudy) |
+| **Antigravity**  | `~/.oh-skills` anchor    | Dynamic subagents (`self_act`)        |
+| **OpenAI Codex** | `~/.oh-skills` anchor    | Dynamic subagents (`self_act`)        |
 
-`/oh init` scaffolds either `./.oh-env` (project, gitignored) or
-`~/.claude/.oh-env` (user-global). Project values override home values per-key.
-Process environment variables override both.
+Only Claude Code exposes named subagents, so on agy and Codex every role
+(`CODING_AGENT` / `REVIEW_AGENT` / `RESEARCH_AGENT`) falls back to the main
+agent. The planning, review, and fix workflows are otherwise identical across
+hosts.
 
-```bash
-CONTEXT_DIR=./.oh/context              # rule-*.md storage
-CONTEXT_TEMPLATE_DIR=./.oh/context-templates  # rule-set presets
-KNOWLEDGE_DIR=./.oh/knowledge          # search-*.md storage
-PLAN_DIR=./.oh/plan                    # <repo>/<slug>/{spec,plan,review}.md
+<details>
+<summary><b>Plugin-root probe order (the details)</b></summary>
 
-CODING_AGENT=      # optional; empty = main Claude implements
-REVIEW_AGENT=      # optional; empty = main Claude reviews
-RESEARCH_AGENT=    # optional; empty = main Claude researches
-```
+First match wins, defined in `src/shared/plugin-root.ts`:
 
-If you have a personal implementer/reviewer (e.g. registered as a sub-agent in
-Claude Code), set the env vars. Otherwise leave them empty and the main
-conversation handles those roles.
+| Priority | Variable / path           | Set by                                                  |
+| -------- | ------------------------- | ------------------------------------------------------- |
+| 1        | `CLAUDE_PLUGIN_ROOT`      | Claude Code (always set when a plugin runs there)       |
+| 2        | `ANTIGRAVITY_PLUGIN_ROOT` | Reserved for a future agy release — not set today       |
+| 3        | `PLUGIN_ROOT`             | Reserved; no known host sets this in skill context      |
+| 4        | `$HOME/.oh-skills`        | Unified anchor symlink (shared by agy + Codex installs) |
 
-## Skills at a glance
+**Why an anchor?** Neither agy (confirmed via binary forensics on v1.0.3) nor
+Codex injects a plugin-root variable into running skills — and Codex's plugin
+validator forbids `hooks`, ruling out a hook-based approach. The `~/.oh-skills`
+symlink is therefore the resolution mechanism on both, which is why their
+install steps create it. The TypeScript resolver additionally probes known
+install paths (`~/.oh-skills`, `~/plugins/oh-skills`,
+`~/.gemini/antigravity-cli/plugins/oh-skills`) for its own internal needs.
+
+</details>
+
+<details>
+<summary><b>Codex skill compatibility</b></summary>
+
+Codex's plugin validator requires `disable-model-invocation` to be `false` or
+absent. The utility skills (`oh-context`, `oh-search`, `oh-doctor`, `oh-help`)
+satisfy this and load on Codex. The two action/orchestration skills (`oh-nice`,
+`oh-bug-tracing`) intentionally keep `disable-model-invocation: true` to stay
+user-only on Claude Code, so Codex's strict validator does not ingest them —
+drive those flows directly on Codex if you need them there.
+
+</details>
+
+---
+
+## Skills in depth
 
 ### oh-nice
 
@@ -284,43 +245,36 @@ conversation handles those roles.
 /oh-nice go                                   → implement
 /oh-nice review                               → review the changes against the plan
 /oh-nice fix                                  → apply the latest review feedback
-/oh-nice do "<one-shot request>"              → implement → review → fix without any plan artifacts
+/oh-nice do "<one-shot request>"              → implement → review → fix, no plan artifacts
 ```
 
-### Parallel execution (DAG-driven)
+**Parallel execution (DAG-driven).** Plans authored via `/oh-nice plan` include
+per-task `**Files:**` and `**Depends-on:**` annotations. When `/oh-nice go` sees
+these, it parses the plan into a dependency DAG, validates it (cycle detection,
+file-collision checks), and dispatches multiple coding agents concurrently for
+tasks whose dependencies are met. Concurrency caps at 3 by default (override
+with `OH_NICE_MAX_PARALLEL`). Plans without DAG annotations fall back to
+single-agent sequential mode — no migration required.
 
-Plans authored via `/oh-nice plan` now include per-task `**Files:**` and
-`**Depends-on:**` annotations. When `/oh-nice go` sees these, it parses the plan
-into a dependency DAG, validates it (cycle detection, file-collision checks),
-and dispatches multiple coding agents concurrently for tasks whose dependencies
-are met. Concurrency is capped at 3 by default (override with
-`OH_NICE_MAX_PARALLEL`).
+<details>
+<summary><b>The <code>do</code> one-shot loop & research modes</b></summary>
 
-Plans without DAG annotations fall back to the original single-agent sequential
-mode — no migration required.
-
-Use `do` for quick one-shot tasks that don't need a stored plan. It runs the
-same implement → review → fix loop but writes no artifacts under `PLAN_DIR`. Opt
-out of later phases with `--no-review` or `--no-fix`:
+Use `do` for quick tasks that don't need a stored plan. Same implement → review
+→ fix loop, no artifacts under `PLAN_DIR`. Opt out of later phases with
+`--no-review` or `--no-fix`:
 
 ```
 /oh-nice do "rename foo to bar"
   → coding agent implements + commits
   → review agent checks diff vs origin/main, writes findings to os.tmpdir()
   → fix agent applies findings, tmp file deleted
-  → done
 
-/oh-nice do "add a TODO comment" --no-review
-  → coding agent implements; review and fix skipped
-
-/oh-nice do "add a TODO comment" --no-fix
-  → coding agent implements + commits
-  → review agent checks diff and writes findings
-  → fix skipped; findings available for manual action
+/oh-nice do "add a TODO comment" --no-review   → implement only
+/oh-nice do "add a TODO comment" --no-fix       → implement + review, findings left for you
 ```
 
 Both `plan` and `update-plan` include an **optional research step** after
-brainstorming. When prompted, choose a source mode:
+brainstorming:
 
 | Mode        | Behaviour                                                                                |
 | ----------- | ---------------------------------------------------------------------------------------- |
@@ -328,10 +282,12 @@ brainstorming. When prompted, choose a source mode:
 | `online`    | Skips local search; uses WebSearch + WebFetch directly (3-5 sources per topic)           |
 | `auto`      | Local-first; falls back to web for topics with no local hit                              |
 
-The research agent appends a `## Research` section (or a `### Research`
-subsection under the latest `## Update` block for `update-plan`) to `spec.md`.
-When online research is performed, you are asked whether to save findings to the
-knowledge base before writing the plan.
+The research agent appends a `## Research` section to `spec.md` (or a
+`### Research` subsection under the latest `## Update` block for `update-plan`).
+After online research you're asked whether to save findings to the knowledge
+base.
+
+</details>
 
 ### oh-bug-tracing
 
@@ -340,20 +296,20 @@ knowledge base before writing the plan.
   → phase 1: coding agent fixes the bug
   → phase 2: main thread does git archaeology — finds the introducing commit,
              reconstructs the original dev's intent, classifies root cause,
-             writes structured trace.md to PLAN_DIR/<repo>/<bug-slug>/trace.md
+             writes trace.md to PLAN_DIR/<repo>/<bug-slug>/trace.md
 ```
 
-The `trace.md` template has eight enforced sections: Symptom · Fix · Origin
-(commit/PR) · Dev intent at the time · Why this slipped · Root cause class ·
-Prevention (TODO checkboxes) · External research. Use this when an ad-hoc bug
-deserves to leave behind institutional memory, not just a fix.
+`trace.md` has eight enforced sections: Symptom · Fix · Origin (commit/PR) · Dev
+intent · Why this slipped · Root cause class · Prevention (TODO checkboxes) ·
+External research. Use it when an ad-hoc bug deserves to leave behind
+institutional memory, not just a fix.
 
 ### oh-context
 
 ```
 /oh-context load                              → pick context folders, inject their rules
 /oh-context list                              → list available folders
-/oh-context check                             → drift detector — verify Claude still has the rules
+/oh-context check                             → drift detector — verify the host still has the rules
 /oh-context add                               → scaffold a new rule-*.md
 /oh-context promote --all                     → convert drafts (.md) to rule-*.md
 ```
@@ -365,6 +321,32 @@ deserves to leave behind institutional memory, not just a fix.
 /oh-search research "<query>"                 → directive to WebSearch + save after YES confirm
 /oh-search list                               → browse what's saved
 ```
+
+---
+
+## Configuration — `.oh-env`
+
+`/oh init` scaffolds either `./.oh-env` (project, gitignored) or
+`~/.claude/.oh-env` (user-global). Project values override home values per-key;
+process environment variables override both.
+
+```bash
+CONTEXT_DIR=./.oh/context                     # rule-*.md storage
+CONTEXT_TEMPLATE_DIR=./.oh/context-templates  # rule-set presets
+KNOWLEDGE_DIR=./.oh/knowledge                 # search-*.md storage
+PLAN_DIR=./.oh/plan                           # <repo>/<slug>/{spec,plan,review}.md
+
+CODING_AGENT=      # optional; empty = main agent implements
+REVIEW_AGENT=      # optional; empty = main agent reviews
+RESEARCH_AGENT=    # optional; empty = main agent researches
+```
+
+Set the agent vars if you have a personal implementer/reviewer registered as a
+Claude Code sub-agent. Otherwise leave them empty and the main conversation
+handles those roles. (On Antigravity and Codex they're ignored — see
+[Multi-host support](#multi-host-support).)
+
+---
 
 ## Development
 
@@ -382,47 +364,24 @@ Local install for development:
 /plugin install oh-skills
 ```
 
-## Repo rules (for contributors and AI agents)
-
-These rules apply to every change made to this repository.
-
-1. **Always update `CHANGELOG.md`.** Every code-changing commit MUST append at
-   least one entry under the `## [Unreleased]` heading, grouped into `Added` /
-   `Changed` / `Fixed` / `Removed` subheadings. We use the
-   [Keep a Changelog](https://keepachangelog.com/) format. CHANGELOG-only
-   commits do not need to update CHANGELOG.md.
-2. **Version sync.** `package.json` and `.claude-plugin/plugin.json` must carry
-   the same `version`. CI fails if they drift (`scripts/check-version.ts`).
-3. **No hardcoded paths or agent names** in `src/`. Every path comes from
-   `.oh-env` via `loadOhEnv()`; every agent role from `resolveAgent(role, env)`.
-4. **Tests first** for new behavior in `src/env.ts`, `src/cli.ts`,
-   `src/shared/`. Port-only changes can skip TDD when the test already exists.
-5. **Bun-only.** No Node-only APIs that don't work on Bun; no
-   `npm`/`pnpm`/`yarn` scripts.
-
-## Long-session token health
+<details>
+<summary><b>Long-session token health</b></summary>
 
 Token context fills up over a long session. Compact before it impacts quality.
 
-**Caps (post-compaction estimates):**
+**Caps (post-compaction estimates):** single skill invocation ~5K tokens;
+combined re-attach budget ~25K (newest-first). Hit either cap → compact before
+the next heavy command.
 
-- Single skill invocation: ~5K tokens.
-- Combined re-attach budget: ~25K (newest-first on re-attach).
-- Hit either cap → compact before the next heavy command.
-
-**When to compact:** after `go` finishes, after `review` returns, or whenever
-`/oh-nice` responses feel sluggish.
-
-**How to compact:**
+**When:** after `go` finishes, after `review` returns, or whenever `/oh-nice`
+responses feel sluggish.
 
 ```
 /compact focus on <current-task>
 ```
 
-Focus hint keeps relevant context; everything else compresses.
-
-**Compact-instructions block** — paste into the conversation after any compact
-to restore skill state:
+**Compact-instructions block** — paste in after any compact to restore skill
+state:
 
 ```
 ## Compact Instructions
@@ -434,9 +393,32 @@ Env: PLAN_DIR / CONTEXT_DIR / KNOWLEDGE_DIR / CODING_AGENT / REVIEW_AGENT from .
 Next action: [fill in what you were doing].
 ```
 
-**Proactive context reload:** after compact, run `/oh-context check` to verify
-rules survived. If not, `/oh-context load` to reload.
+After compact, run `/oh-context check` to verify rules survived;
+`/oh-context load` to reload if not.
+
+</details>
+
+---
+
+## Contributing rules
+
+These apply to every change made to this repository.
+
+1. **Always update `CHANGELOG.md`.** Every code-changing commit appends at least
+   one entry under `## [Unreleased]`, grouped into `Added` / `Changed` / `Fixed`
+   / `Removed` ([Keep a Changelog](https://keepachangelog.com/) format).
+   CHANGELOG-only commits are exempt.
+2. **Version sync.** `package.json` and `.claude-plugin/plugin.json` must carry
+   the same `version`. CI fails if they drift (`scripts/check-version.ts`).
+3. **No hardcoded paths or agent names** in `src/`. Paths come from `.oh-env`
+   via `loadOhEnv()`; agent roles from `resolveAgent(role, env)`.
+4. **Tests first** for new behavior in `src/env.ts`, `src/cli.ts`,
+   `src/shared/`. Port-only changes can skip TDD when the test already exists.
+5. **Bun-only.** No Node-only APIs that don't work on Bun; no
+   `npm`/`pnpm`/`yarn` scripts.
+
+---
 
 ## License
 
-MIT
+[MIT](LICENSE) © KPJCK
