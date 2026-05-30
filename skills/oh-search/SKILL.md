@@ -18,7 +18,7 @@ description:
 Thin shim. CLI lives in the oh-skills plugin. Run via:
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts search <subcommand> [args]
+bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}/src/cli.ts search <subcommand> [args]
 ```
 
 ## Subcommand routing

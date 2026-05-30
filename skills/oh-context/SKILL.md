@@ -1,6 +1,15 @@
 ---
 name: oh-context
-description: Manage domain-specific rule files for this session. Subcommands `load --pick "f1,f2..."` (multi-folder) or `load --template <name>` (preset rule-set), `list`, `check`, `huh` (boolean: any rules loaded?), `add` (scaffold rule) or `add --template <name>` (build a preset), `update <folder>/<name>` (Edit-tool driven), `promote --all | --target <path>`, `template list|show|delete`, `clear`. The `load`/`add --template` pickers show per-rule token estimates. Use proactively at the start of a session, or when the user mentions a tech domain without rules loaded. **NOTE:** interactive pickers need a TTY — when driving via Bash, pass `--pick`/`--template` instead.
+description:
+  'Manage domain-specific rule files for this session. Subcommands `load --pick
+  "f1,f2..."` (multi-folder) or `load --template <name>` (preset rule-set),
+  `list`, `check`, `huh` (boolean: any rules loaded?), `add` (scaffold rule) or
+  `add --template <name>` (build a preset), `update <folder>/<name>` (Edit-tool
+  driven), `promote --all | --target <path>`, `template list|show|delete`,
+  `clear`. The `load`/`add --template` pickers show per-rule token estimates.
+  Use proactively at the start of a session, or when the user mentions a tech
+  domain without rules loaded. **NOTE:** interactive pickers need a TTY — when
+  driving via Bash, pass `--pick`/`--template` instead.'
 ---
 
 # oh-context
@@ -8,7 +17,7 @@ description: Manage domain-specific rule files for this session. Subcommands `lo
 Thin shim. CLI lives in the oh-skills plugin. Run via:
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts context <subcommand> [flags]
+bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}/src/cli.ts context <subcommand> [flags]
 ```
 
 ## Subcommand routing

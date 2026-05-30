@@ -1,0 +1,40 @@
+{
+  "name": "oh-skills",
+  "version": "0.3.0",
+  "description": "Personal dev-cycle skills: plan/go/review/fix orchestration, context-rule loader, local knowledge base, bug-tracing, setup doctor, and help reference. Runs on Claude Code, Antigravity (agy), and OpenAI Codex.",
+  "author": {
+    "name": "KPJCK",
+    "url": "https://github.com/KPJCK"
+  },
+  "homepage": "https://github.com/KPJCK/oh-skills",
+  "repository": "https://github.com/KPJCK/oh-skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "plan",
+    "review",
+    "context",
+    "search",
+    "bug-tracing",
+    "forensics",
+    "claude-code",
+    "codex",
+    "openai"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "oh-skills",
+    "shortDescription": "Personal dev-cycle skills (plan/review/fix, context, search, bug-tracing)",
+    "longDescription": "A multi-tool plugin that bundles six personal dev-cycle skills: oh-nice (plan/go/review/fix/do orchestration with parallel DAG dispatch), oh-bug-tracing (bug fix + forensic trace.md post-mortem), oh-context (dynamic domain-rule loader), oh-search (local knowledge base — check before web search), oh-doctor (installation health check), and oh-help (reference card). Runs natively on Claude Code, Antigravity CLI (agy), and OpenAI Codex from one source tree. Configured via .oh-env with agent-role abstraction (CODING_AGENT / REVIEW_AGENT / RESEARCH_AGENT).",
+    "developerName": "KPJCK",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/KPJCK/oh-skills",
+    "brandColor": "#7C3AED",
+    "defaultPrompt": [
+      "Plan a feature with /oh-nice",
+      "Load TypeScript context rules",
+      "Find local knowledge before searching the web"
+    ]
+  }
+}

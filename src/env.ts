@@ -104,14 +104,17 @@ export function loadOhEnv(opts: { cwd?: string; home?: string } = {}): OhEnv {
   return env;
 }
 
-export type Host = "claude" | "agy" | "unknown";
+export type Host = "claude" | "agy" | "codex" | "unknown";
 
 /** Detect the host CLI from environment markers. Claude sets CLAUDE_PLUGIN_ROOT/CLAUDECODE;
- *  agy sets ANTIGRAVITY_AGENT / ANTIGRAVITY_CONVERSATION_ID / its plugin-root var. */
+ *  agy sets ANTIGRAVITY_AGENT / ANTIGRAVITY_CONVERSATION_ID / its plugin-root var.
+ *  Codex detection is best-effort (CODEX_HOME / CODEX_SANDBOX / CODEX_SANDBOX_NETWORK_DISABLED) —
+ *  Codex has no guaranteed runtime marker, so dispatch correctness does not depend on this. */
 export function detectHost(env: Record<string, string | undefined> = process.env): Host {
   if (env.CLAUDE_PLUGIN_ROOT || env.CLAUDECODE) return "claude";
   if (env.ANTIGRAVITY_AGENT || env.ANTIGRAVITY_CONVERSATION_ID || env.ANTIGRAVITY_PLUGIN_ROOT)
     return "agy";
+  if (env.CODEX_HOME || env.CODEX_SANDBOX || env.CODEX_SANDBOX_NETWORK_DISABLED) return "codex";
   return "unknown";
 }
 
@@ -120,7 +123,8 @@ export function resolveAgent(
   env: OhEnv,
   host: Host = detectHost(),
 ): string | null {
-  if (host === "agy") return null; // agy uses dynamic subagents; no named dispatch
+  // Named subagents (Mirai/Yama/Rudy) exist only on Claude Code; return null on all other hosts.
+  if (host !== "claude") return null;
   const key =
     role === "coding" ? "CODING_AGENT" : role === "review" ? "REVIEW_AGENT" : "RESEARCH_AGENT";
   return env[key]?.trim() || null;

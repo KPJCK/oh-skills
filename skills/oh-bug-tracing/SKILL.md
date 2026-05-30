@@ -12,7 +12,7 @@ disable-model-invocation: true
 Thin shim. CLI lives in the oh-skills plugin. Run via:
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts bug-tracing fix "<bug description>" [--slug=<name>]
+bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}/src/cli.ts bug-tracing fix "<bug description>" [--slug=<name>]
 ```
 
 ## Subcommand routing
@@ -27,7 +27,7 @@ bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-c
 ### Phase 1 — fix (default)
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts bug-tracing fix "<bug>" [--slug=<name>]
+bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}/src/cli.ts bug-tracing fix "<bug>" [--slug=<name>]
 ```
 
 Emits two next-actions:
@@ -39,7 +39,7 @@ Emits two next-actions:
 ### Phase 2 — trace
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts bug-tracing fix --phase=trace --slug=<slug> "<bug>"
+bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}/src/cli.ts bug-tracing fix --phase=trace --slug=<slug> "<bug>"
 ```
 
 Emits two next-actions:

@@ -1,6 +1,12 @@
 ---
 name: oh-nice
-description: Personal dev-cycle orchestrator — subcommands `plan` / `update-plan` / `go` / `review` / `fix` / `do`. Use for: design a feature (plan), iterate an existing plan with new ideas/feedback/improvements (update-plan), implement (go), Yama review (review), apply review feedback (fix), or quick one-shot implement→review→fix without any plan artifacts (do). Run with no subcommand to pick interactively.
+description:
+  "Personal dev-cycle orchestrator — subcommands `plan` / `update-plan` / `go` /
+  `review` / `fix` / `do`. Use for: design a feature (plan), iterate an existing
+  plan with new ideas/feedback/improvements (update-plan), implement (go), Yama
+  review (review), apply review feedback (fix), or quick one-shot
+  implement→review→fix without any plan artifacts (do). Run with no subcommand
+  to pick interactively."
 disable-model-invocation: true
 ---
 
@@ -9,7 +15,7 @@ disable-model-invocation: true
 Thin shim. CLI lives in the oh-skills plugin. Run via:
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts nice <subcommand> [flags]
+bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}/src/cli.ts nice <subcommand> [flags]
 ```
 
 ## Subcommand routing
@@ -29,7 +35,7 @@ bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-c
 For `go`, `review`, `fix`: prefer the `--emit-ask-json` pattern.
 
 1. Run
-   `bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts nice <subcommand> --emit-ask-json`
+   `bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}/src/cli.ts nice <subcommand> --emit-ask-json`
 2. Parse the JSON. If `autoPick`: skip AskUserQuestion. If `tooManyForUI`: show
    `plainText`. Otherwise pass `questions` verbatim to AskUserQuestion.
 3. Re-run with the chosen flags.

@@ -21,6 +21,12 @@ describe("host-aware resolveAgent", () => {
   it("returns null on agy (dynamic subagents)", () => {
     expect(resolveAgent("coding", env, "agy")).toBeNull();
   });
+  it("returns null on codex (no named subagents)", () => {
+    expect(resolveAgent("coding", env, "codex")).toBeNull();
+  });
+  it("returns null on unknown host", () => {
+    expect(resolveAgent("coding", env, "unknown")).toBeNull();
+  });
 });
 
 describe("buildAgentAction respects host", () => {
@@ -39,6 +45,16 @@ describe("buildAgentAction respects host", () => {
       role: "review",
       env,
       host: "agy",
+      dispatchedPrompt: "d",
+      selfActPrompt: "s",
+    });
+    expect(a.type).toBe("self_act");
+  });
+  it("self_act on codex", () => {
+    const a = buildAgentAction({
+      role: "review",
+      env,
+      host: "codex",
       dispatchedPrompt: "d",
       selfActPrompt: "s",
     });

@@ -8,7 +8,7 @@ description:
   rudy). Use when the user asks "what do these oh-* tools do?", "/oh-help",
   "explain the setup", "remind me what's available", or any similar discovery
   question.
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # oh-help
@@ -16,7 +16,7 @@ disable-model-invocation: true
 Shim. Run:
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts help [section]
+bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}/src/cli.ts help [section]
 ```
 
 Without an arg: prints the full reference card (env values substituted into the

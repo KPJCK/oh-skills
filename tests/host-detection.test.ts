@@ -15,6 +15,15 @@ describe("detectHost", () => {
   it("agy when ANTIGRAVITY_CONVERSATION_ID set", () => {
     expect(detectHost({ ANTIGRAVITY_CONVERSATION_ID: "abc" })).toBe("agy");
   });
+  it("codex when CODEX_HOME set", () => {
+    expect(detectHost({ CODEX_HOME: "/x" })).toBe("codex");
+  });
+  it("codex when CODEX_SANDBOX set", () => {
+    expect(detectHost({ CODEX_SANDBOX: "1" })).toBe("codex");
+  });
+  it("codex when CODEX_SANDBOX_NETWORK_DISABLED set", () => {
+    expect(detectHost({ CODEX_SANDBOX_NETWORK_DISABLED: "1" })).toBe("codex");
+  });
   it("unknown otherwise", () => {
     expect(detectHost({})).toBe("unknown");
   });
