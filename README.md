@@ -78,6 +78,80 @@ path as a marketplace, install the plugin, scaffold `.oh-env` via `/oh init`,
 and run `/oh doctor`. It should stop before deleting any pre-existing
 `~/.claude/skills/oh-*` directories — you confirm those manually.
 
+## Running on Antigravity CLI (agy)
+
+oh-skills is a dual-target plugin: it runs on both Claude Code and the
+[Antigravity CLI](https://github.com/antigravityio/antigravity-cli) (`agy`) from
+the same source tree.
+
+### Install
+
+Symlink (or copy) the repo into the path where agy looks for plugins, then
+verify:
+
+```bash
+# Stage the plugin in agy's install location
+mkdir -p ~/.gemini/antigravity-cli/plugins
+ln -sfn ~/workspaces/oh-skills ~/.gemini/antigravity-cli/plugins/oh-skills
+
+# Confirm agy sees it
+agy plugin list
+```
+
+You should see `oh-skills` and all six `oh-*` skills in the output. If you
+prefer not to symlink, copy the directory instead:
+
+```bash
+cp -r ~/workspaces/oh-skills ~/.gemini/antigravity-cli/plugins/oh-skills
+```
+
+### How the plugin root is resolved
+
+Every `skills/*/SKILL.md` shim uses a stateless, host-portable bash expression
+to locate `src/cli.ts` at runtime:
+
+```bash
+${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}
+```
+
+Probe order (first match wins, defined in `src/shared/plugin-root.ts`):
+
+| Priority | Variable                                          | Set by                                            |
+| -------- | ------------------------------------------------- | ------------------------------------------------- |
+| 1        | `CLAUDE_PLUGIN_ROOT`                              | Claude Code (always set when a plugin runs there) |
+| 2        | `ANTIGRAVITY_PLUGIN_ROOT`                         | Reserved for a future agy release — not set today |
+| 3        | `$HOME/.gemini/antigravity-cli/plugins/oh-skills` | Hard-coded known install path                     |
+
+**Key finding from the agy spike:** agy v1.0.3 injects no plugin-root env var
+(confirmed via binary forensics — see `findings.md` for the full list of
+injected vars). The known-install-path fallback is therefore the effective
+mechanism on agy, not a last resort. The `ANTIGRAVITY_PLUGIN_ROOT` probe is kept
+as harmless forward-compat in case a future agy release adds one.
+
+### Behavior differences on agy
+
+| Aspect                  | Claude Code                                                   | agy                                                                                                           |
+| ----------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Agent dispatch          | Named subagents (Mirai / Yama / Rudy) when configured         | Dynamic subagents only — agy composes subagents itself                                                        |
+| `oh-nice go/review/fix` | Dispatches `CODING_AGENT` / `REVIEW_AGENT` / `RESEARCH_AGENT` | Falls back to `self_act`; main agy agent does the work and may spawn its own dynamic subagents via the prompt |
+| `.oh-env` agent vars    | Used                                                          | Ignored (no named-agent dispatch on agy)                                                                      |
+
+In short: `oh-nice` works on agy, but all roles are handled by the main agent
+rather than delegated to named subagents. The planning, review, and fix
+workflows are otherwise identical.
+
+### Reference
+
+- Spike findings (env vars, SKILL.md load, custom-agent support) were recorded
+  during development and are not shipped with the plugin; the probe-order table
+  above captures the key results.
+- Host detection logic: `src/env.ts` — `detectHost()`, signals on
+  `ANTIGRAVITY_AGENT` / `ANTIGRAVITY_CONVERSATION_ID`
+- Plugin-root resolver: `src/shared/plugin-root.ts` — `resolvePluginRoot()`,
+  `SHIM_ROOT_EXPR`, `AGY_ROOT_ENV`
+
+---
+
 ## Uninstall
 
 ```

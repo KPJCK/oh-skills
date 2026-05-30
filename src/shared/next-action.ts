@@ -1,6 +1,6 @@
 // src/shared/next-action.ts
-import type { OhEnv, AgentRole } from "../env";
-import { resolveAgent } from "../env";
+import type { OhEnv, AgentRole, Host } from "../env";
+import { resolveAgent, detectHost } from "../env";
 
 export type AgentDispatchAction = {
   type: "dispatch_agent";
@@ -45,8 +45,9 @@ export function buildAgentAction(opts: {
   env: OhEnv;
   dispatchedPrompt: string;
   selfActPrompt: string;
+  host?: Host;
 }): AgentDispatchAction | SelfActAction {
-  const agent = resolveAgent(opts.role, opts.env);
+  const agent = resolveAgent(opts.role, opts.env, opts.host ?? detectHost());
   if (agent) {
     return {
       type: "dispatch_agent",

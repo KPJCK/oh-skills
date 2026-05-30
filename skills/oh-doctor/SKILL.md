@@ -12,7 +12,7 @@ disable-model-invocation: true
 One-shot diagnostic. Run:
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts doctor
+bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts doctor
 ```
 
 stdout is a markdown report grouped by section (env / dirs / settings / agents /

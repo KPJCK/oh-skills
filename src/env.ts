@@ -104,7 +104,23 @@ export function loadOhEnv(opts: { cwd?: string; home?: string } = {}): OhEnv {
   return env;
 }
 
-export function resolveAgent(role: AgentRole, env: OhEnv): string | null {
+export type Host = "claude" | "agy" | "unknown";
+
+/** Detect the host CLI from environment markers. Claude sets CLAUDE_PLUGIN_ROOT/CLAUDECODE;
+ *  agy sets ANTIGRAVITY_AGENT / ANTIGRAVITY_CONVERSATION_ID / its plugin-root var. */
+export function detectHost(env: Record<string, string | undefined> = process.env): Host {
+  if (env.CLAUDE_PLUGIN_ROOT || env.CLAUDECODE) return "claude";
+  if (env.ANTIGRAVITY_AGENT || env.ANTIGRAVITY_CONVERSATION_ID || env.ANTIGRAVITY_PLUGIN_ROOT)
+    return "agy";
+  return "unknown";
+}
+
+export function resolveAgent(
+  role: AgentRole,
+  env: OhEnv,
+  host: Host = detectHost(),
+): string | null {
+  if (host === "agy") return null; // agy uses dynamic subagents; no named dispatch
   const key =
     role === "coding" ? "CODING_AGENT" : role === "review" ? "REVIEW_AGENT" : "RESEARCH_AGENT";
   return env[key]?.trim() || null;

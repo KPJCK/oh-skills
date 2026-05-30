@@ -16,7 +16,7 @@ disable-model-invocation: true
 Shim. Run:
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts help [section]
+bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts help [section]
 ```
 
 Without an arg: prints the full reference card (env values substituted into the

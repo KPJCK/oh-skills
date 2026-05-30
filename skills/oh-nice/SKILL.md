@@ -9,7 +9,7 @@ disable-model-invocation: true
 Thin shim. CLI lives in the oh-skills plugin. Run via:
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice <subcommand> [flags]
+bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts nice <subcommand> [flags]
 ```
 
 ## Subcommand routing
@@ -28,7 +28,8 @@ bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice <subcommand> [flags]
 
 For `go`, `review`, `fix`: prefer the `--emit-ask-json` pattern.
 
-1. Run `bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts nice <subcommand> --emit-ask-json`
+1. Run
+   `bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts nice <subcommand> --emit-ask-json`
 2. Parse the JSON. If `autoPick`: skip AskUserQuestion. If `tooManyForUI`: show
    `plainText`. Otherwise pass `questions` verbatim to AskUserQuestion.
 3. Re-run with the chosen flags.

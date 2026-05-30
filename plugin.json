@@ -1,0 +1,21 @@
+{
+  "name": "oh-skills",
+  "version": "0.3.0",
+  "description": "Personal dev-cycle skills: plan/go/review/fix orchestration, context-rule loader, local knowledge base, bug-tracing, setup doctor, and help reference. Dual-target: Claude Code + Antigravity CLI.",
+  "author": { "name": "KPJCK" },
+  "homepage": "https://github.com/KPJCK/oh-skills",
+  "repository": "https://github.com/KPJCK/oh-skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "plan",
+    "review",
+    "context",
+    "search",
+    "bug-tracing",
+    "forensics",
+    "claude-code",
+    "antigravity"
+  ],
+  "skills": "./skills/"
+}

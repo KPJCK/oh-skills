@@ -8,7 +8,7 @@ description: Manage domain-specific rule files for this session. Subcommands `lo
 Thin shim. CLI lives in the oh-skills plugin. Run via:
 
 ```bash
-bun ${CLAUDE_PLUGIN_ROOT}/src/cli.ts context <subcommand> [flags]
+bun ${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}/src/cli.ts context <subcommand> [flags]
 ```
 
 ## Subcommand routing
