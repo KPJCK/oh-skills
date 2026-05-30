@@ -15,6 +15,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   the plugin root host-portably.
 - `detectHost()` + host-aware agent dispatch: named subagents (Mirai/Yama/Rudy)
   on Claude, agy dynamic subagents on agy.
+- Native OpenAI Codex support (third host) — oh-skills is now a tri-target
+  plugin (Claude Code + agy + Codex). `.codex-plugin/plugin.json` manifest with
+  required `interface` block; `scripts/install-codex.sh` creates the
+  `~/.oh-skills` symlink anchor (Codex injects no plugin-root var and forbids
+  hooks, so the shim falls back to `$HOME/.oh-skills`), registers the personal
+  marketplace entry, and runs `codex plugin add`. Dispatch falls back to
+  `self_act` on Codex like agy.
+- Host type `'codex'` in `detectHost()` (best-effort `CODEX_HOME` marker);
+  `resolveAgent()` returns `null` for any non-claude host.
 
 ### Chore
 

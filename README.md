@@ -1,7 +1,9 @@
 # oh-skills
 
-A [Claude Code](https://docs.claude.com/en/docs/claude-code) plugin that bundles
-six personal dev-cycle skills:
+A multi-tool plugin that bundles six personal dev-cycle skills. Runs on
+[Claude Code](https://docs.claude.com/en/docs/claude-code),
+[Antigravity CLI (`agy`)](https://github.com/antigravityio/antigravity-cli), and
+[OpenAI Codex](https://platform.openai.com/docs/codex) from one source tree:
 
 | Skill              | What it does                                                                                |
 | ------------------ | ------------------------------------------------------------------------------------------- |
@@ -80,9 +82,9 @@ and run `/oh doctor`. It should stop before deleting any pre-existing
 
 ## Running on Antigravity CLI (agy)
 
-oh-skills is a dual-target plugin: it runs on both Claude Code and the
-[Antigravity CLI](https://github.com/antigravityio/antigravity-cli) (`agy`) from
-the same source tree.
+oh-skills is a tri-target plugin: it runs on Claude Code,
+[Antigravity CLI](https://github.com/antigravityio/antigravity-cli) (`agy`), and
+OpenAI Codex from the same source tree.
 
 ### Install
 
@@ -90,9 +92,12 @@ Symlink (or copy) the repo into the path where agy looks for plugins, then
 verify:
 
 ```bash
-# Stage the plugin in agy's install location
+# Stage the plugin in agy's install location (discovery)
 mkdir -p ~/.gemini/antigravity-cli/plugins
 ln -sfn ~/workspaces/oh-skills ~/.gemini/antigravity-cli/plugins/oh-skills
+
+# Create the shim anchor so SKILL.md shims can locate src/cli.ts at runtime
+ln -sfn ~/workspaces/oh-skills ~/.oh-skills
 
 # Confirm agy sees it
 agy plugin list
@@ -111,22 +116,24 @@ Every `skills/*/SKILL.md` shim uses a stateless, host-portable bash expression
 to locate `src/cli.ts` at runtime:
 
 ```bash
-${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-$HOME/.gemini/antigravity-cli/plugins/oh-skills}}
+${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}
 ```
 
 Probe order (first match wins, defined in `src/shared/plugin-root.ts`):
 
-| Priority | Variable                                          | Set by                                            |
-| -------- | ------------------------------------------------- | ------------------------------------------------- |
-| 1        | `CLAUDE_PLUGIN_ROOT`                              | Claude Code (always set when a plugin runs there) |
-| 2        | `ANTIGRAVITY_PLUGIN_ROOT`                         | Reserved for a future agy release — not set today |
-| 3        | `$HOME/.gemini/antigravity-cli/plugins/oh-skills` | Hard-coded known install path                     |
+| Priority | Variable / path           | Set by                                                  |
+| -------- | ------------------------- | ------------------------------------------------------- |
+| 1        | `CLAUDE_PLUGIN_ROOT`      | Claude Code (always set when a plugin runs there)       |
+| 2        | `ANTIGRAVITY_PLUGIN_ROOT` | Reserved for a future agy release — not set today       |
+| 3        | `PLUGIN_ROOT`             | Reserved; no known host sets this in skill context      |
+| 4        | `$HOME/.oh-skills`        | Unified anchor symlink (shared by agy + Codex installs) |
 
 **Key finding from the agy spike:** agy v1.0.3 injects no plugin-root env var
-(confirmed via binary forensics — see `findings.md` for the full list of
-injected vars). The known-install-path fallback is therefore the effective
-mechanism on agy, not a last resort. The `ANTIGRAVITY_PLUGIN_ROOT` probe is kept
-as harmless forward-compat in case a future agy release adds one.
+(confirmed via binary forensics — see `findings.md`). The shim therefore falls
+through to the `~/.oh-skills` anchor, which is why the install above creates it.
+The TypeScript resolver additionally probes known install paths (`~/.oh-skills`,
+`~/plugins/oh-skills`, `~/.gemini/antigravity-cli/plugins/oh-skills`) for its
+own internal path needs.
 
 ### Behavior differences on agy
 
@@ -149,6 +156,74 @@ workflows are otherwise identical.
   `ANTIGRAVITY_AGENT` / `ANTIGRAVITY_CONVERSATION_ID`
 - Plugin-root resolver: `src/shared/plugin-root.ts` — `resolvePluginRoot()`,
   `SHIM_ROOT_EXPR`, `AGY_ROOT_ENV`
+
+---
+
+## Running on OpenAI Codex
+
+oh-skills is a tri-target plugin: it runs on Claude Code, Antigravity CLI (agy),
+and OpenAI Codex from the same source tree.
+
+### Install
+
+```bash
+bash scripts/install-codex.sh
+```
+
+The script is idempotent — safe to run multiple times. It performs four steps:
+
+1. Creates `~/.oh-skills` → repo symlink (the shim anchor — see below).
+2. Creates `~/plugins/oh-skills` → repo symlink (Codex marketplace lookup path).
+3. Writes `~/.agents/plugins/marketplace.json` with a personal marketplace entry
+   (skipped if the file already exists).
+4. If `codex` CLI is present: runs the cache-buster and registers
+   `oh-skills@personal`. Otherwise it prints the manual steps.
+
+After install, start a **new Codex thread** to pick up the skills — Codex loads
+plugins at thread initialization, not mid-session.
+
+### How the plugin root is resolved on Codex
+
+Codex injects no plugin-root variable into running skills, and its validator
+rejects `hooks` entries, so a hook-based approach is not available. Instead, the
+SKILL.md shims use a stateless bash expression:
+
+```bash
+${CLAUDE_PLUGIN_ROOT:-${ANTIGRAVITY_PLUGIN_ROOT:-${PLUGIN_ROOT:-$HOME/.oh-skills}}}
+```
+
+On Codex none of `CLAUDE_PLUGIN_ROOT`, `ANTIGRAVITY_PLUGIN_ROOT`, or
+`PLUGIN_ROOT` is set in skill context, so the expression resolves to
+`$HOME/.oh-skills` — the symlink created by `install-codex.sh`. This is why the
+anchor is the most important step.
+
+| Priority | Variable / path           | Set by                                               |
+| -------- | ------------------------- | ---------------------------------------------------- |
+| 1        | `CLAUDE_PLUGIN_ROOT`      | Claude Code                                          |
+| 2        | `ANTIGRAVITY_PLUGIN_ROOT` | Reserved for a future agy release                    |
+| 3        | `PLUGIN_ROOT`             | Reserved; Codex forbids hooks, where it would appear |
+| 4        | `$HOME/.oh-skills`        | Symlink created by `install-codex.sh` (Codex anchor) |
+
+### Behavior differences on Codex
+
+| Aspect                  | Claude Code                                                   | Codex                                                   |
+| ----------------------- | ------------------------------------------------------------- | ------------------------------------------------------- |
+| Agent dispatch          | Named subagents (Mirai / Yama / Rudy) when configured         | Falls back to `self_act` — Codex uses dynamic subagents |
+| `oh-nice go/review/fix` | Dispatches `CODING_AGENT` / `REVIEW_AGENT` / `RESEARCH_AGENT` | Main Codex agent does the work                          |
+| Host detection          | `CLAUDE_PLUGIN_ROOT` / `CLAUDECODE`                           | `CODEX_HOME` (best-effort; `unknown` if absent)         |
+
+In short: `oh-nice` works on Codex, but all roles are handled by the main agent
+rather than delegated to named subagents. The planning, review, and fix
+workflows are otherwise identical.
+
+### Skill compatibility on Codex
+
+Codex's plugin validator requires `disable-model-invocation` to be `false` or
+absent. The utility skills (`oh-context`, `oh-search`, `oh-doctor`, `oh-help`)
+satisfy this and load on Codex. The two action/orchestration skills (`oh-nice`,
+`oh-bug-tracing`) intentionally keep `disable-model-invocation: true` to stay
+user-only on Claude Code, so Codex's strict validator does not ingest them.
+Drive those flows directly on Codex if you need them there.
 
 ---
 
