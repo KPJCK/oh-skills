@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="515" height="150" viewBox="0 0 515 150" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14">
+  <rect width="515" height="150" rx="12" fill="#11111b"/>
+  <rect width="515" height="34" rx="12" fill="#181825"/>
+  <rect y="22" width="515" height="12" fill="#181825"/>
+  <circle cx="22" cy="17" r="6" fill="#f38ba8"/><circle cx="42" cy="17" r="6" fill="#f9e2af"/><circle cx="62" cy="17" r="6" fill="#a6e3a1"/>
+  <text x="257.5" y="22" fill="#9399b2" font-size="12" text-anchor="middle">oh-context list</text>
+  <text xml:space="preserve" fill="#cdd6f4"><tspan x="18.0" y="64" fill="rgb(0,212,255)">[</tspan><tspan x="26.4" y="64" fill="rgb(6,215,252)">O</tspan><tspan x="34.8" y="64" fill="rgb(13,218,250)">H</tspan><tspan x="43.2" y="64" fill="rgb(19,221,247)">!</tspan><tspan x="51.6" y="64" fill="rgb(25,223,244)"> </tspan><tspan x="60.0" y="64" fill="rgb(32,226,242)">&gt;</tspan><tspan x="68.4" y="64" fill="rgb(38,229,239)">&gt;</tspan><tspan x="76.8" y="64" fill="rgb(44,232,236)"> </tspan><tspan x="85.2" y="64" fill="rgb(51,235,234)">C</tspan><tspan x="93.6" y="64" fill="rgb(57,238,231)">O</tspan><tspan x="102.0" y="64" fill="rgb(63,241,228)">N</tspan><tspan x="110.4" y="64" fill="rgb(70,244,226)">T</tspan><tspan x="118.8" y="64" fill="rgb(76,246,223)">E</tspan><tspan x="127.2" y="64" fill="rgb(82,249,220)">X</tspan><tspan x="135.6" y="64" fill="rgb(89,252,218)">T</tspan><tspan x="144.0" y="64" fill="rgb(95,255,215)">]</tspan><tspan x="18.0" y="85" fill="#cdd6f4">Context library</tspan><tspan x="18.0" y="127" fill="#cdd6f4">Root: `~/.claude/context` • cwd: `~/workspaces/oh-skills`</tspan></text>
+</svg>

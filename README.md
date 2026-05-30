@@ -12,9 +12,12 @@ Antigravity, and OpenAI Codex.
 
 ![version](https://img.shields.io/badge/version-0.3.0-7C3AED?style=flat-square)
 ![license](https://img.shields.io/badge/license-MIT-3B82F6?style=flat-square)
-![runtime](https://img.shields.io/badge/runtime-Bun-000000?style=flat-square&logo=bun&logoColor=white)
+![runtime](https://img.shields.io/badge/Bun-000000?style=flat-square&logo=bun&logoColor=white)
 ![tests](https://img.shields.io/badge/tests-326%20passing-22C55E?style=flat-square)
-![hosts](https://img.shields.io/badge/hosts-Claude%20·%20Antigravity%20·%20Codex-7C3AED?style=flat-square)
+
+![Claude Code](https://img.shields.io/badge/Claude%20Code-D97757?style=flat-square&logo=anthropic&logoColor=white)
+![Antigravity](https://img.shields.io/badge/Antigravity-4285F4?style=flat-square&logo=googlegemini&logoColor=white)
+![OpenAI Codex](https://img.shields.io/badge/OpenAI%20Codex-10A37F?style=flat-square&logo=openai&logoColor=white)
 
 </div>
 
@@ -23,6 +26,7 @@ Antigravity, and OpenAI Codex.
 ## Contents
 
 - [Skills](#skills)
+- [Demo](#demo)
 - [Quick start](#quick-start)
 - [Installation](#installation)
 - [Multi-host support](#multi-host-support)
@@ -44,6 +48,25 @@ Antigravity, and OpenAI Codex.
 | **oh-search**      | Local knowledge base — check before WebSearch on stable topics                     |
 | **oh-doctor**      | Sanity-check the plugin installation                                               |
 | **oh-help**        | Reference card with your config substituted in                                     |
+
+---
+
+## Demo
+
+Every skill opens with a signature gradient banner, then emits compact,
+scannable output. A few real captures:
+
+<div align="center">
+
+<img src="docs/assets/oh-help.svg" alt="oh help — the toolkit banner and intro" width="660">
+
+<br/><br/>
+
+<img src="docs/assets/oh-doctor.svg" alt="oh doctor — installation health report" width="420">
+&nbsp;&nbsp;
+<img src="docs/assets/oh-context.svg" alt="oh-context list — the context library" width="520">
+
+</div>
 
 ---
 
